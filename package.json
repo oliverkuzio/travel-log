@@ -28,8 +28,12 @@
         "eslint-plugin-format": "^1.0.1",
         "h3": "^1.15.3",
         "husky": "^9.1.7",
+        "lint-staged": "^15.5.1",
         "nitro-cloudflare-dev": "^0.2.2",
         "nitropack": "^2.11.11",
         "wrangler": "^4.14.0"
+    },
+    "lint-staged": {
+        "*": "pnpm lint"
     }
 }
