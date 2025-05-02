@@ -15,6 +15,9 @@ export default withNuxt(
         semi: true,
         quotes: "double",
       },
+      ignores: [
+        "drizzle/**",
+      ],
     },
     {
       rules: {
