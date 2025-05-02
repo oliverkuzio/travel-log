@@ -19,7 +19,7 @@
       "pattern": "travel.kuzio.app",
       "custom_domain": true
     }
-  ]
+  ],
 
   /**
    * Smart Placement
@@ -55,4 +55,13 @@
    * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
    */
   // "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "travel-log",
+      "database_id": "3b9e3acb-8bc6-4ec8-90f9-ffbf3c9eaa71",
+      "migrations_dir": "./drizzle"
+    }
+  ]
 }
