@@ -4,7 +4,12 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  modules: ["nitro-cloudflare-dev", "@nuxt/eslint", "@nuxt/icon"],
+  modules: [
+    "nitro-cloudflare-dev",
+    "@nuxt/eslint",
+    "@nuxt/icon",
+    "@nuxtjs/color-mode",
+  ],
   css: ["~/assets/css/main.css"],
 
   nitro: {
@@ -26,5 +31,9 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
     ],
+  },
+
+  colorMode: {
+    dataValue: "theme",
   },
 });
