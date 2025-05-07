@@ -31,7 +31,7 @@ function toggleSidebar() {
             :show-label="isSidebarOpen"
           />
           <SidebarButton
-            href="/locations/add"
+            href="/add"
             label="Add location"
             icon="tabler:circle-plus-filled"
             :show-label="isSidebarOpen"
@@ -45,6 +45,9 @@ function toggleSidebar() {
           />
         </div>
       </div>
+    </div>
+    <div class="flex-1">
+      <NuxtPage />
     </div>
   </div>
 </template>
