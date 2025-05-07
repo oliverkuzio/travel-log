@@ -1,18 +1,14 @@
-import { drizzle } from "drizzle-orm/d1";
+import { drizzle } from "drizzle-orm/libsql";
 
+import env from "../env";
 import * as schema from "./schema";
 
-export type Env = {
-  DB: D1Database;
-};
-
-export default {
-  async fetch(request: Request, env: Env) {
-    const db = drizzle(env.DB, {
-      schema,
-      casing: "snake_case",
-    });
-
-    return db;
+const db = drizzle({
+  connection: {
+    url: env.DATABASE_URL,
   },
-};
+  casing: "snake_case",
+  schema,
+});
+
+export default db;

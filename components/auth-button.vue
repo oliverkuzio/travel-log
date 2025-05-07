@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import { authClient } from "~/lib/auth-client";
-
-async function signIn() {
-  await authClient.signIn.social({
-    provider: "github",
-  });
-}
+const authStore = useAuthStore();
 </script>
 
 <template>
-  <button class="btn btn-accent" @click="signIn">
+  <button :disabled="authStore.loading" class="btn btn-accent" @click="authStore.signIn">
     Sign in with GitHub
-    <Icon name="tabler:brand-github" />
+    <span v-if="authStore.loading" class="loading loading-spinner loading-md" />
+    <Icon v-else name="tabler:brand-github" size="24" />
   </button>
 </template>
