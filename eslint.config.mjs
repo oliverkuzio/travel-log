@@ -21,10 +21,8 @@ export default withNuxt(
     },
     {
       rules: {
-        "ts/no-redeclare": "off",
-        "ts/consistent-type-definitions": ["error", "type"],
-        "no-console": ["warn"],
         "antfu/no-top-level-await": ["off"],
+        "no-console": ["warn"],
         "node/prefer-global/process": ["off"],
         "node/no-process-env": ["error"],
         "perfectionist/sort-imports": [
@@ -33,11 +31,24 @@ export default withNuxt(
             tsconfigRootDir: "./",
           },
         ],
+        "ts/consistent-type-definitions": ["error", "type"],
+        "ts/no-redeclare": "off",
         "unicorn/filename-case": [
           "error",
           {
             case: "kebabCase",
             ignore: ["README.md"],
+          },
+        ],
+        "vue/max-attributes-per-line": [
+          "error",
+          {
+            singleline: {
+              max: 3,
+            },
+            multiline: {
+              max: 1,
+            },
           },
         ],
       },

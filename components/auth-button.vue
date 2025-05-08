@@ -12,7 +12,7 @@ const authStore = useAuthStore();
       </div>
       {{ authStore.user.name }}
     </div>
-    <ul tabindex="0" class="dropdown-content menu bg-base-200 rounded-box z-1 w-52 p-2 shadow-sm">
+    <ul tabindex="0" class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm">
       <li>
         <NuxtLink to="/sign-out">
           <Icon name="tabler:logout-2" size="24" />
@@ -21,7 +21,12 @@ const authStore = useAuthStore();
       </li>
     </ul>
   </div>
-  <button v-else :disabled="authStore.loading" class="btn btn-accent" @click="authStore.signIn">
+  <button
+    v-else
+    :disabled="authStore.loading"
+    class="btn btn-accent"
+    @click="authStore.signIn"
+  >
     <span v-if="authStore.loading" class="loading loading-spinner loading-md" />
     <Icon v-else name="tabler:brand-github" size="24" />
     Sign in with GitHub
