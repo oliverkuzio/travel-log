@@ -1,4 +1,5 @@
 import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema } from "drizzle-zod";
 
 import { user } from "./auth";
 import { location } from "./location";
@@ -15,4 +16,12 @@ export const locationLog = sqliteTable("locationLog", {
   userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
+});
+
+export const InsertLocationLog = createInsertSchema(locationLog).omit({
+  id: true,
+  userId: true,
+  locationId: true,
+  createdAt: true,
+  updatedAt: true,
 });
