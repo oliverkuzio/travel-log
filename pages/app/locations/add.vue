@@ -26,7 +26,7 @@ const onSubmit = handleSubmit(async (values) => {
     });
 
     submitted.value = true;
-    navigateTo("/dashboard");
+    navigateTo("/app");
   }
   catch (e) {
     const error = e as FetchError;
@@ -121,7 +121,9 @@ onBeforeRouteLeave(() => {
         </button>
         <button :disabled="loading" type="submit" class="btn btn-primary">
           Add
-          <span v-if="loading" class="loading loading-spinner loading-md" />
+          <span v-if="loading">
+            <LoadingSpinner />
+          </span>
           <Icon v-else name="tabler:circle-plus-filled" size="24" />
         </button>
       </div>

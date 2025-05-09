@@ -27,7 +27,9 @@ const authStore = useAuthStore();
     class="btn btn-accent"
     @click="authStore.signIn"
   >
-    <span v-if="authStore.loading" class="loading loading-spinner loading-md" />
+    <span v-if="authStore.loading">
+      <LoadingSpinner />
+    </span>
     <Icon v-else name="tabler:brand-github" size="24" />
     Sign in with GitHub
   </button>

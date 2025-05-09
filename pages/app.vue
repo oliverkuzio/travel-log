@@ -27,13 +27,13 @@ function toggleSidebar() {
       <div class="flex flex-col gap-2">
         <div class="flex flex-col">
           <SidebarButton
-            href="/dashboard/locations"
+            href="/app"
             label="Locations"
             icon="tabler:map"
             :show-label="isSidebarOpen"
           />
           <SidebarButton
-            href="/dashboard/add"
+            href="/app/locations/add"
             label="Add location"
             icon="tabler:circle-plus-filled"
             :show-label="isSidebarOpen"
