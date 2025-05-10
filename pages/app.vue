@@ -1,11 +1,17 @@
 <script setup lang="ts">
 const isSidebarOpen = ref(true);
+const route = useRoute();
+const sidebarStore = useSidebarStore();
+const locationsStore = useLocationStore();
 
 onMounted(() => {
   const storedSidebarState = localStorage.getItem("sidebarOpen");
 
   if (storedSidebarState) {
     isSidebarOpen.value = JSON.parse(storedSidebarState);
+    if (route.path !== "/dashboard") {
+      locationsStore.refresh();
+    }
   }
 });
 
@@ -28,25 +34,46 @@ function toggleSidebar() {
         <div class="flex flex-col">
           <SidebarButton
             href="/app"
+            label="Trips"
+            icon="tabler:luggage"
+            :show-label="isSidebarOpen"
+          />
+          <SidebarButton
+            href="/app"
             label="Locations"
             icon="tabler:map"
             :show-label="isSidebarOpen"
           />
+          <div class="divider" />
+          <div v-if="sidebarStore.loading" class="flex flex-col gap-4">
+            <div class="skeleton h-4 w-full" />
+          </div>
+          <div v-if="!sidebarStore.loading && sidebarStore.sidebarItems.length > 0">
+            <SidebarButton
+              v-for="item in sidebarStore.sidebarItems"
+              :key="item.id"
+              :href="item.href"
+              :label="item.label"
+              :icon="item.icon"
+              :show-label="isSidebarOpen"
+            />
+          </div>
           <SidebarButton
+            v-if="!sidebarStore.loading"
             href="/app/locations/add"
             label="Add location"
             icon="tabler:circle-plus-filled"
             :show-label="isSidebarOpen"
           />
-          <div class="divider" />
-          <SidebarButton
-            href="/sign-out"
-            label="Sign out"
-            icon="tabler:logout-2"
-            :show-label="isSidebarOpen"
-          />
         </div>
       </div>
+      <div class="divider" />
+      <SidebarButton
+        href="/sign-out"
+        label="Sign out"
+        icon="tabler:logout-2"
+        :show-label="isSidebarOpen"
+      />
     </div>
     <div class="flex-1">
       <NuxtPage />

@@ -1,6 +1,9 @@
 <script setup lang="ts">
-const { data, status } = await useFetch("/api/locations", {
-  lazy: true,
+const locationsStore = useLocationStore();
+const { locations, status } = storeToRefs(locationsStore);
+
+onMounted(() => {
+  locationsStore.refresh();
 });
 </script>
 
@@ -12,8 +15,8 @@ const { data, status } = await useFetch("/api/locations", {
     <div v-if="status === 'pending'">
       <LoadingSpinner />
     </div>
-    <div v-else-if="data && data.length > 0" class="grid grid-cols-4 mt-4 gap-4 align-items-stretch">
-      <article v-for="location in data" :key="location.id" class="card card-compact bg-base-200 flex-1">
+    <div v-else-if="locations && locations.length > 0" class="grid grid-cols-4 mt-4 gap-4 align-items-stretch">
+      <article v-for="location in locations" :key="location.id" class="card card-compact bg-base-200 flex-1">
         <div class="card-body">
           <h2 class="card-title">
             {{ location.name }}
