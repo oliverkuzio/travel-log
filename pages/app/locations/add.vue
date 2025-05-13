@@ -64,7 +64,11 @@ onBeforeRouteLeave(() => {
         vists to this location via the location log.
       </p>
     </div>
-    <div v-if="submitError" role="alert" class="alert alert-error my-6">
+    <div
+      v-if="submitError"
+      role="alert"
+      class="alert alert-error my-6"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-6 w-6 shrink-0 stroke-current"
@@ -119,12 +123,20 @@ onBeforeRouteLeave(() => {
           <Icon name="tabler:arrow-left" size="24" />
           Cancel
         </button>
-        <button :disabled="loading" type="submit" class="btn btn-primary">
+        <button
+          :disabled="loading"
+          type="submit"
+          class="btn btn-primary"
+        >
           Add
           <span v-if="loading">
             <LoadingSpinner />
           </span>
-          <Icon v-else name="tabler:circle-plus-filled" size="24" />
+          <Icon
+            v-else
+            name="tabler:circle-plus-filled"
+            size="24"
+          />
         </button>
       </div>
     </form>
