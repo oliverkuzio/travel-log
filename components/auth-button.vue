@@ -4,7 +4,11 @@ const authStore = useAuthStore();
 
 <template>
   <div v-if="!authStore.loading && authStore.user" class="dropdown dropdown-end">
-    <div tabindex="0" role="button" class="btn m-1">
+    <div
+      tabindex="0"
+      role="button"
+      class="btn m-1"
+    >
       <div v-if="authStore.user.image" class="avatar">
         <div class="w-6 rounded-full">
           <img :src="authStore.user.image" alt="User Avatar">
@@ -30,7 +34,11 @@ const authStore = useAuthStore();
     <span v-if="authStore.loading">
       <LoadingSpinner />
     </span>
-    <Icon v-else name="tabler:brand-github" size="24" />
+    <Icon
+      v-else
+      name="tabler:brand-github"
+      size="24"
+    />
     Sign in with GitHub
   </button>
 </template>

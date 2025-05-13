@@ -1,1 +1,3 @@
-export const CENTER_USA = [-98.5795, 39.8384];
+import type { LngLatLike } from "maplibre-gl";
+
+export const CENTER_MAP = [0, 0] as LngLatLike;
