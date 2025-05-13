@@ -4,6 +4,7 @@ const props = defineProps<{
   label: string;
   icon: string;
   showLabel: boolean;
+  iconColor?: "text-accent" | "text-primary" | "text-secondary";
 }>();
 
 const route = useRoute();
@@ -17,13 +18,18 @@ const route = useRoute();
   >
     <NuxtLink
       :to="props.href"
-      :class="{ 'bg-base-300': route.path === props.href, 'justify-center': !showLabel, 'justify-start': showLabel }"
+      :class="{
+        'bg-base-300': route.path === props.href,
+        'justify-center': !showLabel,
+        'justify-start': showLabel,
+      }"
       class="flex gap-4 py-2 px-4 hover:bg-base-300 flex-no-wrap"
     >
       <Icon
         :name="props.icon"
         size="24"
         class="shrink-0"
+        :class="iconColor"
       />
       <Transition name="grow">
         <span v-if="showLabel">{{ props.label }}</span>
