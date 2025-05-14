@@ -42,8 +42,6 @@ export default defineAuthenticatedEventHandler(async (event) => {
     let statusCode = 500;
     let statusMessage = "An unknown error has occurred.";
 
-    console.log("SERVER ERROR: ", error.message);
-
     switch (error.message) {
       case "SQLITE_CONSTRAINT_UNIQUE: UNIQUE constraint failed: location.name, location.user_id":
         statusCode = 409;

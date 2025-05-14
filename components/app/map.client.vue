@@ -1,10 +1,27 @@
 <script setup lang="ts">
+import type { MglEvent } from "@indoorequal/vue-maplibre-gl";
+import type { LngLat } from "maplibre-gl";
+
 import { CENTER_MAP } from "~/lib/constants";
 
 const mapStore = useMapStore();
 const colorMode = useColorMode();
 const style = computed(() => `/styles/${colorMode.value}.json`);
 const zoom = 3;
+
+function updateAddedPoint(location: LngLat) {
+  if (mapStore.addedPoint) {
+    mapStore.addedPoint.lat = location.lat;
+    mapStore.addedPoint.long = location.lng;
+  }
+}
+
+function onDoubleClick(mglEvent: MglEvent<"dblclick">) {
+  if (mapStore.addedPoint) {
+    mapStore.addedPoint.lat = mglEvent.event.lngLat.lat;
+    mapStore.addedPoint.long = mglEvent.event.lngLat.lng;
+  }
+}
 
 onMounted(() => {
   mapStore.init();
@@ -16,8 +33,28 @@ onMounted(() => {
     :map-style="style"
     :center="CENTER_MAP"
     :zoom="zoom"
+    @map:dblclick="onDoubleClick($event)"
   >
     <MglNavigationControl />
+    <MglMarker
+      v-if="mapStore.addedPoint"
+      :coordinates="[mapStore.addedPoint.long, mapStore.addedPoint.lat]"
+      draggable
+      @update:coordinates="updateAddedPoint($event)"
+    >
+      <template #marker>
+        <div
+          class="tooltip tooltip-top tooltip-open hover:cursor-pointer"
+          data-tip="Drag to desired location."
+        >
+          <Icon
+            name="tabler:map-pin-filled"
+            size="48"
+            class="text-accent"
+          />
+        </div>
+      </template>
+    </MglMarker>
     <MglMarker
       v-for="point in mapStore.mapPoints"
       :key="point.id"
@@ -30,8 +67,8 @@ onMounted(() => {
           :class="{
             'tooltip-open': mapStore.selectedPoint === point,
           }"
-          @mouseenter="mapStore.selectPoint(point)"
-          @mouseleave="mapStore.selectPoint(null)"
+          @mouseenter="mapStore.selectedPoint = point"
+          @mouseleave="mapStore.selectedPoint = null"
         >
           <Icon
             name="tabler:map-pin-filled"
