@@ -11,15 +11,21 @@
   @apply px-2 text-lg;
 }
 
-.location-list {
-  @apply flex flex-nowrap mt-4 gap-2 overflow-auto;
-}
-
-.page-content-top {
-  @apply p-4 min-h-72;
-}
-
 #__nuxt {
+  /*
+  .maplibregl-ctrl {
+    @apply text-base-content bg-base-300;
+  }
+
+  .maplibregl-ctrl-attrib {
+    @apply text-base-content;
+
+    a {
+      @apply text-base-content;
+    }
+  }
+  */
+
   .maplibregl-popup-content {
     @apply text-base-content bg-base-100;
   }

@@ -7,12 +7,7 @@ import { CENTER_MAP } from "~/lib/constants";
 export const useMapStore = defineStore("useMapStore", () => {
   const mapPoints = ref<MapPoint[]>([]);
   const selectedPoint = ref<MapPoint | null>(null);
-  const shouldFlyTo = ref(true);
-
-  function selectPoint(point: MapPoint | null) {
-    shouldFlyTo.value = false;
-    selectedPoint.value = point;
-  }
+  const addedPoint = ref<MapPoint | null>(null);
 
   async function init() {
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
@@ -46,30 +41,22 @@ export const useMapStore = defineStore("useMapStore", () => {
       });
     });
 
-    effect(() => {
-      if (selectedPoint.value) {
-        if (shouldFlyTo.value) {
-          map.map?.flyTo({
-            center: [selectedPoint.value.long, selectedPoint.value.lat],
-            speed: 0.8,
-          });
-        }
-
-        shouldFlyTo.value = true;
-      }
-      else if (bounds) {
-        map.map?.fitBounds(bounds, {
-          padding,
-          maxZoom: 10,
+    watch(addedPoint, (newValue, oldValue) => {
+      if (newValue && newValue !== oldValue) {
+        map.map?.flyTo({
+          center: [newValue.long, newValue.lat],
+          speed: 0.8,
         });
       }
+    }, {
+      immediate: true,
     });
   }
 
   return {
     init,
-    selectPoint,
     mapPoints,
+    addedPoint,
     selectedPoint,
   };
 });
