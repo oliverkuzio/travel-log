@@ -81,49 +81,16 @@ function setLocation(result: NominatimResult) {
         Search
       </button>
     </Form>
-
-    <div
+    <AppAlert
       v-if="!loading && errorMessage"
-      role="alert"
-      class="alert alert-error"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6 shrink-0 stroke-current"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      <span>{{ errorMessage }}</span>
-    </div>
-
-    <div
+      type="error"
+      :message="errorMessage"
+    />
+    <AppAlert
       v-if="!loading && submitted && !searchResults.length"
-      role="alert"
-      class="alert"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        class="stroke-info h-6 w-6 shrink-0"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      <span>No locations matched your search.</span>
-    </div>
-
+      type="info"
+      message="No locations matched your search."
+    />
     <ul v-if="!loading && searchResults.length > 0" class="list bg-base-200 rounded-b shadow-md overflow-auto max-h-72">
       <li
         v-for="result in searchResults"
@@ -143,7 +110,6 @@ function setLocation(result: NominatimResult) {
         </div>
       </li>
     </ul>
-
     <div v-if="loading" class="flex justify-center p-4">
       <div class="loading loading-lg" />
     </div>

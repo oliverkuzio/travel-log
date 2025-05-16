@@ -12,7 +12,7 @@ export const useLocationStore = defineStore("useLocationStore", () => {
         id: `location-${location.id}`,
         label: location.name,
         icon: "tabler:map-pin-filled",
-        href: `/app/locations/${location.slug}`,
+        to: { name: "app-locations-slug", params: { slug: location.slug } },
         location,
       }));
 
