@@ -17,7 +17,8 @@
     "db:studio": "drizzle-kit studio",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typecheck": "nuxi typecheck"
   },
   "dependencies": {
     "@indoorequal/vue-maplibre-gl": "^8.3.0",
@@ -58,6 +59,7 @@
     "lint-staged": "^15.5.1",
     "nitro-cloudflare-dev": "^0.2.2",
     "nitropack": "^2.11.11",
+    "vue-tsc": "^2.2.10",
     "wrangler": "^4.14.0"
   },
   "lint-staged": {
