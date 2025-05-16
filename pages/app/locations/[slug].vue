@@ -32,6 +32,15 @@ effect(() => {
       <p class="text-sm">
         {{ location.description }}
       </p>
+      <div v-if="!location.locationLogs.length">
+        <p class="text-sm mt-4">
+          Add a location log to get started.
+        </p>
+      </div>
+      <NuxtLink to="/app/locations/add" class="btn btn-primary mt-4">
+        Add Location Log
+        <Icon name="tabler:map-pin-plus" size="24" />
+      </NuxtLink>
     </div>
   </div>
 </template>

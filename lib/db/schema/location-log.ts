@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 
@@ -17,6 +18,13 @@ export const locationLog = sqliteTable("locationLog", {
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
 });
+
+export const locatinLogRelations = relations(locationLog, ({ one }) => ({
+  location: one(location, {
+    fields: [locationLog.locationId],
+    references: [location.id],
+  }),
+}));
 
 export const InsertLocationLog = createInsertSchema(locationLog).omit({
   id: true,

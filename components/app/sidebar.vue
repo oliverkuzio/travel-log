@@ -74,8 +74,8 @@ function toggleSidebar() {
             :label="item.label"
             :icon="item.icon"
             :show-label="isSidebarOpen"
-            :icon-color="mapStore.selectedPoint === item.location ? 'text-primary' : undefined"
-            @mouseenter="mapStore.selectedPoint = item.location ?? null"
+            :icon-color="isPointSelected(item.mapPoint, mapStore.selectedPoint) ? 'text-primary' : undefined"
+            @mouseenter="mapStore.selectedPoint = item.mapPoint ?? null"
             @mouseleave="mapStore.selectedPoint = null"
           />
         </div>
