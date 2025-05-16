@@ -3,6 +3,8 @@ import type { FetchError } from "ofetch";
 
 import { toTypedSchema } from "@vee-validate/zod";
 
+import type { NominatimResult } from "~/lib/types";
+
 import { CENTER_MAP } from "~/lib/constants";
 import { InsertLocation } from "~/lib/db/schema";
 
@@ -42,10 +44,24 @@ const onSubmit = handleSubmit(async (values) => {
     if (error.data?.data) {
       setErrors(error.data?.data);
     }
-    submitError.value = error.data?.statusMessage || error.statusMessage || "An unknown error occurred.";
+    submitError.value = getFetchErrorMessage(error);
   }
   loading.value = false;
 });
+
+function searchResultSelected(result: NominatimResult) {
+  setFieldValue("name", result.display_name);
+  if (mapStore.addedPoint) {
+    mapStore.addedPoint = {
+      id: 0,
+      name: "New Point",
+      description: "",
+      long: Number(result.lon),
+      lat: Number(result.lat),
+      centerMap: true,
+    };
+  }
+}
 
 effect(() => {
   if (mapStore.addedPoint) {
@@ -141,15 +157,26 @@ onBeforeRouteLeave(() => {
         />
       </div>
 
-      <p class="text-xs text-gray-400">
-        Enter co-ordinates above, or alternatively, double-click the map, or drag the
-        <Icon
-          name="tabler:map-pin-filled"
-          size="12"
-          class="text-accent"
-        />
-        marker to your desired location.
+      <p class="text-sm">
+        To set the co-ordinates above:
       </p>
+      <ul class="list-disc pl-4 text-sm">
+        <li>
+          Drag the
+          <Icon
+            name="tabler:map-pin-filled"
+            size="12"
+            class="text-accent"
+          />
+          marker on the map,
+        </li>
+        <li>
+          Double-click the map, or
+        </li>
+        <li>
+          Search for a location below.
+        </li>
+      </ul>
 
       <div class="flex justify-end gap-2">
         <button
@@ -178,5 +205,9 @@ onBeforeRouteLeave(() => {
         </button>
       </div>
     </form>
+
+    <div class="divider" />
+
+    <PlaceSearch @result-selected="searchResultSelected" />
   </div>
 </template>

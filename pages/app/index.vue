@@ -22,7 +22,7 @@ onMounted(() => {
         :key="location.id"
         class="card card-compact bg-base-200 shrink-0 grow-0 border-2 mb-2 basis-[40vw] md:basis-[25vw] lg:basis-[20vw] xl:basis-[15vw] hover:cursor-pointer"
         :class="{
-          'border-accent': location === mapStore.selectedPoint,
+          'border-primary': location === mapStore.selectedPoint,
           'border-transparent': location !== mapStore.selectedPoint,
         }"
         @mouseenter="mapStore.selectedPoint = location"

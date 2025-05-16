@@ -4,7 +4,7 @@ const props = defineProps<{
   label: string;
   icon: string;
   showLabel: boolean;
-  iconColor?: "text-accent" | "text-primary" | "text-secondary";
+  iconColor?: "text-primary" | "text-primary" | "text-secondary";
 }>();
 
 const route = useRoute();
@@ -23,7 +23,7 @@ const route = useRoute();
         'justify-center': !showLabel,
         'justify-start': showLabel,
       }"
-      class="flex gap-4 py-2 px-4 hover:bg-base-300 flex-no-wrap"
+      class="flex gap-4 py-2 px-4 text-sm hover:bg-base-300 flex-no-wrap"
     >
       <Icon
         :name="props.icon"
