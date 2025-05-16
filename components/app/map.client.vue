@@ -40,6 +40,7 @@ onMounted(() => {
       v-if="mapStore.addedPoint"
       :coordinates="[mapStore.addedPoint.long, mapStore.addedPoint.lat]"
       draggable
+      class-name="z-50"
       @update:coordinates="updateAddedPoint($event)"
     >
       <template #marker>
@@ -73,7 +74,7 @@ onMounted(() => {
           <Icon
             name="tabler:map-pin-filled"
             size="32"
-            :class="mapStore.selectedPoint === point ? 'text-accent' : 'text-secondary'"
+            :class="mapStore.selectedPoint === point ? 'text-primary' : 'text-secondary'"
           />
         </div>
       </template>

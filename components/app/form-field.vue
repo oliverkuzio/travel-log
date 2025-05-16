@@ -25,7 +25,7 @@ const props = defineProps<{
       :type="props.type"
       :disabled="disabled"
     />
-    <p v-if="props.error" class="fieldset-label text-error">
+    <p v-if="props.error" class="validator-hint visible text-error">
       {{ props.error }}
     </p>
   </fieldset>

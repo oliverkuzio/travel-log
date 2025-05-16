@@ -28,7 +28,7 @@ const authStore = useAuthStore();
   <button
     v-else
     :disabled="authStore.loading"
-    class="btn btn-accent"
+    class="btn btn-primary"
     @click="authStore.signIn"
   >
     <span v-if="authStore.loading">
