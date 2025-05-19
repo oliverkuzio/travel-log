@@ -33,3 +33,5 @@ export const InsertLocationLog = createInsertSchema(locationLog).omit({
   createdAt: true,
   updatedAt: true,
 });
+
+export type SelectLocationLogs = typeof locationLog.$inferSelect;
