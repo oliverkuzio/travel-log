@@ -46,6 +46,7 @@ export const useMapStore = defineStore("useMapStore", () => {
         map.map?.flyTo({
           center: [newValue.long, newValue.lat],
           speed: 0.8,
+          zoom: 3,
         });
       }
     }, {

@@ -1,5 +1,5 @@
 <template>
   <div>
-    <h2>Edit location</h2>
+    <h2>Edit Location</h2>
   </div>
 </template>

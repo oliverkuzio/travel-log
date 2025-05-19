@@ -16,6 +16,7 @@ const loading = ref(false);
 const submitted = ref(false);
 const submitError = ref("");
 
+// TODO: Add ability to re-centre map when co-ordinates manually changed
 const { handleSubmit, errors, meta, setErrors, setFieldValue } = useForm({
   validationSchema: toTypedSchema(InsertLocation),
   initialValues: {
@@ -90,6 +91,7 @@ onBeforeRouteLeave(() => {
     }
   }
 
+  mapStore.addedPoint = null;
   return true;
 });
 </script>
