@@ -1,31 +1,20 @@
 <script lang="ts" setup>
 const props = defineProps<{
-  type: "default" | "info" | "success" | "warning" | "error";
+  class?: "alert-info" | "alert-success" | "alert-warning" | "alert-error";
+  icon?: "info-circle-filled" | "circle-check-filled" | "alert-triangle-filled" | "circle-x-filled";
   message?: string;
-  hideIcon?: boolean;
 }>();
-
-const icons = {
-  default: "info-circle-filled",
-  info: "info-circle-filled",
-  success: "circle-check-filled",
-  warning: "alert",
-  error: "circle-x-filled",
-};
-
-const alertClass = `alert-${props.type}`;
-const alertIcon = icons[props.type];
 </script>
 
 <template>
   <div
     role="alert"
     class="alert my-6"
-    :class="alertClass"
+    :class="props.class ?? ''"
   >
     <Icon
-      v-if="!hideIcon"
-      :name="`tabler:${alertIcon}`"
+      v-if="!icon"
+      :name="`tabler:${icon}`"
       size="24"
     />
     <span>{{ props.message ?? 'An unknown error occurred.' }}</span>

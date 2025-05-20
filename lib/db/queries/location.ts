@@ -28,6 +28,15 @@ export async function updateLocation(updates: InsertLocation, slug: string, user
   return updated;
 }
 
+export async function deleteLocation(slug: string, userId: number) {
+  const [deleted] = await db.delete(location).where(and(
+    eq(location.slug, slug),
+    eq(location.userId, userId),
+  )).returning();
+
+  return deleted;
+}
+
 export async function findLocations(userId: number) {
   return await db.query.location.findMany({
     where: eq(location.userId, userId),

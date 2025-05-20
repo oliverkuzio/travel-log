@@ -4,7 +4,7 @@ import type { MapPoint } from "~/lib/types";
 import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
 import { createMapPointFromLocation } from "~/utils/map-points";
 
-export const useLocationStore = defineStore("useLocationStore", () => {
+export const useLocationsStore = defineStore("useLocationsStore", () => {
   const route = useRoute();
 
   const { data: locations, status: locationsStatus, refresh: refreshLocations } = useFetch("/api/locations", {

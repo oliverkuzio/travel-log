@@ -83,12 +83,14 @@ function setLocation(result: NominatimResult) {
     </Form>
     <AppAlert
       v-if="!loading && errorMessage"
-      type="error"
+      class="alert-error"
+      icon="circle-x-filled"
       :message="errorMessage"
     />
     <AppAlert
       v-if="!loading && submitted && !searchResults.length"
-      type="info"
+      class="alert-info"
+      icon="info-circle-filled"
       message="No locations matched your search."
     />
     <ul v-if="!loading && searchResults.length > 0" class="list bg-base-200 rounded-b shadow-md overflow-auto max-h-72">
