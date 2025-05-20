@@ -24,51 +24,51 @@ onMounted(() => {
 effect(() => {
   if (LOCATION_PAGES.has(route.name?.toString() || "")) {
     sidebarStore.sidebarMainItems = [{
-      id: "link-app",
+      id: "dashboard",
       label: "Locations",
-      href: "/app",
+      href: "/dashboard",
       icon: "tabler:map",
     }, {
-      id: "link-locations-add",
+      id: "dashboard-locations-add",
       label: "Add Location",
-      href: "/app/locations/add",
+      href: "/dashboard/locations/add",
       icon: "tabler:circle-plus-filled",
     }];
   }
   else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
     sidebarStore.sidebarMainItems = [{
-      id: "link-app",
+      id: "dashboard",
       label: "Back to Locations",
-      href: "/app",
+      href: "/dashboard",
       icon: "tabler:arrow-left",
     }];
 
     if (currentLocation.value && currentLocationStatus.value !== "pending") {
       sidebarStore.sidebarMainItems.push({
-        id: "link-locations-slug",
+        id: "dashboard-locations-slug",
         label: currentLocation.value.name,
         to: {
-          name: "app-locations-slug",
+          name: "dashboard-locations-slug",
           params: {
             slug: route.params.slug,
           },
         },
         icon: "tabler:map",
       }, {
-        id: "link-locations-edit",
+        id: "dashboard-locations-edit",
         label: "Edit Location",
         to: {
-          name: "app-locations-slug-edit",
+          name: "dashboard-locations-slug-edit",
           params: {
             slug: route.params.slug,
           },
         },
         icon: "tabler:map-pin-cog",
       }, {
-        id: "link-locations-slug-add",
+        id: "dashboard-locations-slug-add",
         label: "Add Location Log",
         to: {
-          name: "app-locations-slug-add",
+          name: "dashboard-locations-slug-add",
           params: {
             slug: route.params.slug,
           },
@@ -114,7 +114,7 @@ function toggleSidebar() {
           :href="item.href"
           :to="item.to"
         />
-        <div v-if="route.path.startsWith('/app/location') && currentLocationStatus === 'pending'" class="flex items-center justify-center">
+        <div v-if="route.path.startsWith('/dashboard/location') && currentLocationStatus === 'pending'" class="flex items-center justify-center">
           <div class="loading" />
         </div>
         <div v-if="sidebarStore.loading || sidebarStore.sidebarSubItems.length" class="divider" />

@@ -6,10 +6,10 @@ export default defineAuthenticatedEventHandler(async (event) => {
   const deleted = await deleteLocation(slug, event.context.user.id);
 
   if (!deleted) {
-    return sendError(event, createError({
+    throw createError({
       statusCode: 404,
       statusMessage: "Location not found.",
-    }));
+    });
   }
 
   setResponseStatus(event, 204);

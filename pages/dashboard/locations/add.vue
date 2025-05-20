@@ -11,7 +11,7 @@ async function onSubmit(values: InsertLocation) {
 }
 
 function onSubmitComplete() {
-  navigateTo("/app");
+  navigateTo("/dashboard");
 }
 </script>
 

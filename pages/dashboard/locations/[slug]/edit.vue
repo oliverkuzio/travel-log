@@ -19,7 +19,7 @@ async function onSubmit(values: InsertLocation) {
 
 function onSubmitComplete() {
   navigateTo({
-    name: "app-locations-slug",
+    name: "dashboard-locations-slug",
     params: {
       slug: route.params.slug,
     },

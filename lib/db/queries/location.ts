@@ -38,13 +38,13 @@ export async function deleteLocation(slug: string, userId: number) {
 }
 
 export async function findLocations(userId: number) {
-  return await db.query.location.findMany({
+  return db.query.location.findMany({
     where: eq(location.userId, userId),
   });
 }
 
 export async function findLocation(slug: string, userId: number) {
-  return await db.query.location.findFirst({
+  return db.query.location.findFirst({
     where: and(
       eq(location.slug, slug),
       eq(location.userId, userId),
@@ -56,7 +56,7 @@ export async function findLocation(slug: string, userId: number) {
 }
 
 export async function findLocationByName(existing: InsertLocation, userId: number) {
-  return await db.query.location.findFirst({
+  return db.query.location.findFirst({
     where: and(
       eq(location.name, existing.name),
       eq(location.userId, userId),
@@ -65,7 +65,7 @@ export async function findLocationByName(existing: InsertLocation, userId: numbe
 }
 
 export async function findLocationBySlug(slug: string) {
-  return await db.query.location.findFirst({
+  return db.query.location.findFirst({
     where: eq(location.slug, slug),
   });
 }

@@ -35,7 +35,7 @@ async function confirmDelete() {
       method: "DELETE",
     });
 
-    navigateTo("/app");
+    navigateTo("/dashboard");
   }
   catch (e) {
     const error = e as FetchError;
@@ -45,7 +45,7 @@ async function confirmDelete() {
 }
 
 onBeforeRouteUpdate((to) => {
-  if (to.name === "app-locations-slug") {
+  if (to.name === "dashboard-locations-slug") {
     locationsStore.refreshCurrentLocation();
   }
 });
@@ -66,7 +66,7 @@ onBeforeRouteUpdate((to) => {
         :message="errorMessage"
       />
     </div>
-    <div v-if="route.name === 'app-locations-slug' && location && !loading">
+    <div v-if="route.name === 'dashboard-locations-slug' && location && !loading">
       <h2 class="text-2xl">
         {{ location.name }}
         <div class="dropdown dropdown-botton">
@@ -77,7 +77,7 @@ onBeforeRouteUpdate((to) => {
             <li>
               <NuxtLink
                 :to="{
-                  name: 'app-locations-slug-edit',
+                  name: 'dashboard-locations-slug-edit',
                   params: { slug: route.params.slug },
                 }"
               >
@@ -102,12 +102,12 @@ onBeforeRouteUpdate((to) => {
           Add a location log to get started.
         </p>
       </div>
-      <NuxtLink to="/app/locations/add" class="btn btn-primary mt-4">
+      <NuxtLink to="/dashboard/locations/add" class="btn btn-primary mt-4">
         Add Location Log
         <Icon name="tabler:map-pin-plus" size="24" />
       </NuxtLink>
     </div>
-    <div v-if="route.name !== 'app-locations-slug'">
+    <div v-if="route.name !== 'dashboard-locations-slug'">
       <NuxtPage />
     </div>
     <AppDialog
