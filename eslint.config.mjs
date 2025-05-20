@@ -6,7 +6,7 @@ import withNuxt from "./.nuxt/eslint.config.mjs";
 export default withNuxt(
   antfu(
     {
-      type: "app",
+      type: "dashboard",
       vue: true,
       typescript: true,
       formatters: true,

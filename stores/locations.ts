@@ -2,12 +2,15 @@ import type { SelectLocationWithLogs } from "~/lib/db/schema";
 import type { MapPoint } from "~/lib/types";
 
 import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
-import { createMapPointFromLocation } from "~/utils/map-points";
 
-export const useLocationStore = defineStore("useLocationStore", () => {
+export const useLocationsStore = defineStore("useLocationsStore", () => {
   const route = useRoute();
 
-  const { data: locations, status: locationsStatus, refresh: refreshLocations } = useFetch("/api/locations", {
+  const {
+    data: locations,
+    status: locationsStatus,
+    refresh: refreshLocations,
+  } = useFetch("/api/locations", {
     lazy: true,
   });
 
@@ -18,7 +21,7 @@ export const useLocationStore = defineStore("useLocationStore", () => {
     status: currentLocationStatus,
     error: currentLocationError,
     refresh: refreshCurrentLocation,
-  } = useFetch <SelectLocationWithLogs>(locationUrlWithSlug, {
+  } = useFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
     lazy: true,
     immediate: false,
     watch: false,
@@ -36,10 +39,10 @@ export const useLocationStore = defineStore("useLocationStore", () => {
         const mapPoint = createMapPointFromLocation(location);
 
         sidebarSubItems.push({
-          id: `app-locations-${location.slug}`,
+          id: `dashboard-locations-${location.slug}`,
           label: location.name,
           icon: "tabler:map-pin-filled",
-          to: { name: "app-locations-slug", params: { slug: location.slug } },
+          to: { name: "dashboard-locations-slug", params: { slug: location.slug } },
           mapPoint,
         });
         mapPoints.push(mapPoint);

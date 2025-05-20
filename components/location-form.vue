@@ -102,7 +102,8 @@ onBeforeRouteLeave(() => {
   <div>
     <AppAlert
       v-if="submitError"
-      type="error"
+      class="alert-error"
+      icon="circle-x-filled"
       :message="submitError"
     />
     <form class="flex flex-col gap-2" @submit.prevent="onSubmit">
@@ -161,7 +162,7 @@ onBeforeRouteLeave(() => {
         <button
           :disabled="loading"
           type="reset"
-          class="btn btn-outline"
+          class="btn btn-outline btn-error"
           @click="router.back()"
         >
           <Icon name="tabler:arrow-left" size="24" />

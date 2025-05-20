@@ -17,11 +17,10 @@ export const useAuthStore = defineStore("useAuthStore", () => {
     const { csrf } = useCsrf();
     const headers = new Headers();
     headers.append("csrf-token", csrf);
-
     await authClient.signIn.social({
       provider: "github",
-      callbackURL: `/app`,
-      errorCallbackURL: `/error`,
+      callbackURL: "/dashboard",
+      errorCallbackURL: "/error",
       fetchOptions: {
         headers,
       },
@@ -32,7 +31,6 @@ export const useAuthStore = defineStore("useAuthStore", () => {
     const { csrf } = useCsrf();
     const headers = new Headers();
     headers.append("csrf-token", csrf);
-
     await authClient.signOut({
       fetchOptions: {
         headers,

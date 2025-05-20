@@ -11,7 +11,7 @@ async function onSubmit(values: InsertLocation) {
 }
 
 function onSubmitComplete() {
-  navigateTo("/app");
+  navigateTo("/dashboard");
 }
 </script>
 
@@ -31,7 +31,7 @@ function onSubmitComplete() {
       :on-submit
       :on-submit-complete
       submit-label="Add"
-      submit-icon="tabler:circle-plus-filled"
+      submit-icon="tabler:map-pin-plus"
     />
   </div>
 </template>

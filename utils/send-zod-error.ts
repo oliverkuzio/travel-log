@@ -10,9 +10,9 @@ export default function sendZodError(event: H3Event, error: ZodError) {
     return errors;
   }, {} as Record<string, string>);
 
-  return sendError(event, createError({
+  throw createError({
     statusCode: 422,
     statusMessage,
     data,
-  }));
+  });
 }

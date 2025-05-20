@@ -17,8 +17,8 @@ export const useSidebarStore = defineStore("useSidebarStore", () => {
   const loading = ref(false);
 
   return {
+    loading,
     sidebarMainItems,
     sidebarSubItems,
-    loading,
   };
 });

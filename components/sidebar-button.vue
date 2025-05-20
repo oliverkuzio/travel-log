@@ -7,7 +7,7 @@ const props = defineProps<{
   href?: string;
   to?: RouteLocationRaw;
   showLabel: boolean;
-  iconColor?: "text-primary" | "text-primary" | "text-secondary";
+  iconColor?: "text-primary" | "text-secondary" | "text-accent";
 }>();
 
 const route = useRoute();
