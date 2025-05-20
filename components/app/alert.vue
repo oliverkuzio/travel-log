@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 const props = defineProps<{
   type: "default" | "info" | "success" | "warning" | "error";
   message?: string;

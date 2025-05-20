@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 const locationsStore = useLocationStore();
 const mapStore = useMapStore();
 const { locations, locationsStatus: status } = storeToRefs(locationsStore);
@@ -9,7 +9,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-4 min-h-64">
+  <div class="p-4 min-h-80">
     <h2 class="text-2xl">
       Locations
     </h2>

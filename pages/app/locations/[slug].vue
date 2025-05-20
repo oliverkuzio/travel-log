@@ -1,4 +1,5 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+const route = useRoute();
 const locationStore = useLocationStore();
 const {
   currentLocation: location,
@@ -8,6 +9,12 @@ const {
 
 onMounted(() => {
   locationStore.refreshCurrentLocation();
+});
+
+onBeforeRouteUpdate((to) => {
+  if (to.name === "app-locations-slug") {
+    locationStore.refreshCurrentLocation();
+  }
 });
 </script>
 
@@ -22,7 +29,7 @@ onMounted(() => {
       </h2>
       <AppAlert type="error" :message="error.statusMessage" />
     </div>
-    <div v-if="location && status !== 'pending'">
+    <div v-if="route.name === 'app-locations-slug' && location && status !== 'pending'">
       <h2 class="text-2xl">
         {{ location?.name }}
       </h2>
@@ -38,6 +45,9 @@ onMounted(() => {
         Add Location Log
         <Icon name="tabler:map-pin-plus" size="24" />
       </NuxtLink>
+    </div>
+    <div v-if="route.name !== 'app-locations-slug'">
+      <NuxtPage />
     </div>
   </div>
 </template>

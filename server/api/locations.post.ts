@@ -8,13 +8,6 @@ import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-
 import sendZodError from "~/utils/send-zod-error";
 
 export default defineAuthenticatedEventHandler(async (event) => {
-  if (!event.context.user) {
-    return sendError(event, createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-    }));
-  }
-
   const result = await readValidatedBody(event, InsertLocation.safeParse);
 
   if (!result.success) {

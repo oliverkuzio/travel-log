@@ -19,6 +19,15 @@ export async function insertLocation(insertable: InsertLocation, slug: string, u
   return created;
 }
 
+export async function updateLocation(updates: InsertLocation, slug: string, userId: number) {
+  const [updated] = await db.update(location).set(updates).where(and(
+    eq(location.slug, slug),
+    eq(location.userId, userId),
+  )).returning();
+
+  return updated;
+}
+
 export async function findLocations(userId: number) {
   return await db.query.location.findMany({
     where: eq(location.userId, userId),

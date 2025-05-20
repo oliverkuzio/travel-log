@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 const props = defineProps<{
   type?: "text" | "textarea" | "number";
   name: string;
@@ -15,12 +15,12 @@ const props = defineProps<{
     </legend>
     <Field
       :as="props.type && props.type !== 'text' && props.type !== 'number' ? props.type : 'input'"
-      class="input w-full"
       :class="{
         'input-error': props.error,
         'input': !props.type || props.type === 'text' || props.type === 'number',
         'textarea': props.type === 'textarea',
       }"
+      class="w-full"
       :name="props.name"
       :type="props.type"
       :disabled="disabled"
