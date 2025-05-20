@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 const isSidebarOpen = ref(true);
 const route = useRoute();
 const sidebarStore = useSidebarStore();
@@ -33,6 +33,9 @@ function toggleSidebar() {
           :icon="item.icon"
           :show-label="isSidebarOpen"
         />
+        <div v-if="route.path.startsWith('/app/locations') && locationsStore.currentLocationStatus === 'pending'" class="gap-4">
+          <div class="skeleton h-4 w-full" />
+        </div>
         <div v-if="sidebarStore.loading || sidebarStore.sidebarSubItems.length" class="divider" />
         <div v-if="sidebarStore.loading" class="gap-4">
           <div class="skeleton h-4 w-full" />

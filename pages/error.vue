@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 const route = useRoute();
 const error = route.query.error?.toString() || "An unknown error occurred. Please try again later.";
 </script>

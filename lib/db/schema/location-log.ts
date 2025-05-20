@@ -19,7 +19,7 @@ export const locationLog = sqliteTable("locationLog", {
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
 });
 
-export const locatinLogRelations = relations(locationLog, ({ one }) => ({
+export const locationLogRelations = relations(locationLog, ({ one }) => ({
   location: one(location, {
     fields: [locationLog.locationId],
     references: [location.id],

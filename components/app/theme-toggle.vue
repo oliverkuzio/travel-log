@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 const colorMode = useColorMode();
 const isDark = computed({
   get() {

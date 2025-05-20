@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
 import type { NominatimResult } from "~/lib/types";
