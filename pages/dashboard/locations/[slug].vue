@@ -104,7 +104,7 @@ onBeforeRouteUpdate((to) => {
       </div>
       <NuxtLink to="/dashboard/locations/add" class="btn btn-primary mt-4">
         Add Location Log
-        <Icon name="tabler:map-pin-plus" size="24" />
+        <Icon name="tabler:calendar-plus" size="24" />
       </NuxtLink>
     </div>
     <div v-if="route.name !== 'dashboard-locations-slug'">

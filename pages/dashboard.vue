@@ -32,7 +32,7 @@ effect(() => {
       id: "dashboard-locations-add",
       label: "Add Location",
       href: "/dashboard/locations/add",
-      icon: "tabler:circle-plus-filled",
+      icon: "tabler:map-pin-plus",
     }];
   }
   else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
@@ -53,7 +53,7 @@ effect(() => {
             slug: route.params.slug,
           },
         },
-        icon: "tabler:map",
+        icon: "tabler:map-pin-filled",
       }, {
         id: "dashboard-locations-edit",
         label: "Edit Location",
@@ -73,7 +73,7 @@ effect(() => {
             slug: route.params.slug,
           },
         },
-        icon: "tabler:circle-plus-filled",
+        icon: "tabler:calendar-plus",
       });
     }
   }
