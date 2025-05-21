@@ -7,7 +7,7 @@ const props = defineProps<{
   href?: string;
   to?: RouteLocationRaw;
   showLabel: boolean;
-  iconColor?: "text-primary" | "text-secondary" | "text-accent";
+  iconColor?: "text-accent" | "text-primary" | "text-secondary";
 }>();
 
 const route = useRoute();
@@ -21,21 +21,16 @@ const route = useRoute();
   >
     <NuxtLink
       :to="props.href || props.to"
-      :class="{
-        'bg-base-300': route.path === props.href,
-        'justify-center': !showLabel,
-        'justify-start': showLabel,
-      }"
-      class="flex gap-4 py-2 px-4 text-sm hover:bg-base-300 flex-no-wrap"
+      :class="{ 'bg-base-200': route.path === props.href, 'justify-center': !showLabel, 'justify-start': showLabel }"
+      class="flex gap-2 p-2 text-sm hover:bg-base-300 hover:cursor-pointer flex-nowrap"
     >
       <Icon
         :name="props.icon"
         size="24"
-        class="shrink-0"
         :class="iconColor"
       />
       <Transition name="grow">
-        <span v-if="showLabel">{{ props.label }}</span>
+        <span v-if="showLabel" class="truncate">{{ props.label }}</span>
       </Transition>
     </NuxtLink>
   </div>
@@ -43,17 +38,17 @@ const route = useRoute();
 
 <style scoped>
 .grow-enter-active {
-  animation: grow 0.1s;
+  animation: grow 0.2s;
 }
 .grow-leave-active {
-  animation: grow 0.1s reverse;
+  animation: grow 0.2s reverse;
 }
 @keyframes grow {
   0% {
-    transform: scaleX(0);
+    transform: scale(0);
   }
   100% {
-    transform: scaleX(1);
+    transform: scale(1);
   }
 }
 </style>

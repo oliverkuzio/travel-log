@@ -13,7 +13,7 @@ const props = defineProps<{
     :class="props.class ?? ''"
   >
     <Icon
-      v-if="!icon"
+      v-if="icon"
       :name="`tabler:${icon}`"
       size="24"
     />

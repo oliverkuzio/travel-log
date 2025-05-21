@@ -24,7 +24,7 @@ function onSubmitComplete() {
       <p class="text-sm my-6">
         A location is a place you have traveled or will travel to. It can be a
         city, country, or any other geographical area. You can add specific
-        vists to this location via the location log.
+        vists to this location via the log.
       </p>
     </div>
     <LocationForm

@@ -2,12 +2,12 @@
 import type { FetchError } from "ofetch";
 
 const route = useRoute();
-const locationsStore = useLocationsStore();
+const locationStore = useLocationsStore();
 const {
   currentLocation: location,
   currentLocationError: error,
   currentLocationStatus: status,
-} = storeToRefs(locationsStore);
+} = storeToRefs(locationStore);
 
 const isOpen = ref(false);
 const deleteError = ref("");
@@ -17,7 +17,7 @@ const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
 
 onMounted(() => {
-  locationsStore.refreshCurrentLocation();
+  locationStore.refreshCurrentLocation();
 });
 
 function openDialog() {
@@ -30,11 +30,9 @@ async function confirmDelete() {
     isOpen.value = false;
     deleteError.value = "";
     isDeleting.value = true;
-
     await $fetch(`/api/locations/${route.params.slug}`, {
       method: "DELETE",
     });
-
     navigateTo("/dashboard");
   }
   catch (e) {
@@ -46,7 +44,7 @@ async function confirmDelete() {
 
 onBeforeRouteUpdate((to) => {
   if (to.name === "dashboard-locations-slug") {
-    locationsStore.refreshCurrentLocation();
+    locationStore.refreshCurrentLocation();
   }
 });
 </script>
@@ -56,24 +54,30 @@ onBeforeRouteUpdate((to) => {
     <div v-if="loading">
       <div class="loading" />
     </div>
-    <div v-if="errorMessage && !loading">
-      <h2 class="text-2xl">
-        Error
-      </h2>
-      <AppAlert
-        class="alert-error"
-        icon="circle-x-filled"
-        :message="errorMessage"
-      />
-    </div>
+    <AppAlert
+      v-if="errorMessage && !loading"
+      class="alert-error"
+      icon="circle-x-filled"
+      :message="errorMessage"
+    />
     <div v-if="route.name === 'dashboard-locations-slug' && location && !loading">
-      <h2 class="text-2xl">
+      <h2 class="text-xl">
         {{ location.name }}
-        <div class="dropdown dropdown-botton">
-          <button class="btn btn-sm p-0">
-            <Icon name="tabler:dots-vertical" size="24" />
-          </button>
-          <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+        <div class="dropdown dropdown-bottom">
+          <div
+            tabindex="0"
+            role="button"
+            class="btn m-1 btn-sm p-0"
+          >
+            <Icon name="tabler:dots-vertical" size="20" />
+          </div>
+          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            <li>
+              <NuxtLink @click="openDialog">
+                <Icon name="tabler:trash-x-filled" size="20" />
+                Delete
+              </NuxtLink>
+            </li>
             <li>
               <NuxtLink
                 :to="{
@@ -81,14 +85,8 @@ onBeforeRouteUpdate((to) => {
                   params: { slug: route.params.slug },
                 }"
               >
-                <Icon name="tabler:map-pin-cog" size="24" />
-                Edit Location
-              </NuxtLink>
-            </li>
-            <li class="text-error">
-              <NuxtLink @click="openDialog">
-                <Icon name="tabler:map-pin-x" size="24" />
-                Delete Location
+                <Icon name="tabler:map-pin-cog" size="20" />
+                Edit
               </NuxtLink>
             </li>
           </ul>
@@ -97,15 +95,21 @@ onBeforeRouteUpdate((to) => {
       <p class="text-sm">
         {{ location.description }}
       </p>
-      <div v-if="!location.locationLogs.length">
-        <p class="text-sm mt-4">
+      <div v-if="!location.locationLogs.length" class="mt-4">
+        <p class="text-sm italic">
           Add a location log to get started.
         </p>
+        <NuxtLink
+          class="btn btn-primary mt-2"
+          :to="{
+            name: 'dashboard-locations-slug-add',
+            params: { slug: route.params.slug },
+          }"
+        >
+          Add Location Log
+          <Icon name="tabler:map-pin-plus" size="24" />
+        </NuxtLink>
       </div>
-      <NuxtLink to="/dashboard/locations/add" class="btn btn-primary mt-4">
-        Add Location Log
-        <Icon name="tabler:calendar-plus" size="24" />
-      </NuxtLink>
     </div>
     <div v-if="route.name !== 'dashboard-locations-slug'">
       <NuxtPage />
@@ -113,7 +117,7 @@ onBeforeRouteUpdate((to) => {
     <AppDialog
       title="Are you sure?"
       description="Deleting this location will also delete all of the associated logs. This cannot be undone. Do you really want to do this?"
-      confirm-label="Yes, delete this location"
+      confirm-label="Yes, delete this location!"
       confirm-class="btn-error"
       :is-open="isOpen"
       @on-closed="isOpen = false"

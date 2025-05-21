@@ -16,7 +16,7 @@ onMounted(() => {
     <div v-if="status === 'pending'">
       <LoadingSpinner />
     </div>
-    <div v-if="status !== 'pending' && locations && locations.length > 0" class="flex flex-nowrap mt-4 overflow-x-auto gap-4 align-items-stretch">
+    <div v-else-if="locations && locations.length > 0" class="flex flex-nowrap mt-4 overflow-x-auto gap-4 align-items-stretch">
       <NuxtLink
         v-for="location in locations"
         :key="location.id"
@@ -39,7 +39,7 @@ onMounted(() => {
         </div>
       </NuxtLink>
     </div>
-    <div v-if="status !== 'pending' && (!locations || locations.length === 0)" class="flex flex-col gap-2">
+    <div v-else class="flex flex-col gap-2">
       <p>Add a location to get started.</p>
       <NuxtLink to="/dashboard/locations/add" class="btn btn-primary w-40">
         Add Location
