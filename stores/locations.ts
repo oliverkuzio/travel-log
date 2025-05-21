@@ -31,7 +31,7 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
   const mapStore = useMapStore();
 
   effect(() => {
-    if (locationsStatus.value !== "pending" && locations.value && LOCATION_PAGES.has(route.name?.toString() || "")) {
+    if (locations.value && LOCATION_PAGES.has(route.name?.toString() || "")) {
       const mapPoints: MapPoint[] = [];
       const sidebarItems: SidebarItem[] = [];
 
@@ -50,7 +50,7 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
       sidebarStore.sidebarSubItems = sidebarItems;
       mapStore.mapPoints = mapPoints;
     }
-    else if (currentLocationStatus.value !== "pending" && currentLocation.value && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
+    else if (currentLocation.value && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
       sidebarStore.sidebarSubItems = [];
       mapStore.mapPoints = [currentLocation.value];
     }
