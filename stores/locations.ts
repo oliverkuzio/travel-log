@@ -1,5 +1,5 @@
 import type { SelectLocationWithLogs } from "~/lib/db/schema";
-import type { MapPoint } from "~/lib/types";
+import type { MapPoint, SidebarItem } from "~/lib/types";
 
 import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
 
@@ -31,15 +31,14 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
   const mapStore = useMapStore();
 
   effect(() => {
-    if (locations.value && LOCATION_PAGES.has(route.name?.toString() || "")) {
-      const sidebarSubItems: SidebarItem[] = [];
+    if (locationsStatus.value !== "pending" && locations.value && LOCATION_PAGES.has(route.name?.toString() || "")) {
       const mapPoints: MapPoint[] = [];
+      const sidebarItems: SidebarItem[] = [];
 
       locations.value.forEach((location) => {
         const mapPoint = createMapPointFromLocation(location);
-
-        sidebarSubItems.push({
-          id: `dashboard-locations-${location.slug}`,
+        sidebarItems.push({
+          id: `location-${location.id}`,
           label: location.name,
           icon: "tabler:map-pin-filled",
           to: { name: "dashboard-locations-slug", params: { slug: location.slug } },
@@ -48,15 +47,17 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
         mapPoints.push(mapPoint);
       });
 
-      sidebarStore.sidebarSubItems = sidebarSubItems;
+      sidebarStore.sidebarSubItems = sidebarItems;
       mapStore.mapPoints = mapPoints;
     }
-    else if (currentLocation.value && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
+    else if (currentLocationStatus.value !== "pending" && currentLocation.value && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
       sidebarStore.sidebarSubItems = [];
       mapStore.mapPoints = [currentLocation.value];
     }
-
-    sidebarStore.loading = locationsStatus.value === "pending";
+    sidebarStore.loading = locationsStatus.value === "pending" || currentLocationStatus.value === "pending";
+    if (sidebarStore.loading) {
+      mapStore.mapPoints = [];
+    }
   });
 
   return {

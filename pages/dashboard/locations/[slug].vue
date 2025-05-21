@@ -17,6 +17,7 @@ const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
 
 onMounted(() => {
+  locationStore.refreshLocations();
   locationStore.refreshCurrentLocation();
 });
 

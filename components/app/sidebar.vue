@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { SidebarItem } from "~/lib/types";
+
 import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
 
 const isSidebarOpen = ref(true);
@@ -16,12 +18,12 @@ onMounted(() => {
 effect(() => {
   if (LOCATION_PAGES.has(route.name?.toString() || "")) {
     sidebarStore.sidebarMainItems = [{
-      id: "dashboard",
+      id: "link-dashboard",
       label: "Locations",
       href: "/dashboard",
       icon: "tabler:map",
     }, {
-      id: "dashboard-locations-add",
+      id: "link-dashboard-locations-add",
       label: "Add Location",
       href: "/dashboard/locations/add",
       icon: "tabler:map-pin-plus",
@@ -29,7 +31,7 @@ effect(() => {
   }
   else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
     const sidebarMainItemBack: SidebarItem = {
-      id: "dashboard",
+      id: "link-dashboard",
       label: "Back to Locations",
       href: "/dashboard",
       icon: "tabler:arrow-left",
@@ -39,34 +41,34 @@ effect(() => {
       sidebarStore.sidebarMainItems = [
         sidebarMainItemBack,
         {
-          id: "dashboard-locations-slug",
+          id: "link-dashboard-locations-slug",
           label: currentLocation.value.name,
           to: {
             name: "dashboard-locations-slug",
             params: {
-              slug: route.params.slug,
+              slug: currentLocation.value.slug,
             },
           },
           icon: "tabler:map-pin-filled",
         },
         {
-          id: "dashboard-locations-edit",
+          id: "link-dashboard-locations-edit",
           label: "Edit Location",
           to: {
             name: "dashboard-locations-slug-edit",
             params: {
-              slug: route.params.slug,
+              slug: currentLocation.value.slug,
             },
           },
           icon: "tabler:map-pin-cog",
         },
         {
-          id: "dashboard-locations-slug-add",
+          id: "link-dashboard-locations-slug-add",
           label: "Add Log",
           to: {
             name: "dashboard-locations-slug-add",
             params: {
-              slug: route.params.slug,
+              slug: currentLocation.value.slug,
             },
           },
           icon: "tabler:calendar-plus",
@@ -113,8 +115,8 @@ function toggleSidebar() {
         :href="item.href"
         :to="item.to"
       />
-      <div v-if="route.path.startsWith('/dashboard/location') && currentLocationStatus === 'pending'" class="flex items-center justify-center">
-        <div class="loading" />
+      <div v-if="route.path.startsWith('/dashboard/locations') && currentLocationStatus === 'pending'" class="px-4">
+        <div class="skeleton h-4 w-full" />
       </div>
       <div v-if="sidebarStore.loading || sidebarStore.sidebarSubItems.length" class="divider" />
       <div v-if="sidebarStore.loading" class="px-4">

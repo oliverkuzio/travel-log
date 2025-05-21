@@ -9,6 +9,7 @@ if (LOCATION_PAGES.has(route.name?.toString() || "")) {
 }
 
 if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
+  await locationsStore.refreshLocations();
   await locationsStore.refreshCurrentLocation();
 }
 </script>

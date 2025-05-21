@@ -38,3 +38,12 @@ export type NominatimResult = {
   display_name: string;
   boundingbox: string[];
 };
+
+export type SidebarItem = {
+  id: string;
+  label: string;
+  icon: string;
+  href?: string;
+  to?: RouteLocationRaw;
+  mapPoint?: MapPoint | null;
+};

@@ -12,5 +12,7 @@ export function createMapPointFromLocation(location: SelectLocation): MapPoint {
 export function isPointSelected(item: Pick<MapPoint, "id" | "lat" | "long"> | null | undefined, selectedPoint: MapPoint | null | undefined) {
   if (!item || !selectedPoint)
     return false;
-  return item.id === selectedPoint.id && item.lat === selectedPoint.lat && item.long === selectedPoint.long;
+  return item.id === selectedPoint.id
+    && item.lat === selectedPoint.lat
+    && item.long === selectedPoint.long;
 }
