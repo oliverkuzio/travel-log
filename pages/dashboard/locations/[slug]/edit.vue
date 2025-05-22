@@ -28,12 +28,17 @@ function onSubmitComplete() {
 </script>
 
 <template>
-  <LocationForm
-    v-if="status !== 'pending'"
-    :on-submit
-    :on-submit-complete
-    :initial-values="location"
-    submit-label="Update"
-    submit-icon="tabler:map-pin-cog"
-  />
+  <div>
+    <h1 class="text-2xl font-semibold mb-4">
+      Edit Location
+    </h1>
+    <LocationForm
+      v-if="status !== 'pending'"
+      :on-submit
+      :on-submit-complete
+      :initial-values="location"
+      submit-label="Update"
+      submit-icon="tabler:map-pin-cog"
+    />
+  </div>
 </template>

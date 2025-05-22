@@ -51,7 +51,7 @@ onBeforeRouteUpdate((to) => {
 </script>
 
 <template>
-  <div class="p-4 min-h-64">
+  <div class="p-4">
     <div v-if="loading">
       <div class="loading" />
     </div>
@@ -62,23 +62,17 @@ onBeforeRouteUpdate((to) => {
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-locations-slug' && location && !loading">
-      <h2 class="text-xl">
+      <h1 class="text-2xl font-semibold mb-4 flex items-start gap-4">
         {{ location.name }}
-        <div class="dropdown dropdown-bottom">
+        <div class="dropdown dropdown-bottom dropdown-end">
           <div
             tabindex="0"
             role="button"
-            class="btn m-1 btn-sm p-0"
+            class="btn m-1 btn-sm btn-ghost p-0"
           >
             <Icon name="tabler:dots-vertical" size="20" />
           </div>
-          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-            <li>
-              <NuxtLink @click="openDialog">
-                <Icon name="tabler:trash-x-filled" size="20" />
-                Delete
-              </NuxtLink>
-            </li>
+          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm font-normal">
             <li>
               <NuxtLink
                 :to="{
@@ -87,21 +81,27 @@ onBeforeRouteUpdate((to) => {
                 }"
               >
                 <Icon name="tabler:map-pin-cog" size="20" />
-                Edit
+                Edit Location
+              </NuxtLink>
+            </li>
+            <li class="text-error">
+              <NuxtLink @click="openDialog">
+                <Icon name="tabler:map-pin-x" size="20" />
+                Delete Location
               </NuxtLink>
             </li>
           </ul>
         </div>
-      </h2>
-      <p class="text-sm">
+      </h1>
+      <p class="text-sm mb-4">
         {{ location.description }}
       </p>
-      <div v-if="!location.locationLogs.length" class="mt-4">
+      <div v-if="!location.locationLogs.length" class="flex flex-col gap-4">
         <p class="text-sm italic">
           Add a location log to get started.
         </p>
         <NuxtLink
-          class="btn btn-primary mt-2"
+          class="btn btn-primary"
           :to="{
             name: 'dashboard-locations-slug-add',
             params: { slug: route.params.slug },

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CURRENT_LOCATION_PAGES, EDIT_PAGES, LOCATION_PAGES } from "~/lib/constants";
+import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
 
 const route = useRoute();
 const locationsStore = useLocationsStore();
@@ -15,21 +15,11 @@ if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
 </script>
 
 <template>
-  <div class="flex-1 flex">
+  <div class="flex-1 flex items-stretch">
     <AppSidebar />
-    <div class="flex-1 overflow-auto bg-base-200">
-      <div
-        class="flex size-full"
-        :class="{
-          'flex-col': !EDIT_PAGES.has(route.name?.toString() || ''),
-        }"
-      >
-        <NuxtPage
-          :class="{
-            'shrink-0': EDIT_PAGES.has(route.name?.toString() || ''),
-            'w-96': EDIT_PAGES.has(route.name?.toString() || ''),
-          }"
-        />
+    <div class="flex-1 flex items-stretch bg-base-100 relative">
+      <NuxtPage class="w-96 shrink-0 max-h-screen overflow-y-scroll z-10" />
+      <div class="flex-1">
         <AppMap />
       </div>
     </div>

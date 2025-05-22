@@ -34,7 +34,7 @@ onUnmounted(() => {
     :open="props.isOpen"
   >
     <div class="modal-box">
-      <h3 class="text-lg font-bold">
+      <h3 class="text-lg font-semibold">
         {{ title }}
       </h3>
       <p class="py-4">

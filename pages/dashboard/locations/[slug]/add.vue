@@ -1,5 +1,7 @@
 <template>
   <div>
-    <h2>Add Log</h2>
+    <h1 class="text-2xl font-semibold mb-4">
+      Add Log
+    </h1>
   </div>
 </template>

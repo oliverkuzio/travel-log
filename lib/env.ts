@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import tryParseEnv from "./try-parse-env";
+
 const EnvSchema = z.object({
   AUTH_GITHUB_CLIENT_ID: z.string(),
   AUTH_GITHUB_CLIENT_SECRET: z.string(),
@@ -13,6 +15,8 @@ const EnvSchema = z.object({
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;
+
+tryParseEnv(EnvSchema);
 
 // eslint-disable-next-line node/no-process-env
 export default EnvSchema.parse(process.env);

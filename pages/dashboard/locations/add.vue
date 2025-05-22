@@ -16,12 +16,12 @@ function onSubmitComplete() {
 </script>
 
 <template>
-  <div class="container max-w-md mx-auto p-4">
+  <div class="p-4">
     <div class="mb-4">
-      <h1 class="text-2xl font-bold mb-6">
+      <h1 class="text-2xl font-semibold mb-4">
         Add Location
       </h1>
-      <p class="text-sm my-6">
+      <p class="text-sm mb-4">
         A location is a place you have traveled or will travel to. It can be a
         city, country, or any other geographical area. You can add specific
         vists to this location via the log.
