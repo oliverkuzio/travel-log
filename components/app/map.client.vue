@@ -63,7 +63,7 @@ onMounted(() => {
     >
       <template #marker>
         <div
-          class="tooltip tooltip-top hover:cursor-pointer"
+          class="tooltip tooltip-top tooltip-open hover:cursor-pointer"
           :data-tip="point.name"
           :class="{
             'tooltip-open': isPointSelected(point, mapStore.selectedPoint),
@@ -79,17 +79,17 @@ onMounted(() => {
         </div>
       </template>
       <MglPopup>
-        <h3 class="text-base me-3 mb-3">
+        <h3 class="text-base font-semibold me-3 mb-3">
           {{ point.name }}
         </h3>
-        <p v-if="point.description">
+        <p v-if="point.description" class="mb-4">
           {{ point.description }}
         </p>
-        <div class="flex justify-end mt-4">
+        <div class="flex justify-end">
           <NuxtLink
             v-if="point.to"
             :to="point.to"
-            class="btn btn-sm btn-outline"
+            class="btn btn-sm btn-primary"
           >
             {{ point.toLabel }}
           </NuxtLink>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// TODO: Fix asyncFetch error when starting app from this route
 import type { FetchError } from "ofetch";
 
 const route = useRoute();
