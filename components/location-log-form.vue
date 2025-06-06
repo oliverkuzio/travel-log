@@ -9,19 +9,22 @@ const props = defineProps<{
   submitLabel: string;
   submitIcon: string;
 }>();
+
+const initialValues = {
+  name: "",
+  description: "",
+  startedAt: Date.now() - (24 * 60 * 60 * 1000),
+  endedAt: Date.now(),
+  long: (CENTER_MAP as [number, number])[0],
+  lat: (CENTER_MAP as [number, number])[1],
+};
 </script>
 
 <template>
   <LocationBaseForm
     v-slot="{ errors, loading }"
-    :initial-values="props.initialValues || {
-      name: '',
-      description: '',
-      startedAt: Date.now() - (24 * 60 * 60 * 1000),
-      endedAt: Date.now(),
-      long: (CENTER_MAP as [number, number])[0],
-      lat: (CENTER_MAP as [number, number])[1],
-    }"
+    :zoom="11"
+    :initial-values="props.initialValues || initialValues"
     :schema="InsertLocationLog"
     :on-submit
     :on-submit-complete
@@ -41,15 +44,17 @@ const props = defineProps<{
       :error="errors.description"
       :disabled="loading"
     />
-    <AppFormField
+    <AppDateFormField
       label="Started At"
       name="startedAt"
+      :value="initialValues.startedAt"
       :error="errors.startedAt"
       :disabled="loading"
     />
-    <AppFormField
+    <AppDateFormField
       label="Ended At"
       name="endedAt"
+      :value="initialValues.endedAt"
       :error="errors.endedAt"
       :disabled="loading"
     />

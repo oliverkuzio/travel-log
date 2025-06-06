@@ -15,6 +15,7 @@ const props = defineProps<{
   onSubmitComplete: () => void;
   submitLabel: string;
   submitIcon: string;
+  zoom: number;
 }>();
 
 const router = useRouter();
@@ -76,6 +77,7 @@ onMounted(() => {
     description: "",
     long: props.initialValues?.long || (CENTER_MAP as [number, number])[0],
     lat: props.initialValues?.lat || (CENTER_MAP as [number, number])[1],
+    zoom: props.zoom,
   };
 });
 

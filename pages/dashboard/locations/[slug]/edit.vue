@@ -33,10 +33,11 @@ function onSubmitComplete() {
       Edit Location
     </h1>
     <LocationForm
-      v-if="status !== 'pending'"
+      v-if="status !== 'pending' && location"
       :on-submit
       :on-submit-complete
       :initial-values="location"
+      :zoom="11"
       submit-label="Update"
       submit-icon="tabler:map-pin-cog"
     />

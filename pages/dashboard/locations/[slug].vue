@@ -109,7 +109,7 @@ onBeforeRouteUpdate((to) => {
           }"
         >
           Add Location Log
-          <Icon name="tabler:map-pin-plus" size="24" />
+          <Icon name="tabler:calendar-plus" size="24" />
         </NuxtLink>
       </div>
     </div>

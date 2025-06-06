@@ -1,17 +1,18 @@
 <script lang="ts" setup>
 import type { InsertLocationLog } from "~/lib/db/schema";
 
-const route = useRoute();
+import { CENTER_MAP } from "~/lib/constants";
 
-// const { $csrfFetch } = useNuxtApp();
+const route = useRoute();
+const { $csrfFetch } = useNuxtApp();
+
+const { currentLocation } = useLocationsStore();
 
 async function onSubmit(values: InsertLocationLog) {
-  // await $csrfFetch("/api/locations", {
-  //   method: "post",
-  //   body: values,
-  // });
-
-  console.log(values);
+  await $csrfFetch(`/api/locations/${route.params.slug}/add`, {
+    method: "post",
+    body: values,
+  });
 }
 
 function onSubmitComplete() {
@@ -31,9 +32,17 @@ function onSubmitComplete() {
     </h1>
     <LocationLogForm
       :on-submit="onSubmit"
-      :on-submit-complete
+      :on-submit-complete="onSubmitComplete"
       submit-label="Add Location Log"
       submit-icon="tabler:calendar-plus"
+      :initial-values="{
+        name: '',
+        description: '',
+        startedAt: Date.now() - (24 * 60 * 60 * 1000),
+        endedAt: Date.now(),
+        long: currentLocation?.long || (CENTER_MAP as [number, number])[0],
+        lat: currentLocation?.lat || (CENTER_MAP as [number, number])[1],
+      }"
     />
   </div>
 </template>
