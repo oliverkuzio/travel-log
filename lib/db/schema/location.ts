@@ -6,6 +6,7 @@ import { createInsertSchema } from "drizzle-zod";
 
 import type { SelectLocationLogs } from "./location-log";
 
+import { DescriptionSchema, LatSchema, LongSchema, NameSchema } from "../../zod-schemas";
 import { user } from "./auth";
 import { locationLog } from "./location-log";
 
@@ -28,10 +29,10 @@ export const locationRelations = relations(location, ({ many }) => ({
 }));
 
 export const InsertLocation = createInsertSchema(location, {
-  name: field => field.min(1).max(100),
-  description: field => field.min(1).max(1000),
-  lat: field => field.min(-90).max(90),
-  long: field => field.min(-180).max(180),
+  name: NameSchema,
+  description: DescriptionSchema,
+  lat: LatSchema,
+  long: LongSchema,
 }).omit({
   id: true,
   slug: true,

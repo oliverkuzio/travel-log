@@ -25,6 +25,7 @@ export const auth = betterAuth({
       }
     }),
   },
+  // TODO: Add support for Cloudflare D1 database
   database: drizzleAdapter(db, {
     provider: "sqlite",
   }),

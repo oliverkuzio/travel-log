@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// TODO: Fix asyncFetch error when starting app from this route
 import type { FetchError } from "ofetch";
 
 const route = useRoute();
@@ -108,7 +109,7 @@ onBeforeRouteUpdate((to) => {
           }"
         >
           Add Location Log
-          <Icon name="tabler:map-pin-plus" size="24" />
+          <Icon name="tabler:calendar-plus" size="24" />
         </NuxtLink>
       </div>
     </div>
