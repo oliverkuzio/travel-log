@@ -51,8 +51,29 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
       mapStore.mapPoints = mapPoints;
     }
     else if (currentLocation.value && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
-      sidebarStore.sidebarSubItems = [];
-      mapStore.mapPoints = [currentLocation.value];
+      const mapPoints: MapPoint[] = [];
+      const sidebarItems: SidebarItem[] = [];
+
+      currentLocation.value.locationLogs.forEach((log) => {
+        const mapPoint = createMapPointFromLocationLog(log);
+        sidebarItems.push({
+          id: `location-log-${log.id}`,
+          label: log.name,
+          icon: "tabler:map-pin-filled",
+          to: { name: "dashboard-locations-slug-id", params: { id: log.id } },
+          mapPoint,
+        });
+        mapPoints.push(mapPoint);
+      });
+
+      sidebarStore.sidebarSubItems = sidebarItems;
+
+      if (mapPoints.length) {
+        mapStore.mapPoints = mapPoints;
+      }
+      else {
+        mapStore.mapPoints = [currentLocation.value];
+      }
     }
     sidebarStore.loading = locationsStatus.value === "pending" || currentLocationStatus.value === "pending";
     if (sidebarStore.loading) {
