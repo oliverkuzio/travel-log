@@ -2,6 +2,7 @@
  * For more details on how to configure Wrangler, refer to:
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
+// TODO: Add auto-deployment to Cloudflare as part of Github CI
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "travel-log",
