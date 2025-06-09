@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import type { SidebarItem } from "~/lib/types";
-
-import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
+import { CURRENT_LOCATION_LOG_PAGES, CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
 
 const isSidebarOpen = ref(true);
 const route = useRoute();
@@ -30,16 +28,15 @@ effect(() => {
     }];
   }
   else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
-    const sidebarMainItemBack: SidebarItem = {
+    sidebarStore.sidebarMainItems = [{
       id: "link-dashboard",
       label: "Back to Locations",
       href: "/dashboard",
       icon: "tabler:arrow-left",
-    };
+    }];
 
     if (currentLocation.value && currentLocationStatus.value !== "pending") {
-      sidebarStore.sidebarMainItems = [
-        sidebarMainItemBack,
+      sidebarStore.sidebarMainItems.push(
         {
           id: "link-dashboard-locations-slug",
           label: currentLocation.value.name,
@@ -73,10 +70,22 @@ effect(() => {
           },
           icon: "tabler:calendar-plus",
         },
-      ];
+      );
     }
-    else {
-      sidebarStore.sidebarMainItems = [sidebarMainItemBack];
+  }
+  else if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
+    if (currentLocation.value && currentLocationStatus.value !== "pending") {
+      sidebarStore.sidebarMainItems = [{
+        id: "link-dashboard-locations-slug",
+        label: `Back to ${currentLocation.value.name}`,
+        to: {
+          name: "dashboard-locations-slug",
+          params: {
+            slug: currentLocation.value.slug,
+          },
+        },
+        icon: "tabler:arrow-left",
+      }];
     }
   }
 });
