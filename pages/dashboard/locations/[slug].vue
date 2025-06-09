@@ -113,6 +113,23 @@ onBeforeRouteUpdate((to) => {
         </NuxtLink>
       </div>
     </div>
+    <div v-if="route.name === 'dashboard-locations-slug' && location?.locationLogs.length" class="flex flex-col flex-nowrap gap-4 align-items-stretch">
+      <LocationCard
+        v-for="log in location.locationLogs"
+        :key="log.id"
+        :map-point="createMapPointFromLocationLog(log)"
+      >
+        <template #top>
+          <p class="text-sm italic text-gray-500">
+            {{ formatDate(log.startedAt) }}
+            <span v-if="log.startedAt !== log.endedAt">
+              -
+              {{ formatDate(log.endedAt) }}
+            </span>
+          </p>
+        </template>
+      </LocationCard>
+    </div>
     <div v-if="route.name !== 'dashboard-locations-slug'">
       <NuxtPage />
     </div>
