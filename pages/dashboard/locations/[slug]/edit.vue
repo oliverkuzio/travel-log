@@ -39,7 +39,7 @@ function onSubmitComplete() {
       :initial-values="location"
       :zoom="11"
       submit-label="Update"
-      submit-icon="tabler:map-pin-cog"
+      submit-icon="tabler:map-pin-up"
     />
   </div>
 </template>

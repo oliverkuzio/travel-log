@@ -1,5 +1,7 @@
 <template>
-  <h2>
-    Location Log
-  </h2>
+  <div>
+    <h2>
+      Location Log
+    </h2>
+  </div>
 </template>

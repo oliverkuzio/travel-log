@@ -31,8 +31,8 @@ function onSubmitComplete() {
       Add Log
     </h1>
     <LocationLogForm
-      :on-submit="onSubmit"
-      :on-submit-complete="onSubmitComplete"
+      :on-submit
+      :on-submit-complete
       submit-label="Add Location Log"
       submit-icon="tabler:calendar-plus"
       :initial-values="{
