@@ -34,7 +34,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
-  const locationLog = await updateLocationLog(Number(id), result.data, event.context.user.id);
+  const locationLog = await updateLocationLog(result.data, Number(id), event.context.user.id);
 
   if (!locationLog) {
     throw createError({

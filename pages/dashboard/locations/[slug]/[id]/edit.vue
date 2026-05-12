@@ -1,25 +1,23 @@
 <script lang="ts" setup>
-// import type { InsertLocationLog } from "~/lib/db/schema";
+import type { InsertLocationLog } from "~/lib/db/schema";
 
 const route = useRoute();
 const locationsStore = useLocationsStore();
-// const { $csrfFetch } = useNuxtApp();
+const { $csrfFetch } = useNuxtApp();
 
 const {
   currentLocationLog: locationLog,
   currentLocationLogStatus: status,
 } = storeToRefs(locationsStore);
 
-// async function onSubmit(values: InsertLocationLog) {
-async function onSubmit() {
-  console.warn("");
-  // await $csrfFetch(`/api/locations/${route.params.slug}`, {
-  //   method: "put",
-  //   body: values,
-  // });
+async function onSubmit(values: InsertLocationLog) {
+  await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}`, {
+    method: "put",
+    body: values,
+  });
 }
 
-function onSubmitComplete() {
+function submitComplete() {
   navigateTo({
     name: "dashboard-locations-slug-id",
     params: {
@@ -38,7 +36,7 @@ function onSubmitComplete() {
     <LocationLogForm
       v-if="status !== 'pending' && locationLog"
       :on-submit="onSubmit"
-      :on-submit-complete
+      :on-submit-complete="submitComplete"
       :initial-values="locationLog"
       submit-label="Update"
       submit-icon="tabler:calendar-up"

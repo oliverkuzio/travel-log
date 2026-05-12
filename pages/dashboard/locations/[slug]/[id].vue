@@ -20,6 +20,12 @@ onMounted(() => {
   locationStore.refreshCurrentLocationLog();
 });
 
+onBeforeRouteUpdate((to) => {
+  if (to.name === "dashboard-locations-slug-id") {
+    locationStore.refreshCurrentLocationLog();
+  }
+});
+
 function openDialog() {
   isOpen.value = true;
   (document.activeElement as HTMLAnchorElement).blur();
@@ -41,12 +47,6 @@ async function confirmDelete() {
   }
   isDeleting.value = false;
 }
-
-onBeforeRouteUpdate((to) => {
-  if (to.name === "dashboard-locations-slug-id") {
-    locationStore.refreshCurrentLocationLog();
-  }
-});
 </script>
 
 <template>
