@@ -36,16 +36,23 @@ async function confirmDelete() {
     isOpen.value = false;
     deleteError.value = "";
     isDeleting.value = true;
-    await $fetch(`/api/locations/${route.params.slug}`, {
+
+    await $fetch(`/api/locations/${route.params.slug}/${route.params.id}`, {
       method: "DELETE",
     });
-    navigateTo("/dashboard");
+
+    await navigateTo({
+      name: "dashboard-locations-slug",
+      params: {
+        slug: route.params.slug,
+      },
+    });
   }
   catch (e) {
     const error = e as FetchError;
     deleteError.value = getFetchErrorMessage(error);
+    isDeleting.value = false;
   }
-  isDeleting.value = false;
 }
 </script>
 
@@ -108,8 +115,8 @@ async function confirmDelete() {
     </div>
     <AppDialog
       title="Are you sure?"
-      description="Deleting this location will also delete all of the associated logs. This cannot be undone. Do you really want to do this?"
-      confirm-label="Yes, delete this location!"
+      description="Deleting this location log cannot be undone. Do you really want to do this?"
+      confirm-label="Yes, delete this location log!"
       confirm-class="btn-error"
       :is-open="isOpen"
       @on-closed="isOpen = false"

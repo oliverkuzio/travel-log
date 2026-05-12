@@ -5,6 +5,17 @@ import type { InsertLocationLog } from "../schema";
 import db from "..";
 import { locationLog } from "../schema";
 
+export async function findLocationLog(locationLogId: number, userId: number) {
+  const foundLog = await db.query.locationLog.findFirst({
+    where: and(
+      eq(locationLog.id, locationLogId),
+      eq(locationLog.userId, userId),
+    ),
+  });
+
+  return foundLog;
+}
+
 export async function insertLocationLog(
   locationId: number,
   insertable: InsertLocationLog,
@@ -32,13 +43,13 @@ export async function updateLocationLog(updateable: InsertLocationLog, locationL
   return updated;
 }
 
-export async function findLocationLog(id: number, userId: number) {
-  const foundLog = await db.query.locationLog.findFirst({
-    where: and(
-      eq(locationLog.id, id),
+export async function deleteLocationLog(locationLogId: number, userId: number) {
+  const [deleted] = await db.delete(locationLog).where(
+    and(
+      eq(locationLog.id, locationLogId),
       eq(locationLog.userId, userId),
     ),
-  });
+  ).returning();
 
-  return foundLog;
+  return deleted;
 }
