@@ -7,7 +7,7 @@ const sidebarStore = useSidebarStore();
 const locationsStore = useLocationsStore();
 const mapStore = useMapStore();
 
-const { currentLocation, currentLocationStatus } = storeToRefs(locationsStore);
+const { currentLocation, currentLocationStatus, currentLocationLog, currentLocationLogStatus } = storeToRefs(locationsStore);
 
 onMounted(() => {
   isSidebarOpen.value = localStorage.getItem("isSidebarOpen") === "true";
@@ -74,7 +74,12 @@ effect(() => {
     }
   }
   else if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
-    if (currentLocation.value && currentLocationStatus.value !== "pending") {
+    if (
+      currentLocation.value
+      && currentLocationStatus.value !== "pending"
+      && currentLocationLog.value
+      && currentLocationLogStatus.value !== "pending"
+    ) {
       sidebarStore.sidebarMainItems = [{
         id: "link-dashboard-locations-slug",
         label: `Back to ${currentLocation.value.name}`,
@@ -85,6 +90,28 @@ effect(() => {
           },
         },
         icon: "tabler:arrow-left",
+      }, {
+        id: "link-dashboard-locations-slug-id",
+        label: currentLocationLog.value.name,
+        to: {
+          name: "dashboard-locations-slug-id",
+          params: {
+            slug: route.params.slug,
+            id: route.params.id,
+          },
+        },
+        icon: "tabler:calendar-filled",
+      }, {
+        id: "link-dashboard-locations-slug-id-edit",
+        label: "Edit Log",
+        to: {
+          name: "dashboard-locations-slug-id-edit",
+          params: {
+            slug: route.params.slug,
+            id: route.params.id,
+          },
+        },
+        icon: "tabler:calendar-cog",
       }];
     }
   }

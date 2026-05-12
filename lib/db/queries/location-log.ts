@@ -19,6 +19,19 @@ export async function insertLocationLog(
   return inserted;
 }
 
+export async function updateLocationLog(updateable: InsertLocationLog, locationLogId: number, userId: number) {
+  const [updated] = await db.update(locationLog).set({
+    ...updateable,
+  }).where(
+    and(
+      eq(locationLog.id, locationLogId),
+      eq(locationLog.userId, userId),
+    ),
+  ).returning();
+
+  return updated;
+}
+
 export async function findLocationLog(id: number, userId: number) {
   const foundLog = await db.query.locationLog.findFirst({
     where: and(
