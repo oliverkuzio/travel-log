@@ -32,16 +32,18 @@ async function confirmDelete() {
     isOpen.value = false;
     deleteError.value = "";
     isDeleting.value = true;
+
     await $fetch(`/api/locations/${route.params.slug}`, {
       method: "DELETE",
     });
-    navigateTo("/dashboard");
+
+    await navigateTo("/dashboard");
   }
   catch (e) {
     const error = e as FetchError;
     deleteError.value = getFetchErrorMessage(error);
+    isDeleting.value = false;
   }
-  isDeleting.value = false;
 }
 
 onBeforeRouteUpdate((to) => {
