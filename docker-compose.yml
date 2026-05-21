@@ -1,0 +1,17 @@
+services:
+  garage:
+    image: dxflrs/garage:v1.0.1
+    ports:
+      - "${GARAGE_API_PORT}:3900"
+      - "${GARAGE_ADMIN_PORT}:3901"
+      - "${GARAGE_WEB_PORT}:3902"
+    volumes:
+      - ./.docker/garage/garage.toml:/etc/garage.toml
+      - ./.docker/garage/meta:/var/lib/garage/meta
+      - ./.docker/garage/data:/var/lib/garage/data
+    command: /garage server
+    healthcheck:
+      test: [CMD, /garage, status]
+      interval: 30s
+      timeout: 20s
+      retries: 3

@@ -3,6 +3,7 @@ import { z } from "zod";
 import tryParseEnv from "./try-parse-env";
 
 const EnvSchema = z.object({
+  NODE_ENV: z.enum(["development", "production", "test"]),
   AUTH_GITHUB_CLIENT_ID: z.string(),
   AUTH_GITHUB_CLIENT_SECRET: z.string(),
   BETTER_AUTH_SECRET: z.string(),
@@ -11,7 +12,11 @@ const EnvSchema = z.object({
   CLOUDFLARE_D1_TOKEN: z.string(),
   CLOUDFLARE_DATABASE_ID: z.string(),
   DATABASE_URL: z.string(),
-  NODE_ENV: z.enum(["development", "production", "test"]),
+  S3_ACCESS_KEY: z.string(),
+  S3_ACCESS_SECRET: z.string(),
+  S3_BUCKET: z.string(),
+  S3_ENDPOINT: z.string(),
+  S3_REGION: z.string(),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;
