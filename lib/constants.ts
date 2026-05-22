@@ -17,4 +17,5 @@ export const CURRENT_LOCATION_LOG_PAGES = new Set([
   "dashboard-locations-slug-id",
   "dashboard-locations-slug-id-add",
   "dashboard-locations-slug-id-edit",
+  "dashboard-locations-slug-id-images",
 ]);

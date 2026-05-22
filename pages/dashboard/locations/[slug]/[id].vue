@@ -10,8 +10,8 @@ const {
 } = storeToRefs(locationStore);
 
 const isOpen = ref(false);
-const deleteError = ref("");
 const isDeleting = ref(false);
+const deleteError = ref("");
 
 const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
