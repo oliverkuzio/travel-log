@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import formatDate from "~/utils/format-date";
-
 const props = defineProps<{
   name: string;
   label: string;
@@ -12,6 +10,10 @@ const props = defineProps<{
 const { handleBlur, value: inputValue, handleChange } = useField<number>(props.name, {
   initialValue: props.value,
 });
+
+function formatDateISO(value: number) {
+  return new Date(value).toISOString().split("T")[0];
+}
 
 function dateChanged(event: Event) {
   const target = event.target as HTMLInputElement;
@@ -33,7 +35,7 @@ function dateChanged(event: Event) {
       :name="props.name"
       type="date"
       :disabled="disabled"
-      :value="formatDate(inputValue)"
+      :value="formatDateISO(inputValue)"
       @blur="handleBlur"
       @change="dateChanged"
     >

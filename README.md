@@ -4,6 +4,12 @@ Runs on Nuxt, please look at the [Nuxt documentation](https://nuxt.com/docs/gett
 
 ## Setup
 
+Create a `.env` file and update values:
+
+```bash
+cp .env.example .env
+```
+
 Install dependencies:
 
 ```bash
