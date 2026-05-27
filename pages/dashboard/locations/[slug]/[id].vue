@@ -10,8 +10,8 @@ const {
 } = storeToRefs(locationStore);
 
 const isOpen = ref(false);
-const deleteError = ref("");
 const isDeleting = ref(false);
+const deleteError = ref("");
 
 const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
@@ -109,6 +109,14 @@ async function confirmDelete() {
       <p class="text-sm mb-4">
         {{ locationLog.description }}
       </p>
+      <div v-if="!locationLog.images.length" class="flex flex-col gap-2 mt-2">
+        <p>Add some images get started.</p>
+        <NuxtLink :to="{ name: 'dashboard-locations-slug-id-images', params: { slug: route.params.slug, id: route.params.id } }" class="btn btn-primary w-40">
+          Add Images
+          <Icon name="tabler:photo-cog" size="24" />
+        </NuxtLink>
+      </div>
+      <ImageList :images="locationLog.images" />
     </div>
     <div v-if="route.name !== 'dashboard-locations-slug'">
       <NuxtPage />

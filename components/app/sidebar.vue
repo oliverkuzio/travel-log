@@ -112,6 +112,17 @@ effect(() => {
           },
         },
         icon: "tabler:calendar-cog",
+      }, {
+        id: "link-dashboard-locations-slug-id-images",
+        label: "Manage Images",
+        to: {
+          name: "dashboard-locations-slug-id-images",
+          params: {
+            slug: route.params.slug,
+            id: route.params.id,
+          },
+        },
+        icon: "tabler:photo-cog",
       }];
     }
   }
