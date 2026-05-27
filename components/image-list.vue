@@ -17,6 +17,7 @@ useRuntimeConfig();
     >
       <div class="card-body p-2 size-full">
         <img class="size-full object-cover rounded-sm" :src="`${$config.public.s3BucketUrl}/${image.key}`">
+        <slot :image />
       </div>
     </div>
   </div>
