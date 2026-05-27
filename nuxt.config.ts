@@ -1,6 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 
-import "./lib/env";
+import env from "./lib/env";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -17,7 +17,11 @@ export default defineNuxtConfig({
     "nuxt-maplibre",
   ],
   css: ["~/assets/css/main.css"],
-
+  runtimeConfig: {
+    public: {
+      s3BucketUrl: env.S3_BUCKET_URL,
+    },
+  },
   nitro: {
     preset: "cloudflare_module",
 

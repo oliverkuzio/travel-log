@@ -18,6 +18,7 @@ const uploadError = ref("");
 
 const loading = computed(() => status.value === "pending");
 const errorMessage = computed(() => error.value?.statusMessage);
+const imageInput = useTemplateRef("imageInput");
 
 function selectImage(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];
@@ -77,7 +78,7 @@ async function uploadImage() {
 
       formData.append("file", blob);
 
-      $fetch(url, {
+      await $fetch(url, {
         method: "POST",
         body: formData,
         headers: {
@@ -85,7 +86,19 @@ async function uploadImage() {
         },
       });
 
-      console.log(`${url}/${key}`);
+      await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}/image`, {
+        method: "POST",
+        body: {
+          key,
+        },
+      });
+
+      await locationStore.refreshCurrentLocationLog();
+      image.value = null;
+      previewUrl.value = null;
+      if (imageInput.value) {
+        imageInput.value.value = "";
+      }
     }
     catch (e) {
       if (e instanceof FetchError) {
@@ -122,7 +135,7 @@ async function uploadImage() {
         Manage <b>{{ locationLog?.name }}</b> images
       </h2>
       <div class="flex gap-2 flex-col w-64">
-        <div class="bg-gray-500 h-48 w-full flex justify-center items-center relative">
+        <div class="bg-gray-500 h-48 w-full flex justify-center items-center relative rounded-sm">
           <p v-if="!previewUrl" class="text-center text-white">
             Select an image
           </p>
@@ -140,6 +153,7 @@ async function uploadImage() {
           </div>
         </div>
         <input
+          ref="imageInput"
           type="file"
           class="file-input"
           :disabled="isUploading"
@@ -151,7 +165,9 @@ async function uploadImage() {
           @click="uploadImage"
         >
           Upload
+          <Icon name="tabler:photo-plus" size="24" />
         </button>
+        <ImageList :images="locationLog?.images || []" />
       </div>
     </div>
   </div>

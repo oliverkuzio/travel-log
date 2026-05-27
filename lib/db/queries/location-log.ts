@@ -11,6 +11,13 @@ export async function findLocationLog(locationLogId: number, userId: number) {
       eq(locationLog.id, locationLogId),
       eq(locationLog.userId, userId),
     ),
+    with: {
+      images: {
+        orderBy(fields, operators) {
+          return operators.desc(fields.createdAt);
+        },
+      },
+    },
   });
 
   return foundLog;
