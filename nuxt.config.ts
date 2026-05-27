@@ -6,6 +6,7 @@ import env from "./lib/env";
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
+
   modules: [
     "nitro-cloudflare-dev",
     "@nuxt/eslint",
@@ -15,13 +16,17 @@ export default defineNuxtConfig({
     "@vee-validate/nuxt",
     "nuxt-csurf",
     "nuxt-maplibre",
+    "@sentry/nuxt/module",
   ],
+
   css: ["~/assets/css/main.css"],
+
   runtimeConfig: {
     public: {
       s3BucketUrl: env.S3_BUCKET_URL,
     },
   },
+
   nitro: {
     preset: "cloudflare_module",
 
@@ -57,5 +62,14 @@ export default defineNuxtConfig({
 
   colorMode: {
     dataValue: "theme",
+  },
+
+  sentry: {
+    org: import.meta.env.SENTRY_ORG,
+    project: import.meta.env.SENTRY_PROJECT,
+  },
+
+  sourcemap: {
+    client: "hidden",
   },
 });
