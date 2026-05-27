@@ -138,7 +138,7 @@ onBeforeRouteUpdate((to) => {
     <AppDialog
       title="Are you sure?"
       description="Deleting this location will also delete all of the associated logs. This cannot be undone. Do you really want to do this?"
-      confirm-label="Yes, delete this location!"
+      confirm-label="Yes, delete this location."
       confirm-class="btn-error"
       :is-open="isOpen"
       @on-closed="isOpen = false"

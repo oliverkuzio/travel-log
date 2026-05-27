@@ -124,7 +124,7 @@ async function confirmDelete() {
     <AppDialog
       title="Are you sure?"
       description="Deleting this location log cannot be undone. Do you really want to do this?"
-      confirm-label="Yes, delete this location log!"
+      confirm-label="Yes, delete this location log."
       confirm-class="btn-error"
       :is-open="isOpen"
       @on-closed="isOpen = false"
