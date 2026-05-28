@@ -62,7 +62,7 @@
       "binding": "DB",
       "database_name": "travel-log",
       "database_id": "3b9e3acb-8bc6-4ec8-90f9-ffbf3c9eaa71",
-      "migrations_dir": "./drizzle"
+      "migrations_dir": "./lib/db/migrations"
     }
   ]
 }

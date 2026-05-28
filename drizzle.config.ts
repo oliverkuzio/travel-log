@@ -7,7 +7,7 @@ if (!env.DATABASE_URL)
 
 export default defineConfig({
   schema: "./lib/db/schema/index.ts",
-  out: "./drizzle",
+  out: "./lib/db/migrations",
   casing: "snake_case",
   dbCredentials: { url: env.DATABASE_URL },
   verbose: true,
