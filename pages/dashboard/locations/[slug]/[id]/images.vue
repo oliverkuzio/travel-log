@@ -212,7 +212,7 @@ async function confirmDelete() {
           <template #default="{ image: item }">
             <button
               :disabled="deletingImage === item && isDeleting"
-              class="btn btn-error btn-sm"
+              class="btn btn-error btn-sm w-full"
               @click="deleteImage(item)"
             >
               Delete
