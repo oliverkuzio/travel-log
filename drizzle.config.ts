@@ -1,16 +1,23 @@
 import { defineConfig } from "drizzle-kit";
 
-import env from "./lib/env";
+// eslint-disable-next-line node/no-process-env
+const { CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_DATABASE_ID, CLOUDFLARE_D1_TOKEN } = process.env;
 
-if (!env.DATABASE_URL)
-  throw new Error("DATABASE_URL is not set");
+if (!CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_DATABASE_ID || !CLOUDFLARE_D1_TOKEN) {
+  throw new Error("CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_DATABASE_ID and CLOUDFLARE_D1_TOKEN must be set for drizzle-kit.");
+}
 
 export default defineConfig({
   schema: "./lib/db/schema/index.ts",
   out: "./lib/db/migrations",
   casing: "snake_case",
-  dbCredentials: { url: env.DATABASE_URL },
+  driver: "d1-http",
+  dialect: "sqlite",
+  dbCredentials: {
+    accountId: CLOUDFLARE_ACCOUNT_ID,
+    databaseId: CLOUDFLARE_DATABASE_ID,
+    token: CLOUDFLARE_D1_TOKEN,
+  },
   verbose: true,
   strict: true,
-  dialect: "sqlite",
 });

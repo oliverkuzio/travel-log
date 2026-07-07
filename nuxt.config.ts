@@ -1,7 +1,5 @@
 import tailwindcss from "@tailwindcss/vite";
 
-import env from "./lib/env";
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
@@ -23,7 +21,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      s3BucketUrl: env.S3_BUCKET_URL,
+      // Override via NUXT_PUBLIC_S3_BUCKET_URL env var at build time
+      s3BucketUrl: "",
     },
   },
 
@@ -65,8 +64,10 @@ export default defineNuxtConfig({
   },
 
   sentry: {
-    org: import.meta.env.SENTRY_ORG,
-    project: import.meta.env.SENTRY_PROJECT,
+    // eslint-disable-next-line node/no-process-env
+    org: process.env.SENTRY_ORG,
+    // eslint-disable-next-line node/no-process-env
+    project: process.env.SENTRY_PROJECT,
   },
 
   sourcemap: {

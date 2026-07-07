@@ -1,0 +1,6 @@
+# Local development secrets for Wrangler / Cloudflare Workers
+# These mirror the secrets uploaded to Cloudflare via `wrangler secret put <NAME>`
+AUTH_GITHUB_CLIENT_SECRET=
+BETTER_AUTH_SECRET=
+S3_ACCESS_SECRET=
+VITE_SENTRY_DSN=

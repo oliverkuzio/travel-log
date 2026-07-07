@@ -34,14 +34,43 @@
    * databases, object storage, AI inference, real-time communication and more.
    * https://developers.cloudflare.com/workers/runtime-apis/bindings/
    */
+  "d1_databases": [
+    {
+      "binding": "travel_log_database",
+      "database_name": "travel-log",
+      "database_id": "3b9e3acb-8bc6-4ec8-90f9-ffbf3c9eaa71",
+      "migrations_dir": "./lib/db/migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "travel_log_bucket", // <~ valid JavaScript variable name
+      "bucket_name": "travel-log"
+    }
+  ],
 
   /**
    * Environment Variables
    * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
    */
-  // "vars": { "MY_VARIABLE": "production_value" },
+  "vars": {
+    "AUTH_GITHUB_CLIENT_ID": "Ov23li1ktAje44CpEDQb",
+    "BETTER_AUTH_URL": "https://travel.kuzio.app",
+    "S3_ACCESS_KEY": "4a6c9902d570d9c30b5e7943006ab2f9",
+    "S3_BUCKET": "travel-log",
+    "S3_BUCKET_URL": "https://f3aea88fbb8e74db66c7e2f039fa9fee.eu.r2.cloudflarestorage.com/travel-log",
+    "S3_ENDPOINT": "https://f3aea88fbb8e74db66c7e2f039fa9fee.eu.r2.cloudflarestorage.com",
+    "S3_REGION": "eu",
+    "SENTRY_ORG": "ok-apps",
+    "SENTRY_PROJECT": "travel-log"
+  }
   /**
-   * Note: Use secrets to store sensitive data.
+   * Secrets — upload via `wrangler secret put <NAME>` for production.
+   * For local development, add to `.dev.vars`:
+   *   AUTH_GITHUB_CLIENT_SECRET
+   *   BETTER_AUTH_SECRET
+   *   S3_ACCESS_SECRET
+   *   VITE_SENTRY_DSN
    * https://developers.cloudflare.com/workers/configuration/secrets/
    */
 
@@ -57,12 +86,4 @@
    */
   // "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
 
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "travel-log",
-      "database_id": "3b9e3acb-8bc6-4ec8-90f9-ffbf3c9eaa71",
-      "migrations_dir": "./lib/db/migrations"
-    }
-  ]
 }

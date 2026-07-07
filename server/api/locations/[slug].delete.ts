@@ -3,7 +3,7 @@ import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug") as string;
-  const deleted = await deleteLocation(slug, event.context.user.id);
+  const deleted = await deleteLocation(event.context.db, slug, event.context.user.id);
 
   if (!deleted) {
     throw createError({

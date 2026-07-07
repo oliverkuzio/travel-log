@@ -11,7 +11,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
     return sendZodError(event, result.error);
   }
 
-  const existingLocation = await findLocationByName(result.data, event.context.user.id);
+  const existingLocation = await findLocationByName(event.context.db, result.data, event.context.user.id);
 
   if (existingLocation && existingLocation.slug !== slug) {
     throw createError({
@@ -20,5 +20,5 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
-  return updateLocation(result.data, slug, event.context.user.id);
+  return updateLocation(event.context.db, result.data, slug, event.context.user.id);
 });

@@ -6,7 +6,7 @@ import sendZodError from "~/utils/send-zod-error";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug") as string;
-  const location = await findLocation(slug, event.context.user.id);
+  const location = await findLocation(event.context.db, slug, event.context.user.id);
 
   if (!location) {
     throw createError({
@@ -21,5 +21,5 @@ export default defineAuthenticatedEventHandler(async (event) => {
     return sendZodError(event, result.error);
   }
 
-  return insertLocationLog(location.id, result.data, event.context.user.id);
+  return insertLocationLog(event.context.db, location.id, result.data, event.context.user.id);
 });
