@@ -14,7 +14,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
     return sendZodError(event, result.error);
   }
 
-  const existingLocation = await findLocationByName(result.data, event.context.user.id);
+  const existingLocation = await findLocationByName(event.context.db, result.data, event.context.user.id);
 
   if (existingLocation) {
     throw createError({
@@ -23,10 +23,10 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
-  const slug = await findUniqueSlug(slugify(result.data.name));
+  const slug = await findUniqueSlug(event.context.db, slugify(result.data.name));
 
   try {
-    return insertLocation(result.data, slug, event.context.user.id);
+    return insertLocation(event.context.db, result.data, slug, event.context.user.id);
   }
   catch (e) {
     const error = e as DrizzleError;

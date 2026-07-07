@@ -16,7 +16,7 @@ export default withNuxt(
         quotes: "double",
       },
       ignores: [
-        "drizzle/**",
+        "**/migrations/*",
       ],
     },
     {

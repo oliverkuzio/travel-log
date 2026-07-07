@@ -1,11 +1,13 @@
 import { and, eq } from "drizzle-orm";
 
+import type { AppDatabase } from "~/lib/db";
+
 import type { InsertLocationLogImage } from "../schema";
 
-import db from "..";
 import { locationLogImage } from "../schema";
 
 export async function insertLocationLogImage(
+  db: AppDatabase,
   locationLogId: number,
   insertable: InsertLocationLogImage,
   userId: number,
@@ -20,6 +22,7 @@ export async function insertLocationLogImage(
 }
 
 export async function deleteLocationLogImage(
+  db: AppDatabase,
   imageId: number,
   userId: number,
 ) {
