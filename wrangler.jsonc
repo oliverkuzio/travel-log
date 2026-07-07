@@ -45,7 +45,8 @@
   "r2_buckets": [
     {
       "binding": "travel_log_bucket", // <~ valid JavaScript variable name
-      "bucket_name": "travel-log"
+      "bucket_name": "travel-log",
+      "jurisdiction": "eu"
     }
   ],
 
