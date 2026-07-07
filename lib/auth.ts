@@ -38,7 +38,7 @@ export function createAuth(db: AppDatabase, env: AuthEnv) {
     },
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_URL,
-    trustedOrigins: ["https://travel.kuzio.app", "http://localhost:3000"],
+    trustedOrigins: [env.BETTER_AUTH_URL, "http://localhost:3000"],
     advanced: {
       database: {
         generateId: false,

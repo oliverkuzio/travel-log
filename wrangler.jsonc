@@ -64,7 +64,21 @@
     "S3_REGION": "eu",
     "SENTRY_ORG": "ok-apps",
     "SENTRY_PROJECT": "travel-log"
+  },
+
+  /**
+   * Environments
+   * https://developers.cloudflare.com/workers/wrangler/configuration/#environments
+   */
+  "env": {
+    "development": {
+      "routes": [],
+      "vars": {
+        "BETTER_AUTH_URL": "https://travel-log.empty-queen-0060.workers.dev"
+      }
+    }
   }
+
   /**
    * Secrets — upload via `wrangler secret put <NAME>` for production.
    * For local development, add to `.dev.vars`:
