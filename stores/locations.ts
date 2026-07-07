@@ -11,6 +11,7 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
     status: locationsStatus,
     refresh: refreshLocations,
   } = useFetch("/api/locations", {
+    key: "locations",
     lazy: true,
   });
 
@@ -23,6 +24,7 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
     error: currentLocationError,
     refresh: refreshCurrentLocation,
   } = useFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
+    key: "current-location",
     lazy: true,
     immediate: false,
     watch: false,
@@ -34,6 +36,7 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
     error: currentLocationLogError,
     refresh: refreshCurrentLocationLog,
   } = useFetch<SelectLocationLogWithImages>(locationLogUrlWithSlugAndId, {
+    key: "current-location-log",
     lazy: true,
     immediate: false,
     watch: false,

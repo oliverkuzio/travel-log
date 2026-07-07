@@ -1,14 +1,9 @@
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/d1";
 
-import env from "../env";
 import * as schema from "./schema";
 
-const db = drizzle({
-  connection: {
-    url: env.DATABASE_URL,
-  },
-  casing: "snake_case",
-  schema,
-});
+export function createDb(d1: D1Database) {
+  return drizzle(d1, { casing: "snake_case", schema });
+}
 
-export default db;
+export type AppDatabase = ReturnType<typeof createDb>;

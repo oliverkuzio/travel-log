@@ -4,7 +4,7 @@ import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-
 export default defineAuthenticatedEventHandler(async (event) => {
   // await new Promise(resolve => setTimeout(resolve, 2000));
   const slug = getRouterParam(event, "slug") as string;
-  const location = await findLocation(slug, event.context.user.id);
+  const location = await findLocation(event.context.db, slug, event.context.user.id);
 
   if (!location) {
     throw createError({

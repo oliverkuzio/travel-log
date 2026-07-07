@@ -17,6 +17,7 @@ logs
 .DS_Store
 .fleet
 .idea
+.pnpm-store/
 
 # Local env files
 .env
@@ -26,6 +27,7 @@ logs
 # wrangler files
 .wrangler
 .dev.vars*
+!.dev.vars.example
 
 # db files
 local.db*
