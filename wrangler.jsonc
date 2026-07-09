@@ -63,16 +63,6 @@
     "S3_REGION": "eu",
     "SENTRY_ORG": "ok-apps",
     "SENTRY_PROJECT": "travel-log"
-  },
-
-  /**
-   * Environments
-   * https://developers.cloudflare.com/workers/wrangler/configuration/#environments
-   */
-  "env": {
-    "development": {
-      "routes": []
-    }
   }
 
   /**
