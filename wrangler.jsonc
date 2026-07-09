@@ -56,7 +56,6 @@
    */
   "vars": {
     "AUTH_GITHUB_CLIENT_ID": "Ov23li1ktAje44CpEDQb",
-    "BETTER_AUTH_URL": "https://travel.kuzio.app",
     "S3_ACCESS_KEY": "4a6c9902d570d9c30b5e7943006ab2f9",
     "S3_BUCKET": "travel-log",
     "S3_BUCKET_URL": "https://f3aea88fbb8e74db66c7e2f039fa9fee.eu.r2.cloudflarestorage.com/travel-log",
@@ -72,10 +71,7 @@
    */
   "env": {
     "development": {
-      "routes": [],
-      "vars": {
-        "BETTER_AUTH_URL": "https://travel-log.empty-queen-0060.workers.dev"
-      }
+      "routes": []
     }
   }
 

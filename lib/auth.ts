@@ -2,7 +2,7 @@ import type { User } from "better-auth";
 
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { createAuthMiddleware } from "better-auth/plugins";
+import { createAuthMiddleware } from "better-auth/api";
 
 import type { AppDatabase } from "./db";
 
@@ -10,7 +10,7 @@ export type UserWithId = Omit<User, "id"> & {
   id: number;
 };
 
-type AuthEnv = Pick<Env, "AUTH_GITHUB_CLIENT_ID" | "AUTH_GITHUB_CLIENT_SECRET" | "BETTER_AUTH_SECRET" | "BETTER_AUTH_URL">;
+type AuthEnv = Pick<Env, "AUTH_GITHUB_CLIENT_ID" | "AUTH_GITHUB_CLIENT_SECRET" | "BETTER_AUTH_SECRET">;
 
 export function createAuth(db: AppDatabase, env: AuthEnv) {
   return betterAuth({
@@ -37,8 +37,14 @@ export function createAuth(db: AppDatabase, env: AuthEnv) {
       },
     },
     secret: env.BETTER_AUTH_SECRET,
-    baseURL: env.BETTER_AUTH_URL,
-    trustedOrigins: [env.BETTER_AUTH_URL, "http://localhost:3000"],
+    baseURL: {
+      allowedHosts: [
+        "localhost:3000",
+        "travel.kuzio.app",
+        "*.empty-queen-0060.workers.dev",
+      ],
+      protocol: "https",
+    },
     advanced: {
       database: {
         generateId: false,
