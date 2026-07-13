@@ -17,6 +17,7 @@ type Env = {
   SENTRY_PROJECT: string;
   // Secrets (uploaded via `wrangler secret put`)
   AUTH_GITHUB_CLIENT_SECRET: string;
+  MAPTILER_API_KEY: string;
   BETTER_AUTH_SECRET: string;
   S3_ACCESS_SECRET: string;
   VITE_SENTRY_DSN: string;

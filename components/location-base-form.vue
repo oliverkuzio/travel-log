@@ -116,7 +116,7 @@ onBeforeRouteLeave(() => {
         />
         <AppFormField
           type="number"
-          label="Latitude"
+          label="Longitude"
           name="long"
           :error="errors.long"
           :disabled="loading"
