@@ -2,12 +2,12 @@
 
 @plugin "daisyui" {
   themes:
-    travel-light --default,
-    travel-dark --prefersdark;
+    light --default,
+    dark --prefersdark;
 }
 
 @plugin "daisyui/theme" {
-  name: "travel-light";
+  name: "light";
   default: true;
   prefersdark: false;
   color-scheme: "light";
@@ -42,7 +42,7 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "travel-dark";
+  name: "dark";
   default: false;
   prefersdark: true;
   color-scheme: "dark";
