@@ -10,7 +10,7 @@ export type UserWithId = Omit<User, "id"> & {
   id: number;
 };
 
-type AuthEnv = Pick<Env, "AUTH_GITHUB_CLIENT_ID" | "AUTH_GITHUB_CLIENT_SECRET" | "BETTER_AUTH_SECRET">;
+type AuthEnv = Pick<Env, "AUTH_GITHUB_CLIENT_ID" | "AUTH_GITHUB_CLIENT_SECRET" | "BETTER_AUTH_URL" | "BETTER_AUTH_SECRET">;
 
 export function createAuth(db: AppDatabase, env: AuthEnv) {
   return betterAuth({
@@ -39,11 +39,12 @@ export function createAuth(db: AppDatabase, env: AuthEnv) {
     secret: env.BETTER_AUTH_SECRET,
     baseURL: {
       allowedHosts: [
+        "localhost",
         "localhost:3000",
         "travel.kuzio.app",
         "*.empty-queen-0060.workers.dev",
       ],
-      protocol: "https",
+      protocol: env.BETTER_AUTH_URL.startsWith("https") ? "https" : "http",
     },
     advanced: {
       database: {
