@@ -7,7 +7,7 @@ const authStore = useAuthStore();
     <div
       tabindex="0"
       role="button"
-      class="btn m-1"
+      class="btn btn-neutral m-1"
     >
       <div v-if="authStore.user.image" class="avatar">
         <div class="w-6 rounded-full">

@@ -71,7 +71,7 @@ onBeforeRouteUpdate((to) => {
           <div
             tabindex="0"
             role="button"
-            class="btn m-1 btn-sm btn-ghost p-0"
+            class="btn m-1 btn-sm btn-accent p-0"
           >
             <Icon name="tabler:dots-vertical" size="20" />
           </div>
@@ -122,7 +122,7 @@ onBeforeRouteUpdate((to) => {
         :map-point="createMapPointFromLocationLog(log)"
       >
         <template #top>
-          <p class="text-sm italic text-gray-500">
+          <p class="text-xs opacity-50">
             {{ formatDate(log.startedAt) }}
             <span v-if="log.startedAt !== log.endedAt">
               -

@@ -68,7 +68,7 @@ async function confirmDelete() {
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-locations-slug-id' && locationLog && !loading">
-      <p class="text-sm italic text-gray-500">
+      <p class="text-xs opacity-50">
         {{ formatDate(locationLog.startedAt) }}
         <span v-if="locationLog.startedAt !== locationLog.endedAt">
           -
@@ -81,7 +81,7 @@ async function confirmDelete() {
           <div
             tabindex="0"
             role="button"
-            class="btn m-1 btn-sm btn-ghost p-0"
+            class="btn m-1 btn-sm btn-accent p-0"
           >
             <Icon name="tabler:dots-vertical" size="20" />
           </div>

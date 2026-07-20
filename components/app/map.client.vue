@@ -6,7 +6,7 @@ import { CENTER_MAP } from "~/lib/constants";
 
 const mapStore = useMapStore();
 const colorMode = useColorMode();
-const style = computed(() => `/api/styles/${colorMode.value}`);
+const style = computed(() => `/styles/${colorMode.value}.json`);
 const zoom = 3;
 
 function updateAddedPoint(location: LngLat) {
@@ -63,10 +63,12 @@ onMounted(() => {
     >
       <template #marker>
         <div
-          class="tooltip tooltip-top tooltip-open hover:cursor-pointer"
+          class="tooltip tooltip-top hover:cursor-pointer"
           :data-tip="point.name"
           :class="{
             'tooltip-open': isPointSelected(point, mapStore.selectedPoint),
+            'tooltip-primary': isPointSelected(point, mapStore.selectedPoint),
+            'tooltip-secondary': !isPointSelected(point, mapStore.selectedPoint),
           }"
           @mouseenter="mapStore.selectedPoint = point"
           @mouseleave="mapStore.selectedPoint = null"

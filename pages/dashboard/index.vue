@@ -9,7 +9,7 @@ onMounted(() => {
 
 <template>
   <div class="p-4">
-    <h1 class="text-2xl font-semibold mb-4">
+    <h1 class="text-xl mb-4">
       Locations
     </h1>
     <div v-if="status === 'pending'">

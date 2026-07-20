@@ -20,7 +20,7 @@ if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
 <template>
   <div class="flex-1 flex items-stretch">
     <AppSidebar />
-    <div class="flex-1 flex items-stretch bg-base-100 relative">
+    <div class="flex-1 flex items-stretch bg-base-200 relative">
       <NuxtPage class="w-96 shrink-0 max-h-screen overflow-y-scroll z-10" />
       <div class="flex-1">
         <AppMap />
