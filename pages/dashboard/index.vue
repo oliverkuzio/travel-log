@@ -1,17 +1,18 @@
 <script lang="ts" setup>
-const locationsStore = useLocationsStore();
-const { locations, locationsStatus: status } = storeToRefs(locationsStore);
+// const tripsStore = useLocationsStore();
+// const { trips, tripsStatus: status } = storeToRefs(tripsStore);
 
-onMounted(() => {
-  locationsStore.refreshLocations();
-});
+// onMounted(() => {
+//   tripsStore.refreshLocations();
+// });
 </script>
 
 <template>
   <div class="p-4">
     <h1 class="text-xl mb-4">
-      Locations
+      Your trips
     </h1>
+    <!--
     <div v-if="status === 'pending'">
       <LoadingSpinner />
     </div>
@@ -25,11 +26,14 @@ onMounted(() => {
       </div>
     </div>
     <div v-else class="flex flex-col gap-4">
-      <p>Add a location to get started.</p>
-      <NuxtLink to="/dashboard/locations/add" class="btn btn-primary w-40">
-        Add Location
-        <Icon name="tabler:map-pin-plus" size="24" />
-      </NuxtLink>
+    -->
+    <p>Add a trip to get started.</p>
+    <NuxtLink to="/dashboard/trips/add" class="btn btn-primary w-40">
+      Add Trip
+      <Icon name="tabler:map-plus" size="24" />
+    </NuxtLink>
+    <!--
     </div>
+    -->
   </div>
 </template>
