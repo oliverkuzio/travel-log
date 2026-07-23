@@ -10,18 +10,17 @@ const mapStore = useMapStore();
 
 <template>
   <NuxtLink
-    class="card card-compact bg-base-200 border-2 shrink-0 hover:cursor-pointer"
+    class="card card-sm card-border bg-base-100 border-base-300 shrink-0 hover:cursor-pointer"
     :to="mapPoint.to"
     :class="{
-      'border-accent': isPointSelected(mapPoint, mapStore.selectedPoint),
-      'border-transparent': !isPointSelected(mapPoint, mapStore.selectedPoint),
+      'border-base-content': isPointSelected(mapPoint, mapStore.selectedPoint),
     }"
     @mouseenter="mapStore.selectedPoint = mapPoint"
     @mouseleave="mapStore.selectedPoint = null"
   >
     <div class="card-body">
       <slot name="top" />
-      <h2 class="text-lg font-semibold mb-2">
+      <h2 class="text-xl mb-1">
         {{ mapPoint.name }}
       </h2>
       <p>{{ mapPoint.description }}</p>

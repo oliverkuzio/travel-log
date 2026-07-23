@@ -14,25 +14,28 @@ const route = useRoute();
 </script>
 
 <template>
-  <div
-    class="tooltip-right"
-    :data-tip="showLabel ? undefined : props.label"
-    :class="{ tooltip: !showLabel }"
-  >
-    <NuxtLink
-      :to="props.href || props.to"
-      :class="{ 'bg-base-200': route.path === props.href, 'justify-center': !showLabel, 'justify-start': showLabel }"
-      class="flex gap-2 p-2 text-sm hover:bg-base-300 hover:cursor-pointer flex-nowrap"
+  <div>
+    <div
+      class="tooltip-right"
+      :data-tip="showLabel ? undefined : props.label"
+      :class="{ tooltip: !showLabel }"
     >
-      <Icon
-        :name="props.icon"
-        size="24"
-        :class="iconColor"
-      />
-      <Transition name="grow">
-        <span v-if="showLabel" class="truncate">{{ props.label }}</span>
-      </Transition>
-    </NuxtLink>
+      <NuxtLink
+        :to="props.href || props.to"
+        :class="{ 'bg-base-200': route.path === props.href, 'justify-center': !showLabel, 'justify-start': showLabel }"
+        class="flex gap-2 p-2 text-sm hover:bg-base-300 hover:cursor-pointer flex-nowrap"
+      >
+        <Icon
+          :name="props.icon"
+          size="24"
+          :class="iconColor"
+        />
+        <Transition name="grow">
+          <span v-if="showLabel" class="truncate">{{ props.label }}</span>
+        </Transition>
+      </NuxtLink>
+    </div>
+    <!-- <div v-if="showDivider" class="divider" /> -->
   </div>
 </template>
 

@@ -21,7 +21,7 @@ const initialValues = {
 </script>
 
 <template>
-  <LocationBaseForm
+  <BaseForm
     v-slot="{ errors, loading }"
     :zoom="11"
     :initial-values="props.initialValues || initialValues"
@@ -58,5 +58,11 @@ const initialValues = {
       :error="errors.endedAt"
       :disabled="loading"
     />
-  </LocationBaseForm>
+    <CoordPicker
+      :initial-values="initialValues"
+      :errors="errors"
+      :loading="loading"
+      :zoom="11"
+    />
+  </BaseForm>
 </template>

@@ -50,14 +50,6 @@ function setLocation(result: NominatimResult) {
 
 <template>
   <div>
-    <div class="text-xs italic flex justify-end gap-1 mb-2">
-      <span>Search results provided by</span><a
-        class="link"
-        href="https://nominatim.openstreetmap.org/ui/search.html"
-        target="_blank"
-        rel="noopener nofollow"
-      >Nominatim</a>
-    </div>
     <Form
       ref="form"
       v-slot="{ errors }"
@@ -89,6 +81,14 @@ function setLocation(result: NominatimResult) {
         Search
       </button>
     </Form>
+    <div class="text-xs italic flex justify-end gap-1 mt-1 mb-2">
+      <span>Search results provided by</span><a
+        class="link"
+        href="https://nominatim.openstreetmap.org/ui/search.html"
+        target="_blank"
+        rel="noopener nofollow"
+      >Nominatim</a>
+    </div>
     <AppAlert
       v-if="!loading && errorMessage"
       class="alert-error"

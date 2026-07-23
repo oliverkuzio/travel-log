@@ -2,7 +2,7 @@
   "rules": [
     {
       "allowed": {
-        "origins": ["https://travel.kuzio.app", "http://localhost:3000"],
+        "origins": ["https://travel.kuzio.app", "http://localhost"],
         "methods": ["PUT"],
         "headers": ["Content-Type"]
       },

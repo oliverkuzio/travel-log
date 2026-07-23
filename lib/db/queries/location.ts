@@ -50,7 +50,7 @@ export async function findLocation(db: AppDatabase, slug: string, userId: number
       eq(location.userId, userId),
     ),
     with: {
-      locationLogs: {
+      logs: {
         orderBy(fields, operators) {
           return operators.desc(fields.startedAt);
         },

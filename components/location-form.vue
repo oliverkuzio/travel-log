@@ -10,18 +10,19 @@ const props = defineProps<{
   submitIcon: string;
   zoom?: number;
 }>();
+
+const initialValues = {
+  name: "",
+  description: "",
+  long: (CENTER_MAP as [number, number])[0],
+  lat: (CENTER_MAP as [number, number])[1],
+};
 </script>
 
 <template>
-  <LocationBaseForm
+  <BaseForm
     v-slot="{ errors, loading }"
-    :zoom="props.zoom || 6"
-    :initial-values="props.initialValues || {
-      name: '',
-      description: '',
-      long: (CENTER_MAP as [number, number])[0],
-      lat: (CENTER_MAP as [number, number])[1],
-    }"
+    :initial-values="props.initialValues || initialValues"
     :schema="InsertLocation"
     :on-submit
     :on-submit-complete
@@ -41,5 +42,11 @@ const props = defineProps<{
       :error="errors.description"
       :disabled="loading"
     />
-  </LocationBaseForm>
+    <CoordPicker
+      :initial-values="initialValues"
+      :errors="errors"
+      :loading="loading"
+      :zoom="props.zoom || 6"
+    />
+  </BaseForm>
 </template>
