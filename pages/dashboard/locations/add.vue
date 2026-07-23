@@ -23,13 +23,16 @@ function onSubmitComplete() {
       </h1>
       <p class="text-sm mb-4">
         A location is an establishment, landmark or other specific location you
-        have visited on your trips. You can add the cities or countries you have
+        have visited on your trips.
+      </p>
+      <p class="text-sm mb-4">
+        You can add the cities or countries you have
         visited or will visit on your trips via the
         <NuxtLink
           to="/dashboard/trips"
         >
-          trips page
-        </NuxtLink>.
+          trips page.
+        </NuxtLink>
       </p>
     </div>
     <LocationForm

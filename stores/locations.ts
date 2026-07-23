@@ -1,7 +1,7 @@
 import type { SelectLocationLogWithImages, SelectLocationWithLogs } from "~/lib/db/schema";
 import type { MapPoint, SidebarItem } from "~/lib/types";
 
-import { CURRENT_LOCATION_LOG_PAGES, CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
+import { CURRENT_LOCATION_LOG_PAGES, CURRENT_LOCATION_PAGES, CURRENT_PAGES } from "~/lib/constants";
 
 export const useLocationsStore = defineStore("useLocationsStore", () => {
   const route = useRoute();
@@ -46,7 +46,7 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
   const mapStore = useMapStore();
 
   effect(() => {
-    if (locations.value && LOCATION_PAGES.has(route.name?.toString() || "")) {
+    if (locations.value && !CURRENT_PAGES.has(route.name?.toString() || "")) {
       const mapPoints: MapPoint[] = [];
       const sidebarItems: SidebarItem[] = [];
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CURRENT_LOCATION_LOG_PAGES, CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
+import { CURRENT_LOCATION_LOG_PAGES, CURRENT_LOCATION_PAGES, CURRENT_PAGES } from "~/lib/constants";
 
 const isSidebarOpen = ref(true);
 const route = useRoute();
@@ -14,12 +14,22 @@ onMounted(() => {
 });
 
 effect(() => {
-  if (LOCATION_PAGES.has(route.name?.toString() || "")) {
+  if (!CURRENT_PAGES.has(route.name?.toString() || "")) {
     sidebarStore.sidebarMainItems = [{
       id: "link-dashboard",
-      label: "Locations",
+      label: "Trips",
       href: "/dashboard",
       icon: "tabler:map",
+    }, {
+      id: "link-dashboard-trips-add",
+      label: "Add Trip",
+      href: "/dashboard/trips/add",
+      icon: "tabler:map-plus",
+    }, {
+      id: "link-dashboard-locations-add",
+      label: "Locations",
+      href: "/dashboard/locations/add",
+      icon: "tabler:map-pins",
     }, {
       id: "link-dashboard-locations-add",
       label: "Add Location",
