@@ -5,8 +5,9 @@ import { int, real, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 
 import type { SelectLocationLog } from "./location-log";
+import type { SelectLocationType } from "./location-type";
 
-import { DescriptionSchema, LatSchema, LongSchema, NameSchema } from "../../zod-schemas";
+import { DescriptionSchema, IdSchema, LatSchema, LongSchema, NameSchema } from "../../zod-schemas";
 import { user } from "./auth";
 import { locationLog } from "./location-log";
 import { locationType } from "./location-type";
@@ -18,7 +19,7 @@ export const location = sqliteTable("location", {
   description: text(),
   lat: real().notNull(),
   long: real().notNull(),
-  typeId: int().references(() => locationType.id),
+  typeId: int().references(() => locationType.id, { onDelete: "set null" }),
   userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
@@ -39,6 +40,7 @@ export const InsertLocation = createInsertSchema(location, {
   description: DescriptionSchema,
   lat: LatSchema,
   long: LongSchema,
+  typeId: IdSchema.nullable().optional(),
 }).omit({
   id: true,
   slug: true,
@@ -49,6 +51,9 @@ export const InsertLocation = createInsertSchema(location, {
 
 export type InsertLocation = z.infer<typeof InsertLocation>;
 export type SelectLocation = typeof location.$inferSelect;
-export type SelectLocationWithLogs = SelectLocation & {
-  locationLogs: SelectLocationLog[];
+export type SelectLocationWithType = SelectLocation & {
+  type: SelectLocationType | null;
+};
+export type SelectLocationWithLogs = SelectLocationWithType & {
+  logs: SelectLocationLog[];
 };

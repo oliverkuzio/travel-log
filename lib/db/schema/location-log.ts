@@ -3,10 +3,11 @@ import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-import type { SelectLocation } from "./location";
+import type { SelectLocationWithType } from "./location";
 import type { SelectLocationLogImage } from "./location-log-image";
+import type { SelectTrip } from "./trip";
 
-import { DateSchema, DescriptionSchema, NameSchema } from "../../zod-schemas";
+import { DateSchema, DescriptionSchema, IdSchema, NameSchema, refineDates } from "../../zod-schemas";
 import { user } from "./auth";
 import { location } from "./location";
 import { locationLogImage } from "./location-log-image";
@@ -19,7 +20,7 @@ export const locationLog = sqliteTable("locationLog", {
   startedAt: int().notNull(),
   endedAt: int().notNull(),
   locationId: int().notNull().references(() => location.id, { onDelete: "cascade" }),
-  tripId: int().references(() => trip.id, { onDelete: "cascade" }),
+  tripId: int().references(() => trip.id, { onDelete: "set null" }),
   userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
@@ -37,39 +38,36 @@ export const locationLogRelations = relations(locationLog, ({ one, many }) => ({
   images: many(locationLogImage),
 }));
 
-export const InsertLocationLog = createInsertSchema(locationLog, {
+const InsertLocationLogBase = createInsertSchema(locationLog, {
   name: NameSchema,
   description: DescriptionSchema,
   startedAt: DateSchema,
   endedAt: DateSchema,
+  tripId: IdSchema.nullable().optional(),
 }).omit({
   id: true,
   locationId: true,
-  tripId: true,
   userId: true,
   createdAt: true,
   updatedAt: true,
-}).superRefine((values, context) => {
-  if (values.startedAt > values.endedAt || values.endedAt < values.startedAt) {
-    context.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Start Date must be before End Date",
-      path: ["startedAt"],
-    });
-
-    context.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "End Date must be after Start Date",
-      path: ["endedAt"],
-    });
-  }
 });
 
+export const InsertLocationLog = InsertLocationLogBase.superRefine(refineDates);
+
+export const InsertTripLocationLog = InsertLocationLogBase.extend({
+  locationId: z.number({
+    required_error: "Location is required",
+    invalid_type_error: "Location is required",
+  }).int().positive(),
+}).superRefine(refineDates);
+
 export type InsertLocationLog = z.infer<typeof InsertLocationLog>;
+export type InsertTripLocationLog = z.infer<typeof InsertTripLocationLog>;
 export type SelectLocationLog = typeof locationLog.$inferSelect;
 export type SelectLocationLogWithLocation = SelectLocationLog & {
-  location: SelectLocation;
+  location: SelectLocationWithType;
 };
 export type SelectLocationLogWithImages = SelectLocationLog & {
   images: SelectLocationLogImage[];
+  trip: SelectTrip | null;
 };

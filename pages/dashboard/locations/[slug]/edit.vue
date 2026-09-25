@@ -29,6 +29,10 @@ function onSubmitComplete() {
 
 <template>
   <div>
+    <BackLink
+      :to="{ name: 'dashboard-locations-slug', params: { slug: route.params.slug } }"
+      :label="location?.name"
+    />
     <h1 class="text-2xl font-semibold mb-4">
       Edit Location
     </h1>

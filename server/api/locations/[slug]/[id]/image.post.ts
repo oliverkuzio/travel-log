@@ -23,7 +23,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
   const fileName = crypto.randomUUID();
   const key = `${event.context.user.id}/${id}/${fileName}.jpg`;
 
-  await event.context.cloudflare.env.travel_log_bucket.put(key, await file.arrayBuffer(), {
+  await event.context.cloudflare.env.BUCKET.put(key, await file.arrayBuffer(), {
     httpMetadata: { contentType: "image/jpeg" },
   });
 

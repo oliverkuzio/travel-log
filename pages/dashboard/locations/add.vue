@@ -1,22 +1,26 @@
 <script lang="ts" setup>
-import type { InsertLocation } from "~/lib/db/schema";
+import type { InsertLocation, SelectLocation } from "~/lib/db/schema";
 
 const { $csrfFetch } = useNuxtApp();
+const created = ref<SelectLocation | null>(null);
 
 async function onSubmit(values: InsertLocation) {
-  await $csrfFetch("/api/locations", {
+  created.value = await $csrfFetch<SelectLocation>("/api/locations", {
     method: "post",
     body: values,
   });
 }
 
 function onSubmitComplete() {
-  navigateTo("/dashboard");
+  navigateTo(created.value
+    ? { name: "dashboard-locations-slug", params: { slug: created.value.slug } }
+    : "/dashboard/locations");
 }
 </script>
 
 <template>
   <div class="p-4">
+    <BackLink to="/dashboard/locations" label="Locations" />
     <div class="mb-4">
       <h1 class="text-2xl font-semibold mb-4">
         Add location
@@ -26,10 +30,11 @@ function onSubmitComplete() {
         have visited on your trips.
       </p>
       <p class="text-sm mb-4">
-        You can add the cities or countries you have
-        visited or will visit on your trips via the
+        Once added, you can log visits to this location and group them into
+        journeys via the
         <NuxtLink
           to="/dashboard/trips"
+          class="link"
         >
           trips page.
         </NuxtLink>

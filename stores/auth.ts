@@ -1,6 +1,18 @@
+import { inferAdditionalFields } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/vue";
 
-const authClient = createAuthClient();
+const authClient = createAuthClient({
+  plugins: [
+    inferAdditionalFields({
+      user: {
+        role: {
+          type: "string",
+          input: false,
+        },
+      },
+    }),
+  ],
+});
 
 export const useAuthStore = defineStore("useAuthStore", () => {
   const session = ref<Awaited<ReturnType<typeof authClient.useSession>> | null>(null);
@@ -12,6 +24,7 @@ export const useAuthStore = defineStore("useAuthStore", () => {
 
   const user = computed(() => session.value?.data?.user);
   const loading = computed(() => session.value?.isPending);
+  const isAdmin = computed(() => user.value?.role === "admin");
 
   async function signIn() {
     const { csrf } = useCsrf();
@@ -41,6 +54,7 @@ export const useAuthStore = defineStore("useAuthStore", () => {
 
   return {
     init,
+    isAdmin,
     loading,
     signIn,
     signOut,

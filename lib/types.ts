@@ -14,13 +14,32 @@ export type LatLongItem = {
   long: number;
 };
 
-export type MapPoint = {
+export type MapPointKind = "trip" | "location";
+
+export type CardPoint = {
   id: number;
+  kind: MapPointKind;
   name: string;
   description: string | null;
+  icon?: string | null;
   to?: RouteLocationRaw;
   toLabel?: string;
-} & LatLongItem;
+} & Partial<LatLongItem>;
+
+export type MapPoint = CardPoint & LatLongItem;
+
+export type SelectOption = {
+  value: number;
+  label: string;
+};
+
+export type HeadingMenuItem = {
+  label: string;
+  icon: string;
+  to?: RouteLocationRaw;
+  onClick?: () => void;
+  danger?: boolean;
+};
 
 export type NominatimResult = {
   place_id: number;
@@ -45,5 +64,9 @@ export type SidebarItem = {
   icon: string;
   href?: string;
   to?: RouteLocationRaw;
-  mapPoint?: MapPoint | null;
+  mapPoint?: CardPoint | null;
+  iconColor?: string;
+  matchPrefix?: boolean;
+  // Render the icon inside a map pin, matching the item's marker on the map.
+  pin?: boolean;
 };

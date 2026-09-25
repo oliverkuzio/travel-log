@@ -8,10 +8,12 @@ const props = defineProps<{
   errors: Record<string, string | undefined>;
   loading: boolean;
   zoom: number;
+  // Resolves the icon to overlay on the draggable pin from the current form values.
+  getIcon?: (values: Record<string, unknown>) => string | null | undefined;
 }>();
 
 // TODO: Add ability to re-centre map when co-ordinates manually changed
-const { setFieldValue, errors } = useFormContext();
+const { setFieldValue, errors, values } = useFormContext();
 const mapStore = useMapStore();
 
 function searchResultSelected(result: NominatimResult) {
@@ -20,6 +22,7 @@ function searchResultSelected(result: NominatimResult) {
   if (mapStore.addedPoint) {
     mapStore.addedPoint = {
       id: 0,
+      kind: "location",
       name: result.display_name,
       description: "",
       long: Number(result.lon),
@@ -28,6 +31,12 @@ function searchResultSelected(result: NominatimResult) {
     };
   }
 }
+
+effect(() => {
+  if (mapStore.addedPoint && props.getIcon) {
+    mapStore.addedPoint.icon = props.getIcon(values);
+  }
+});
 
 effect(() => {
   if (mapStore.addedPoint) {
@@ -39,6 +48,7 @@ effect(() => {
 onMounted(() => {
   mapStore.addedPoint = {
     id: 0,
+    kind: "location",
     name: "New Point",
     description: "",
     long: props.initialValues.long || (CENTER_MAP as [number, number])[0],

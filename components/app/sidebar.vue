@@ -1,141 +1,48 @@
 <script lang="ts" setup>
-import { CURRENT_LOCATION_LOG_PAGES, CURRENT_LOCATION_PAGES, CURRENT_PAGES } from "~/lib/constants";
+import type { SidebarItem } from "~/lib/types";
 
 const isSidebarOpen = ref(true);
-const route = useRoute();
 const sidebarStore = useSidebarStore();
-const locationsStore = useLocationsStore();
+const authStore = useAuthStore();
 const mapStore = useMapStore();
-
-const { currentLocation, currentLocationStatus, currentLocationLog, currentLocationLogStatus } = storeToRefs(locationsStore);
 
 onMounted(() => {
   isSidebarOpen.value = localStorage.getItem("isSidebarOpen") === "true";
 });
 
-effect(() => {
-  if (!CURRENT_PAGES.has(route.name?.toString() || "")) {
-    sidebarStore.sidebarMainItems = [{
-      id: "link-dashboard",
-      label: "Trips",
-      href: "/dashboard",
-      icon: "tabler:map",
-    }, {
-      id: "link-dashboard-trips-add",
-      label: "Add Trip",
-      href: "/dashboard/trips/add",
-      icon: "tabler:map-plus",
-    }, {
-      id: "link-dashboard-locations-add",
-      label: "Locations",
-      href: "/dashboard/locations/add",
-      icon: "tabler:map-pins",
-    }, {
-      id: "link-dashboard-locations-add",
-      label: "Add Location",
-      href: "/dashboard/locations/add",
-      icon: "tabler:map-pin-plus",
-    }];
-  }
-  else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
-    sidebarStore.sidebarMainItems = [{
-      id: "link-dashboard",
-      label: "Back to Locations",
-      href: "/dashboard",
-      icon: "tabler:arrow-left",
-    }];
+const mainItems = computed(() => {
+  const items: SidebarItem[] = [{
+    id: "link-dashboard",
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: "tabler:layout-dashboard",
+  }, {
+    id: "link-dashboard-trips",
+    label: "Trips",
+    href: "/dashboard/trips",
+    icon: TRIP_ICON,
+    iconColor: getPointColors("trip").text,
+    matchPrefix: true,
+  }, {
+    id: "link-dashboard-locations",
+    label: "Locations",
+    href: "/dashboard/locations",
+    icon: "tabler:map-pins",
+    iconColor: getPointColors("location").text,
+    matchPrefix: true,
+  }];
 
-    if (currentLocation.value && currentLocationStatus.value !== "pending") {
-      sidebarStore.sidebarMainItems.push(
-        {
-          id: "link-dashboard-locations-slug",
-          label: currentLocation.value.name,
-          to: {
-            name: "dashboard-locations-slug",
-            params: {
-              slug: currentLocation.value.slug,
-            },
-          },
-          icon: "tabler:map-pin-filled",
-        },
-        {
-          id: "link-dashboard-locations-edit",
-          label: "Edit Location",
-          to: {
-            name: "dashboard-locations-slug-edit",
-            params: {
-              slug: currentLocation.value.slug,
-            },
-          },
-          icon: "tabler:map-pin-cog",
-        },
-        {
-          id: "link-dashboard-locations-slug-add",
-          label: "Add Log",
-          to: {
-            name: "dashboard-locations-slug-add",
-            params: {
-              slug: currentLocation.value.slug,
-            },
-          },
-          icon: "tabler:calendar-plus",
-        },
-      );
-    }
+  if (authStore.isAdmin) {
+    items.push({
+      id: "link-dashboard-types",
+      label: "Location Types",
+      href: "/dashboard/types",
+      icon: "tabler:category",
+      matchPrefix: true,
+    });
   }
-  else if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
-    if (
-      currentLocation.value
-      && currentLocationStatus.value !== "pending"
-      && currentLocationLog.value
-      && currentLocationLogStatus.value !== "pending"
-    ) {
-      sidebarStore.sidebarMainItems = [{
-        id: "link-dashboard-locations-slug",
-        label: `Back to ${currentLocation.value.name}`,
-        to: {
-          name: "dashboard-locations-slug",
-          params: {
-            slug: currentLocation.value.slug,
-          },
-        },
-        icon: "tabler:arrow-left",
-      }, {
-        id: "link-dashboard-locations-slug-id",
-        label: currentLocationLog.value.name,
-        to: {
-          name: "dashboard-locations-slug-id",
-          params: {
-            slug: route.params.slug,
-            id: route.params.id,
-          },
-        },
-        icon: "tabler:calendar-filled",
-      }, {
-        id: "link-dashboard-locations-slug-id-edit",
-        label: "Edit Log",
-        to: {
-          name: "dashboard-locations-slug-id-edit",
-          params: {
-            slug: route.params.slug,
-            id: route.params.id,
-          },
-        },
-        icon: "tabler:calendar-cog",
-      }, {
-        id: "link-dashboard-locations-slug-id-images",
-        label: "Manage Images",
-        to: {
-          name: "dashboard-locations-slug-id-images",
-          params: {
-            slug: route.params.slug,
-            id: route.params.id,
-          },
-        },
-        icon: "tabler:photo-cog",
-      }];
-    }
-  }
+
+  return items;
 });
 
 function toggleSidebar() {
@@ -164,22 +71,20 @@ function toggleSidebar() {
     </div>
     <div class="flex flex-col">
       <SidebarButton
-        v-for="item in sidebarStore.sidebarMainItems"
+        v-for="item in mainItems"
         :key="item.id"
         :show-label="isSidebarOpen"
         :label="item.label"
         :icon="item.icon"
         :href="item.href"
-        :to="item.to"
+        :icon-color="item.iconColor"
+        :match-prefix="item.matchPrefix"
       />
-      <div v-if="route.path.startsWith('/dashboard/locations') && currentLocationStatus === 'pending'" class="px-4">
-        <div class="skeleton h-4 w-full" />
-      </div>
       <div v-if="sidebarStore.loading || sidebarStore.sidebarSubItems.length" class="divider" />
-      <div v-if="sidebarStore.loading" class="px-4">
+      <div v-if="sidebarStore.loading && !sidebarStore.sidebarSubItems.length" class="px-4">
         <div class="skeleton h-4 w-full" />
       </div>
-      <div v-if="!sidebarStore.loading && sidebarStore.sidebarSubItems.length" class="flex flex-col">
+      <div v-if="sidebarStore.sidebarSubItems.length" class="flex flex-col">
         <SidebarButton
           v-for="item in sidebarStore.sidebarSubItems"
           :key="item.id"
@@ -187,7 +92,9 @@ function toggleSidebar() {
           :label="item.label"
           :icon="item.icon"
           :to="item.to"
-          :icon-color="isPointSelected(item.mapPoint, mapStore.selectedPoint) ? 'text-accent' : undefined"
+          :icon-color="item.mapPoint ? getPointColors(item.mapPoint.kind, isPointSelected(item.mapPoint, mapStore.activePoint)).text : undefined"
+          :pin-colors="item.pin && item.mapPoint ? getPointColors(item.mapPoint.kind, isPointSelected(item.mapPoint, mapStore.activePoint)) : undefined"
+          :pin-icon="item.mapPoint?.icon"
           @mouseenter="mapStore.selectedPoint = item.mapPoint ?? null"
           @mouseleave="mapStore.selectedPoint = null"
         />

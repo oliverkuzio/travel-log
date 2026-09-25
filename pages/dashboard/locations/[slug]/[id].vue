@@ -1,9 +1,12 @@
 <script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
+import type { HeadingMenuItem } from "~/lib/types";
+
 const route = useRoute();
 const locationStore = useLocationsStore();
 const {
+  currentLocation: location,
   currentLocationLog: locationLog,
   currentLocationLogError: error,
   currentLocationLogStatus: status,
@@ -16,20 +19,20 @@ const deleteError = ref("");
 const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
 
-onMounted(() => {
-  locationStore.refreshCurrentLocationLog();
-});
-
-onBeforeRouteUpdate((to) => {
-  if (to.name === "dashboard-locations-slug-id") {
-    locationStore.refreshCurrentLocationLog();
-  }
-});
-
-function openDialog() {
-  isOpen.value = true;
-  (document.activeElement as HTMLAnchorElement).blur();
-}
+const menuItems = computed<HeadingMenuItem[]>(() => [{
+  label: "Edit Log",
+  icon: "tabler:calendar-cog",
+  to: { name: "dashboard-locations-slug-id-edit", params: { slug: route.params.slug, id: route.params.id } },
+}, {
+  label: "Manage Images",
+  icon: "tabler:photo-cog",
+  to: { name: "dashboard-locations-slug-id-images", params: { slug: route.params.slug, id: route.params.id } },
+}, {
+  label: "Delete Log",
+  icon: "tabler:calendar-x",
+  danger: true,
+  onClick: () => isOpen.value = true,
+}]);
 
 async function confirmDelete() {
   try {
@@ -57,7 +60,12 @@ async function confirmDelete() {
 </script>
 
 <template>
-  <div class="p-4">
+  <div>
+    <BackLink
+      v-if="route.name === 'dashboard-locations-slug-id'"
+      :to="{ name: 'dashboard-locations-slug', params: { slug: route.params.slug } }"
+      :label="location?.name"
+    />
     <div v-if="loading">
       <div class="loading" />
     </div>
@@ -75,37 +83,33 @@ async function confirmDelete() {
           {{ formatDate(locationLog.endedAt) }}
         </span>
       </p>
-      <h1 class="text-2xl font-semibold mb-4 flex items-start gap-4">
-        {{ locationLog.name }}
-        <div class="dropdown dropdown-bottom dropdown-end">
-          <div
-            tabindex="0"
-            role="button"
-            class="btn m-1 btn-sm btn-accent p-0"
-          >
-            <Icon name="tabler:dots-vertical" size="20" />
+      <PageHeadingMenu :title="locationLog.name" :items="menuItems" />
+      <NuxtLink
+        v-if="locationLog.trip"
+        :to="{ name: 'dashboard-trips-slug', params: { slug: locationLog.trip.slug } }"
+        class="card card-sm card-border bg-base-100 border-l-4 border-secondary mb-4 hover:bg-base-200 transition-colors"
+      >
+        <div class="card-body py-2 px-3 flex-row items-center gap-2">
+          <MapPin
+            :colors="getPointColors('trip')"
+            :icon="TRIP_ICON"
+            :size="24"
+            class="shrink-0"
+          />
+          <div class="flex-1 min-w-0">
+            <p class="text-xs opacity-60">
+              Part of trip
+            </p>
+            <p class="text-sm font-medium truncate">
+              {{ locationLog.trip.name }}
+            </p>
           </div>
-          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm font-normal">
-            <li>
-              <NuxtLink
-                :to="{
-                  name: 'dashboard-locations-slug-id-edit',
-                  params: { id: route.params.id },
-                }"
-              >
-                <Icon name="tabler:map-pin-cog" size="20" />
-                Edit Location
-              </NuxtLink>
-            </li>
-            <li class="text-error">
-              <NuxtLink @click="openDialog">
-                <Icon name="tabler:map-pin-x" size="20" />
-                Delete Location
-              </NuxtLink>
-            </li>
-          </ul>
+          <span class="text-xs opacity-70 flex items-center gap-1">
+            View trip
+            <Icon name="tabler:arrow-right" size="14" />
+          </span>
         </div>
-      </h1>
+      </NuxtLink>
       <p class="text-sm mb-4">
         {{ locationLog.description }}
       </p>
@@ -118,7 +122,7 @@ async function confirmDelete() {
       </div>
       <ImageList :images="locationLog.images" />
     </div>
-    <div v-if="route.name !== 'dashboard-locations-slug'">
+    <div v-if="route.name !== 'dashboard-locations-slug-id'">
       <NuxtPage />
     </div>
     <AppDialog

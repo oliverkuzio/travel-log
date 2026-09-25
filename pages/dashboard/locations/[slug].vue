@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-// TODO: Fix asyncFetch error when starting app from this route
 import type { FetchError } from "ofetch";
+
+import type { HeadingMenuItem } from "~/lib/types";
 
 const route = useRoute();
 const locationStore = useLocationsStore();
@@ -17,14 +18,20 @@ const isDeleting = ref(false);
 const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
 
-onMounted(() => {
-  locationStore.refreshCurrentLocation();
-});
-
-function openDialog() {
-  isOpen.value = true;
-  (document.activeElement as HTMLAnchorElement).blur();
-}
+const menuItems = computed<HeadingMenuItem[]>(() => [{
+  label: "Edit Location",
+  icon: "tabler:map-pin-cog",
+  to: { name: "dashboard-locations-slug-edit", params: { slug: route.params.slug } },
+}, {
+  label: "Add Log",
+  icon: "tabler:calendar-plus",
+  to: { name: "dashboard-locations-slug-add", params: { slug: route.params.slug } },
+}, {
+  label: "Delete Location",
+  icon: "tabler:map-pin-x",
+  danger: true,
+  onClick: () => isOpen.value = true,
+}]);
 
 async function confirmDelete() {
   try {
@@ -36,7 +43,7 @@ async function confirmDelete() {
       method: "DELETE",
     });
 
-    await navigateTo("/dashboard");
+    await navigateTo("/dashboard/locations");
   }
   catch (e) {
     const error = e as FetchError;
@@ -45,16 +52,15 @@ async function confirmDelete() {
 
   isDeleting.value = false;
 }
-
-onBeforeRouteUpdate((to) => {
-  if (to.name === "dashboard-locations-slug") {
-    locationStore.refreshCurrentLocation();
-  }
-});
 </script>
 
 <template>
   <div class="p-4">
+    <BackLink
+      v-if="route.name === 'dashboard-locations-slug'"
+      to="/dashboard/locations"
+      label="Locations"
+    />
     <div v-if="loading">
       <div class="loading" />
     </div>
@@ -65,41 +71,22 @@ onBeforeRouteUpdate((to) => {
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-locations-slug' && location && !loading">
-      <h1 class="text-2xl font-semibold mb-4 flex items-start gap-4">
-        {{ location.name }}
-        <div class="dropdown dropdown-bottom dropdown-end">
-          <div
-            tabindex="0"
-            role="button"
-            class="btn m-1 btn-sm btn-accent p-0"
-          >
-            <Icon name="tabler:dots-vertical" size="20" />
-          </div>
-          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm font-normal">
-            <li>
-              <NuxtLink
-                :to="{
-                  name: 'dashboard-locations-slug-edit',
-                  params: { slug: route.params.slug },
-                }"
-              >
-                <Icon name="tabler:map-pin-cog" size="20" />
-                Edit Location
-              </NuxtLink>
-            </li>
-            <li class="text-error">
-              <NuxtLink @click="openDialog">
-                <Icon name="tabler:map-pin-x" size="20" />
-                Delete Location
-              </NuxtLink>
-            </li>
-          </ul>
-        </div>
-      </h1>
+      <PageHeadingMenu :title="location.name" :items="menuItems">
+        <template #icon>
+          <Icon
+            :name="location.type?.icon || DEFAULT_LOCATION_ICON"
+            size="28"
+            class="text-accent shrink-0 mt-1"
+          />
+        </template>
+      </PageHeadingMenu>
+      <p v-if="location.type" class="badge badge-primary badge-sm mb-2">
+        {{ location.type.name }}
+      </p>
       <p class="text-sm mb-4">
         {{ location.description }}
       </p>
-      <div v-if="!location.locationLogs.length" class="flex flex-col gap-4">
+      <div v-if="!location.logs.length" class="flex flex-col gap-4">
         <p class="text-sm italic">
           Add a location log to get started.
         </p>
@@ -115,11 +102,11 @@ onBeforeRouteUpdate((to) => {
         </NuxtLink>
       </div>
     </div>
-    <div v-if="route.name === 'dashboard-locations-slug' && !loading && location?.locationLogs.length" class="flex flex-col flex-nowrap gap-4 align-items-stretch">
-      <LocationCard
-        v-for="log in location.locationLogs"
+    <div v-if="route.name === 'dashboard-locations-slug' && !loading && location?.logs.length" class="flex flex-col flex-nowrap gap-4 align-items-stretch">
+      <MapPointCard
+        v-for="log in location.logs"
         :key="log.id"
-        :map-point="createMapPointFromLocationLog(log)"
+        :map-point="createMapPointFromLocationLog(log, location)"
       >
         <template #top>
           <p class="text-xs opacity-50">
@@ -130,7 +117,7 @@ onBeforeRouteUpdate((to) => {
             </span>
           </p>
         </template>
-      </LocationCard>
+      </MapPointCard>
     </div>
     <div v-if="route.name !== 'dashboard-locations-slug'">
       <NuxtPage />

@@ -11,18 +11,30 @@ const props = defineProps<{
   zoom?: number;
 }>();
 
-const initialValues = {
+const values = props.initialValues || {
   name: "",
   description: "",
+  typeId: null,
   long: (CENTER_MAP as [number, number])[0],
   lat: (CENTER_MAP as [number, number])[1],
 };
+
+const { locationTypes } = storeToRefs(useLocationTypesStore());
+
+const typeOptions = computed(() => locationTypes.value?.map(type => ({
+  value: type.id,
+  label: type.name,
+})) ?? []);
+
+function findTypeIcon(typeId: unknown) {
+  return locationTypes.value?.find(type => type.id === typeId)?.icon;
+}
 </script>
 
 <template>
   <BaseForm
     v-slot="{ errors, loading }"
-    :initial-values="props.initialValues || initialValues"
+    :initial-values="values"
     :schema="InsertLocation"
     :on-submit
     :on-submit-complete
@@ -42,11 +54,28 @@ const initialValues = {
       :error="errors.description"
       :disabled="loading"
     />
+    <AppSelectFormField
+      label="Type"
+      name="typeId"
+      empty-label="No type"
+      :options="typeOptions"
+      :error="errors.typeId"
+      :disabled="loading"
+    >
+      <template #prefix="{ value }">
+        <Icon
+          :name="findTypeIcon(value) || DEFAULT_LOCATION_ICON"
+          size="24"
+          class="text-primary shrink-0"
+        />
+      </template>
+    </AppSelectFormField>
     <CoordPicker
-      :initial-values="initialValues"
+      :initial-values="values"
       :errors="errors"
       :loading="loading"
       :zoom="props.zoom || 6"
+      :get-icon="formValues => findTypeIcon(formValues.typeId)"
     />
   </BaseForm>
 </template>

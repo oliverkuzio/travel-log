@@ -1,9 +1,6 @@
-import type { SelectTrip } from "~/lib/db/schema";
-import type { MapPoint, SidebarItem } from "~/lib/types";
+import type { SelectTripWithLogs } from "~/lib/db/schema";
 
-import { CURRENT_PAGES } from "~/lib/constants";
-
-export const useTripsStore = defineStore("useLocationSotre", () => {
+export const useTripsStore = defineStore("useTripsStore", () => {
   const route = useRoute();
 
   const {
@@ -13,6 +10,7 @@ export const useTripsStore = defineStore("useLocationSotre", () => {
   } = useFetch("/api/trips", {
     key: "trips",
     lazy: true,
+    immediate: false,
   });
 
   const tripUrlWithSlug = computed(() => `/api/trips/${route.params.slug}`);
@@ -20,40 +18,13 @@ export const useTripsStore = defineStore("useLocationSotre", () => {
   const {
     data: currentTrip,
     status: currentTripStatus,
-    // error: currentTripError,
+    error: currentTripError,
     refresh: refreshCurrentTrip,
-  } = useFetch<SelectTrip>(tripUrlWithSlug, {
+  } = useFetch<SelectTripWithLogs>(tripUrlWithSlug, {
     key: "current-trip",
     lazy: true,
     immediate: false,
     watch: false,
-  });
-
-  const sidebarStore = useSidebarStore();
-  const mapStore = useMapStore();
-
-  effect(() => {
-    if (trips.value && !CURRENT_PAGES.has(route.name?.toString() || "")) {
-      const mapPoints: MapPoint[] = [];
-      const sidebarItems: SidebarItem[] = [];
-
-      trips.value.forEach((trip) => {
-        const mapPoint = createMapPointFromTrip(trip);
-
-        sidebarItems.push({
-          id: `trip-${trip.id}`,
-          label: trip.name,
-          icon: "tabler:map",
-          to: { name: "dashboard-trips-slug", params: { slug: trip.slug } },
-          mapPoint,
-        });
-
-        mapPoints.push(mapPoint);
-      });
-
-      sidebarStore.sidebarSubItems = sidebarItems;
-      mapStore.mapPoints = mapPoints;
-    }
   });
 
   return {
@@ -62,6 +33,7 @@ export const useTripsStore = defineStore("useLocationSotre", () => {
     refreshTrips,
     currentTrip,
     currentTripStatus,
+    currentTripError,
     refreshCurrentTrip,
   };
 });

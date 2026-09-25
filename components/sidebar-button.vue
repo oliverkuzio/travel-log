@@ -1,16 +1,33 @@
 <script lang="ts" setup>
 import type { RouteLocationRaw } from "vue-router";
 
+import type { PointColors } from "~/utils/map-points";
+
 const props = defineProps<{
   label: string;
   icon: string;
   href?: string;
   to?: RouteLocationRaw;
   showLabel: boolean;
-  iconColor?: "text-accent" | "text-primary" | "text-secondary";
+  iconColor?: string;
+  // When set, the icon is drawn inside a map pin in these colours.
+  pinColors?: PointColors;
+  // The icon inside the pin; omitted for a plain pin (e.g. a location with no type).
+  pinIcon?: string | null;
+  // Also treat nested routes (e.g. /dashboard/trips/my-trip for /dashboard/trips) as active.
+  matchPrefix?: boolean;
 }>();
 
 const route = useRoute();
+
+const isActive = computed(() => {
+  if (!props.href) {
+    return false;
+  }
+
+  return route.path === props.href
+    || (props.matchPrefix && route.path.startsWith(`${props.href}/`));
+});
 </script>
 
 <template>
@@ -22,10 +39,18 @@ const route = useRoute();
     >
       <NuxtLink
         :to="props.href || props.to"
-        :class="{ 'bg-base-200': route.path === props.href, 'justify-center': !showLabel, 'justify-start': showLabel }"
+        :class="{ 'bg-base-200': isActive, 'justify-center': !showLabel, 'justify-start': showLabel }"
         class="flex gap-2 p-2 text-sm hover:bg-base-300 hover:cursor-pointer flex-nowrap"
       >
+        <MapPin
+          v-if="props.pinColors"
+          :colors="props.pinColors"
+          :icon="props.pinIcon"
+          :size="24"
+          class="shrink-0"
+        />
         <Icon
+          v-else
           :name="props.icon"
           size="24"
           :class="iconColor"

@@ -1,12 +1,15 @@
 import type { LngLatBounds } from "maplibre-gl";
 
-import type { MapPoint } from "~/lib/types";
+import type { CardPoint, MapPoint } from "~/lib/types";
 
 import { CENTER_MAP } from "~/lib/constants";
 
 export const useMapStore = defineStore("useMapStore", () => {
   const mapPoints = ref<MapPoint[]>([]);
-  const selectedPoint = ref<MapPoint | null>(null);
+  const selectedPoint = ref<CardPoint | null>(null);
+  // The point for the record currently being viewed, which stays highlighted when not hovering.
+  const lockedPoint = ref<CardPoint | null>(null);
+  const activePoint = computed(() => selectedPoint.value ?? lockedPoint.value);
   const addedPoint = ref<MapPoint & { centerMap?: boolean; zoom?: number } | null>(null);
 
   async function init() {
@@ -59,5 +62,7 @@ export const useMapStore = defineStore("useMapStore", () => {
     mapPoints,
     addedPoint,
     selectedPoint,
+    lockedPoint,
+    activePoint,
   };
 });

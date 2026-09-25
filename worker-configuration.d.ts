@@ -2,9 +2,9 @@
 // After adding bindings to `wrangler.jsonc`, regenerate this interface via `npm run cf-typegen`
 type Env = {
   // D1 database binding
-  travel_log_database: D1Database;
+  DB: D1Database;
   // R2 bucket binding
-  travel_log_bucket: R2Bucket;
+  BUCKET: R2Bucket;
   // Vars (wrangler.jsonc → vars)
   GITHUB_CLIENT_ID: string;
   BETTER_AUTH_URL: string;

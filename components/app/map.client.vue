@@ -45,43 +45,48 @@ onMounted(() => {
     >
       <template #marker>
         <div
-          class="tooltip tooltip-top tooltip-open hover:cursor-pointer"
+          class="tooltip tooltip-top tooltip-open tooltip-accent hover:cursor-pointer"
           data-tip="Drag to desired location."
         >
-          <Icon
-            name="tabler:map-pin-filled"
-            size="48"
-            class="text-accent"
+          <MapPin
+            :colors="getPointColors('location', true)"
+            :icon="mapStore.addedPoint.icon"
+            :size="48"
           />
         </div>
       </template>
     </MglMarker>
     <MglMarker
       v-for="point in mapStore.mapPoints"
-      :key="point.id"
+      :key="`${point.kind}-${point.id}`"
       :coordinates="[point.long, point.lat]"
+      :class-name="isPointSelected(point, mapStore.activePoint) ? 'z-40' : undefined"
     >
       <template #marker>
         <div
           class="tooltip tooltip-top hover:cursor-pointer"
           :data-tip="point.name"
-          :class="{
-            'tooltip-open': isPointSelected(point, mapStore.selectedPoint),
-            'tooltip-primary': isPointSelected(point, mapStore.selectedPoint),
-            'tooltip-secondary': !isPointSelected(point, mapStore.selectedPoint),
-          }"
+          :class="[
+            getPointColors(point.kind, isPointSelected(point, mapStore.activePoint)).tooltip,
+            { 'tooltip-open': isPointSelected(point, mapStore.activePoint) },
+          ]"
           @mouseenter="mapStore.selectedPoint = point"
           @mouseleave="mapStore.selectedPoint = null"
         >
-          <Icon
-            name="tabler:map-pin-filled"
-            size="32"
-            :class="isPointSelected(point, mapStore.selectedPoint) ? 'text-primary' : 'text-secondary'"
+          <MapPin
+            :colors="getPointColors(point.kind, isPointSelected(point, mapStore.activePoint))"
+            :icon="point.icon"
           />
         </div>
       </template>
       <MglPopup>
-        <h3 class="text-base font-semibold me-3 mb-3">
+        <h3 class="text-base font-semibold me-3 mb-3 flex items-center gap-2">
+          <Icon
+            v-if="point.icon"
+            :name="point.icon"
+            size="20"
+            :class="getPointColors(point.kind).text"
+          />
           {{ point.name }}
         </h3>
         <p v-if="point.description" class="mb-4">
@@ -91,7 +96,8 @@ onMounted(() => {
           <NuxtLink
             v-if="point.to"
             :to="point.to"
-            class="btn btn-sm btn-primary"
+            class="btn btn-sm"
+            :class="getPointColors(point.kind).btn"
           >
             {{ point.toLabel }}
           </NuxtLink>

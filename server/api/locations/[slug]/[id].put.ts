@@ -3,6 +3,7 @@ import { z } from "zod";
 import { findLocation } from "~/lib/db/queries/location";
 import { updateLocationLog } from "~/lib/db/queries/location-log";
 import { InsertLocationLog } from "~/lib/db/schema";
+import { assertTripOwned } from "~/utils/assert-references";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
 import sendZodError from "~/utils/send-zod-error";
 
@@ -15,6 +16,8 @@ export default defineAuthenticatedEventHandler(async (event) => {
   if (!result.success) {
     return sendZodError(event, result.error);
   }
+
+  await assertTripOwned(event.context.db, result.data.tripId, event.context.user.id);
 
   const location = await findLocation(event.context.db, slug, event.context.user.id);
 

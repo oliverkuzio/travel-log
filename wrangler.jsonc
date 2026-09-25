@@ -36,7 +36,7 @@
    */
   "d1_databases": [
     {
-      "binding": "travel_log_database",
+      "binding": "DB",
       "database_name": "travel-log",
       "database_id": "3b9e3acb-8bc6-4ec8-90f9-ffbf3c9eaa71",
       "migrations_dir": "./lib/db/migrations"
@@ -44,7 +44,7 @@
   ],
   "r2_buckets": [
     {
-      "binding": "travel_log_bucket", // <~ valid JavaScript variable name
+      "binding": "BUCKET", // <~ valid JavaScript variable name
       "bucket_name": "travel-log",
       "jurisdiction": "eu"
     }

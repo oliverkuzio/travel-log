@@ -30,6 +30,10 @@ function submitComplete() {
 
 <template>
   <div>
+    <BackLink
+      :to="{ name: 'dashboard-locations-slug-id', params: { slug: route.params.slug, id: route.params.id } }"
+      :label="locationLog?.name"
+    />
     <h1 class="text-2xl font-semibold mb-4">
       Edit Location Log
     </h1>
@@ -37,7 +41,14 @@ function submitComplete() {
       v-if="status !== 'pending' && locationLog"
       :on-submit="onSubmit"
       :on-submit-complete="submitComplete"
-      :initial-values="locationLog"
+      :initial-values="{
+        name: locationLog.name,
+        description: locationLog.description,
+        startedAt: locationLog.startedAt,
+        endedAt: locationLog.endedAt,
+        tripId: locationLog.tripId,
+      }"
+      select-trip
       submit-label="Update"
       submit-icon="tabler:calendar-up"
     />

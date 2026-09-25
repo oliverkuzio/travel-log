@@ -23,7 +23,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
   const deleted = await deleteLocationLogImage(event.context.db, Number(imageId), event.context.user.id);
 
   if (deleted) {
-    await event.context.cloudflare.env.travel_log_bucket.delete(deleted.key);
+    await event.context.cloudflare.env.BUCKET.delete(deleted.key);
   }
 
   setResponseStatus(event, 204);

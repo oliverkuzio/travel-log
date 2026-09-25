@@ -13,6 +13,7 @@ export async function findLocationLog(db: AppDatabase, locationLogId: number, us
       eq(locationLog.userId, userId),
     ),
     with: {
+      trip: true,
       images: {
         orderBy(fields, operators) {
           return operators.desc(fields.createdAt);

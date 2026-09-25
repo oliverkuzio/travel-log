@@ -1,20 +1,5 @@
 <script lang="ts" setup>
-import { CURRENT_LOCATION_LOG_PAGES, CURRENT_LOCATION_PAGES, CURRENT_PAGES } from "~/lib/constants";
-
-const route = useRoute();
-const locationsStore = useLocationsStore();
-
-if (!CURRENT_PAGES.has(route.name?.toString() || "")) {
-  await locationsStore.refreshLocations();
-}
-
-if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "") || CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
-  await locationsStore.refreshCurrentLocation();
-}
-
-if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
-  await locationsStore.refreshCurrentLocation();
-}
+await useDashboardView();
 </script>
 
 <template>

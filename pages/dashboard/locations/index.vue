@@ -1,10 +1,6 @@
 <script lang="ts" setup>
 const locationsStore = useLocationsStore();
 const { locations, locationsStatus: status } = storeToRefs(locationsStore);
-
-onMounted(() => {
-  locationsStore.refreshLocations();
-});
 </script>
 
 <template>
@@ -12,24 +8,26 @@ onMounted(() => {
     <h1 class="text-xl mb-4">
       Your locations
     </h1>
-    <div v-if="status === 'pending'">
-      <LoadingSpinner />
-    </div>
-    <div v-else-if="locations && locations.length > 0">
-      <div class="flex flex-col flex-nowrap gap-4 align-items-stretch">
-        <LocationCard
-          v-for="location in locations"
-          :key="location.id"
-          :map-point="createMapPointFromLocation(location)"
-        />
+    <div class="flex flex-col flex-nowrap gap-2 align-items-stretch">
+      <AddCard
+        label="Add new location"
+        icon="tabler:map-pin-plus"
+        to="/dashboard/locations/add"
+        kind="location"
+        compact
+      />
+      <div v-if="status === 'pending' && !locations">
+        <LoadingSpinner />
       </div>
-    </div>
-    <div v-else class="flex flex-col gap-4">
-      <p>Add a location to get started.</p>
-      <NuxtLink to="/dashboard/locations/add" class="btn btn-primary w-40">
-        Add Location
-        <Icon name="tabler:map-pin-plus" size="24" />
-      </NuxtLink>
+      <p v-else-if="!locations?.length" class="text-sm italic">
+        Add a location to get started.
+      </p>
+      <MapPointCard
+        v-for="location in locations"
+        :key="location.id"
+        :map-point="createMapPointFromLocation(location)"
+        compact
+      />
     </div>
   </div>
 </template>

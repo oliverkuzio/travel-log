@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 
 import type { AppDatabase } from "~/lib/db";
@@ -40,6 +40,10 @@ export async function deleteLocation(db: AppDatabase, slug: string, userId: numb
 export async function findLocations(db: AppDatabase, userId: number) {
   return db.query.location.findMany({
     where: eq(location.userId, userId),
+    orderBy: asc(location.name),
+    with: {
+      type: true,
+    },
   });
 }
 
@@ -50,12 +54,22 @@ export async function findLocation(db: AppDatabase, slug: string, userId: number
       eq(location.userId, userId),
     ),
     with: {
+      type: true,
       logs: {
         orderBy(fields, operators) {
           return operators.desc(fields.startedAt);
         },
       },
     },
+  });
+}
+
+export async function findLocationById(db: AppDatabase, id: number, userId: number) {
+  return db.query.location.findFirst({
+    where: and(
+      eq(location.id, id),
+      eq(location.userId, userId),
+    ),
   });
 }
 

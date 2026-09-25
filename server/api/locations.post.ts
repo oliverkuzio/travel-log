@@ -4,6 +4,7 @@ import slugify from "slug";
 
 import { findLocationByName, findUniqueSlug, insertLocation } from "~/lib/db/queries/location";
 import { InsertLocation } from "~/lib/db/schema";
+import { assertLocationTypeExists } from "~/utils/assert-references";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
 import sendZodError from "~/utils/send-zod-error";
 
@@ -13,6 +14,8 @@ export default defineAuthenticatedEventHandler(async (event) => {
   if (!result.success) {
     return sendZodError(event, result.error);
   }
+
+  await assertLocationTypeExists(event.context.db, result.data.typeId);
 
   const existingLocation = await findLocationByName(event.context.db, result.data, event.context.user.id);
 
@@ -26,7 +29,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
   const slug = await findUniqueSlug(event.context.db, slugify(result.data.name));
 
   try {
-    return insertLocation(event.context.db, result.data, slug, event.context.user.id);
+    return await insertLocation(event.context.db, result.data, slug, event.context.user.id);
   }
   catch (e) {
     const error = e as DrizzleError;

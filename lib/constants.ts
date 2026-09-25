@@ -2,6 +2,35 @@ import type { LngLatLike } from "maplibre-gl";
 
 export const CENTER_MAP = [0, 0] as LngLatLike;
 
+export const DASHBOARD_PAGES = new Set([
+  "dashboard",
+]);
+
+export const TRIPS_LIST_PAGES = new Set([
+  "dashboard-trips",
+  "dashboard-trips-add",
+]);
+
+export const LOCATIONS_LIST_PAGES = new Set([
+  "dashboard-locations",
+  "dashboard-locations-add",
+]);
+
+export const LOCATION_TYPE_PAGES = new Set([
+  "dashboard-types",
+  "dashboard-types-add",
+  "dashboard-types-slug-edit",
+]);
+
+export const EDIT_PAGES = new Set([
+  "dashboard-locations-slug-edit",
+]);
+
+export const TRIP_SELECT_PAGES = new Set([
+  "dashboard-locations-slug-add",
+  "dashboard-locations-slug-id-edit",
+]);
+
 export const CURRENT_TRIP_PAGES = new Set([
   "dashboard-trips-slug",
   "dashboard-trips-slug-add",

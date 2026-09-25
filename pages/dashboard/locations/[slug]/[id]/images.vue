@@ -129,7 +129,11 @@ async function confirmDelete() {
 </script>
 
 <template>
-  <div class="p-4">
+  <div>
+    <BackLink
+      :to="{ name: 'dashboard-locations-slug-id', params: { slug: route.params.slug, id: route.params.id } }"
+      :label="locationLog?.name"
+    />
     <div v-if="loading">
       <div class="loading" />
     </div>

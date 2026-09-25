@@ -1,11 +1,11 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 
 import type { AppDatabase } from "~/lib/db";
 
 import type { InsertTrip } from "../schema/trip";
 
-import { trip } from "../schema";
+import { locationLog, trip } from "../schema";
 
 const nanoid = customAlphabet("1234567890", 5);
 
@@ -29,17 +29,45 @@ export async function updateTrip(db: AppDatabase, updates: InsertTrip, slug: str
 }
 
 export async function deleteTrip(db: AppDatabase, slug: string, userId: number) {
-  const [deleted] = await db.delete(trip).where(and(
-    eq(trip.slug, slug),
-    eq(trip.userId, userId),
-  )).returning();
+  const existing = await db.query.trip.findFirst({
+    where: and(
+      eq(trip.slug, slug),
+      eq(trip.userId, userId),
+    ),
+  });
+
+  if (!existing) {
+    return undefined;
+  }
+
+  // Location logs belong to their location, not the trip, so detach rather than delete them.
+  // This is done here as well as via the FK because the live `trip_id` FK has no ON DELETE action.
+  const [, [deleted]] = await db.batch([
+    db.update(locationLog).set({ tripId: null }).where(eq(locationLog.tripId, existing.id)),
+    db.delete(trip).where(eq(trip.id, existing.id)).returning(),
+  ]);
 
   return deleted;
 }
 
+const logsWithLocation = {
+  with: {
+    location: {
+      with: {
+        type: true,
+      },
+    },
+  },
+  orderBy: desc(locationLog.startedAt),
+} as const;
+
 export async function findTrips(db: AppDatabase, userId: number) {
   return db.query.trip.findMany({
     where: eq(trip.userId, userId),
+    orderBy: desc(trip.startedAt),
+    with: {
+      logs: logsWithLocation,
+    },
   });
 }
 
@@ -50,12 +78,17 @@ export async function findTrip(db: AppDatabase, slug: string, userId: number) {
       eq(trip.userId, userId),
     ),
     with: {
-      logs: {
-        orderBy(fields, operators) {
-          return operators.desc(fields.startedAt);
-        },
-      },
+      logs: logsWithLocation,
     },
+  });
+}
+
+export async function findTripById(db: AppDatabase, id: number, userId: number) {
+  return db.query.trip.findFirst({
+    where: and(
+      eq(trip.id, id),
+      eq(trip.userId, userId),
+    ),
   });
 }
 

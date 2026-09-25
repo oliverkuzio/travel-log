@@ -26,7 +26,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
   const slug = await findUniqueSlug(event.context.db, slugify(result.data.name));
 
   try {
-    return insertTrip(event.context.db, result.data, slug, event.context.user.id);
+    return await insertTrip(event.context.db, result.data, slug, event.context.user.id);
   }
   catch (e) {
     const error = e as DrizzleError;
