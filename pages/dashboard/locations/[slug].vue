@@ -76,11 +76,12 @@ async function confirmDelete() {
           <Icon
             :name="location.type?.icon || DEFAULT_LOCATION_ICON"
             size="28"
-            class="text-accent shrink-0 mt-1"
+            class="shrink-0 mt-1"
+            :class="getPointColors('location', true).text"
           />
         </template>
       </PageHeadingMenu>
-      <p v-if="location.type" class="badge badge-primary badge-sm mb-2">
+      <p v-if="location.type" class="badge badge-neutral badge-sm mb-2">
         {{ location.type.name }}
       </p>
       <p class="text-sm mb-4">

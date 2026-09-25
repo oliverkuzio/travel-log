@@ -91,7 +91,7 @@ onBeforeRouteLeave(() => {
       <Icon
         name="tabler:map-pin-filled"
         size="12"
-        class="text-accent"
+        :class="getPointColors('location', true).text"
       />
       marker on the map,
     </li>

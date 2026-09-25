@@ -21,14 +21,14 @@ const mainItems = computed(() => {
     label: "Trips",
     href: "/dashboard/trips",
     icon: TRIP_ICON,
-    iconColor: getPointColors("trip").text,
+    // iconColor: getPointColors("trip").text,
     matchPrefix: true,
   }, {
     id: "link-dashboard-locations",
     label: "Locations",
     href: "/dashboard/locations",
     icon: "tabler:map-pins",
-    iconColor: getPointColors("location").text,
+    // iconColor: getPointColors("location").text,
     matchPrefix: true,
   }];
 

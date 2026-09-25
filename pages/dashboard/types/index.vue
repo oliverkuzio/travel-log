@@ -65,7 +65,8 @@ async function confirmDelete() {
           <Icon
             :name="locationType.icon"
             size="20"
-            class="text-primary shrink-0"
+            class="shrink-0"
+            :class="getPointColors('location').text"
           />
           <span class="flex-1 text-sm font-medium truncate">{{ locationType.name }}</span>
           <NuxtLink

@@ -32,12 +32,16 @@ const mappedTrips = computed(() => trips.value?.filter(trip => getTripCoords(tri
           </div>
         </div>
       </NuxtLink>
-      <NuxtLink to="/dashboard/locations" class="card card-sm card-border bg-base-100 border-l-4 border-primary">
+      <NuxtLink
+        to="/dashboard/locations"
+        class="card card-sm card-border bg-base-100 border-l-4"
+        :class="getPointColors('location').border"
+      >
         <div class="card-body flex-row items-center gap-3">
           <Icon
             name="tabler:map-pins"
             size="32"
-            class="text-primary"
+            :class="getPointColors('location').text"
           />
           <h2 class="text-lg">
             {{ locations?.length ?? 0 }} {{ locations?.length === 1 ? "location" : "locations" }}

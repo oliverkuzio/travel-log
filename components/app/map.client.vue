@@ -45,7 +45,8 @@ onMounted(() => {
     >
       <template #marker>
         <div
-          class="tooltip tooltip-top tooltip-open tooltip-accent hover:cursor-pointer"
+          class="tooltip tooltip-top tooltip-open hover:cursor-pointer"
+          :class="getPointColors('location', true).tooltip"
           data-tip="Drag to desired location."
         >
           <MapPin

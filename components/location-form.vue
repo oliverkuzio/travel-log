@@ -66,7 +66,8 @@ function findTypeIcon(typeId: unknown) {
         <Icon
           :name="findTypeIcon(value) || DEFAULT_LOCATION_ICON"
           size="24"
-          class="text-primary shrink-0"
+          class="shrink-0"
+          :class="getPointColors('location').text"
         />
       </template>
     </AppSelectFormField>

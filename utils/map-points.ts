@@ -86,12 +86,12 @@ export function isPointSelected(item: Pick<CardPoint, "id" | "kind"> | null | un
 // Full class names are listed so Tailwind can detect them.
 const POINT_COLORS = {
   location: {
-    text: "text-primary",
-    content: "text-primary-content",
-    bg: "bg-primary",
-    border: "border-primary",
-    tooltip: "tooltip-primary",
-    btn: "btn-primary",
+    text: "text-neutral",
+    content: "text-neutral-content",
+    bg: "bg-neutral",
+    border: "border-neutral",
+    tooltip: "tooltip-neutral",
+    btn: "btn-neutral",
   },
   trip: {
     text: "text-secondary",
@@ -102,20 +102,20 @@ const POINT_COLORS = {
     btn: "btn-secondary",
   },
   selected: {
-    text: "text-accent",
-    content: "text-accent-content",
-    bg: "bg-accent",
-    border: "border-accent",
-    tooltip: "tooltip-accent",
-    btn: "btn-accent",
+    text: "text-primary",
+    content: "text-primary-content",
+    bg: "bg-primary",
+    border: "border-primary",
+    tooltip: "tooltip-primary",
+    btn: "btn-primary",
   },
 } as const;
 
 export type PointColors = (typeof POINT_COLORS)[keyof typeof POINT_COLORS];
 
 /**
- * Locations use the primary colour, trips the secondary colour, and the currently selected
- * (hovered, viewed or edited) point uses the accent colour.
+ * Locations use the neutral colour, trips the secondary colour, and the currently selected
+ * (hovered, viewed or edited) point uses the primary colour.
  */
 export function getPointColors(kind: MapPointKind, selected = false): PointColors {
   return selected ? POINT_COLORS.selected : POINT_COLORS[kind];
