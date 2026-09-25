@@ -6,7 +6,7 @@ const STYLES: Record<string, typeof darkStyle | typeof lightStyle> = {
   light: lightStyle,
 };
 
-const PLACEHOLDER = "get_your_own_OpIi9ZULNHzrESv6T2vL";
+const PLACEHOLDER = "get_your_own_key";
 
 export default defineEventHandler((event) => {
   const theme = getRouterParam(event, "theme") ?? "light";
@@ -14,6 +14,9 @@ export default defineEventHandler((event) => {
 
   const { env } = event.context.cloudflare;
   const key = env.MAPTILER_API_KEY;
+  if (!key) {
+    throw createError({ statusCode: 500, statusMessage: "MAPTILER_API_KEY is not configured" });
+  }
 
   const styleWithKey = JSON.parse(
     JSON.stringify(style).replaceAll(PLACEHOLDER, key),

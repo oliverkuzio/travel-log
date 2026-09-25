@@ -6,7 +6,7 @@ import { CENTER_MAP } from "~/lib/constants";
 
 const mapStore = useMapStore();
 const colorMode = useColorMode();
-const style = computed(() => `/styles/${colorMode.value}.json`);
+const style = computed(() => `/api/styles/${colorMode.value}`);
 const zoom = 3;
 
 function updateAddedPoint(location: LngLat) {
