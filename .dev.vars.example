@@ -1,9 +1,18 @@
-# Local development secrets for Wrangler / Cloudflare Workers
-# These mirror the secrets uploaded to Cloudflare via `wrangler secret put <NAME>`
-AUTH_GITHUB_CLIENT_ID=
-AUTH_GITHUB_CLIENT_SECRET=
-BETTER_AUTH_URL=
+# Wrangler-style local secrets, proxied into `platform.env` during `vite dev` / `wrangler dev`.
+# Copy to `.dev.vars` (untracked) and fill in real values.
+# For production, set these with `wrangler secret put <NAME>` instead of committing them.
+
+# Random string used to sign session tokens/cookies, e.g. `openssl rand -base64 32`.
 BETTER_AUTH_SECRET=
+
+# Overrides the production BETTER_AUTH_URL set in wrangler.jsonc's `vars`.
+BETTER_AUTH_URL=http://localhost:5173
+
+# GitHub OAuth App credentials: https://github.com/settings/developers
+# Authorization callback URL: <origin>/api/auth/callback/github
+# (http://localhost:5173/api/auth/callback/github for local dev)
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# MapTiler API for map visualisation
 MAPTILER_API_KEY=
-S3_ACCESS_SECRET=
-VITE_SENTRY_DSN=

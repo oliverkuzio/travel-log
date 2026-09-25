@@ -10,7 +10,7 @@ export type UserWithId = Omit<User, "id"> & {
   id: number;
 };
 
-type AuthEnv = Pick<Env, "AUTH_GITHUB_CLIENT_ID" | "AUTH_GITHUB_CLIENT_SECRET" | "BETTER_AUTH_URL" | "BETTER_AUTH_SECRET">;
+type AuthEnv = Pick<Env, "GITHUB_CLIENT_ID" | "GITHUB_CLIENT_SECRET" | "BETTER_AUTH_URL" | "BETTER_AUTH_SECRET">;
 
 export function createAuth(db: AppDatabase, env: AuthEnv) {
   return betterAuth({
@@ -32,8 +32,8 @@ export function createAuth(db: AppDatabase, env: AuthEnv) {
     }),
     socialProviders: {
       github: {
-        clientId: env.AUTH_GITHUB_CLIENT_ID,
-        clientSecret: env.AUTH_GITHUB_CLIENT_SECRET,
+        clientId: env.GITHUB_CLIENT_ID,
+        clientSecret: env.GITHUB_CLIENT_SECRET,
       },
     },
     secret: env.BETTER_AUTH_SECRET,

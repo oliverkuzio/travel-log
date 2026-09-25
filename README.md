@@ -25,15 +25,14 @@ Copy the example env file and fill in the values:
 cp .env.example .env
 ```
 
-| Variable                    | Description                                                                   |
-| --------------------------- | ----------------------------------------------------------------------------- |
-| `NODE_ENV`                  | Set to `development` locally                                                  |
-| `NUXT_PUBLIC_S3_BUCKET_URL` | Public URL of the R2 bucket (also set in `wrangler.jsonc`)                    |
-| `CLOUDFLARE_ACCOUNT_ID`     | Your Cloudflare account ID (needed for `drizzle-kit` only)                    |
-| `CLOUDFLARE_DATABASE_ID`    | D1 database ID (needed for `drizzle-kit` only)                                |
-| `CLOUDFLARE_D1_TOKEN`       | Cloudflare API token with D1 edit permissions (needed for `drizzle-kit` only) |
-| `SENTRY_ORG`                | Sentry organisation slug (build-time source maps upload)                      |
-| `SENTRY_PROJECT`            | Sentry project slug                                                           |
+| Variable                 | Description                                                                   |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| `NODE_ENV`               | Set to `development` locally                                                  |
+| `CLOUDFLARE_ACCOUNT_ID`  | Your Cloudflare account ID (needed for `drizzle-kit` only)                    |
+| `CLOUDFLARE_DATABASE_ID` | D1 database ID (needed for `drizzle-kit` only)                                |
+| `CLOUDFLARE_D1_TOKEN`    | Cloudflare API token with D1 edit permissions (needed for `drizzle-kit` only) |
+| `SENTRY_ORG`             | Sentry organisation slug (build-time source maps upload)                      |
+| `SENTRY_PROJECT`         | Sentry project slug                                                           |
 
 ### 3. Local secrets (`.dev.vars`)
 
@@ -46,11 +45,10 @@ touch .dev.vars
 Add the following secrets (never commit this file):
 
 ```ini
-AUTH_GITHUB_CLIENT_ID=        # GitHub OAuth App client ID (use a dev app)
-AUTH_GITHUB_CLIENT_SECRET=    # GitHub OAuth App client secret
+GITHUB_CLIENT_ID=        # GitHub OAuth App client ID (use a dev app)
+GITHUB_CLIENT_SECRET=    # GitHub OAuth App client secret
 BETTER_AUTH_SECRET=           # Random secret, e.g. `openssl rand -hex 32`
 BETTER_AUTH_URL=http://localhost:3000
-S3_ACCESS_SECRET=             # R2 API token secret
 VITE_SENTRY_DSN=              # Sentry DSN
 ```
 

@@ -6,19 +6,13 @@ type Env = {
   // R2 bucket binding
   travel_log_bucket: R2Bucket;
   // Vars (wrangler.jsonc → vars)
-  AUTH_GITHUB_CLIENT_ID: string;
+  GITHUB_CLIENT_ID: string;
   BETTER_AUTH_URL: string;
-  S3_ACCESS_KEY: string;
-  S3_BUCKET: string;
-  S3_BUCKET_URL: string;
-  S3_ENDPOINT: string;
-  S3_REGION: string;
   SENTRY_ORG: string;
   SENTRY_PROJECT: string;
   // Secrets (uploaded via `wrangler secret put`)
-  AUTH_GITHUB_CLIENT_SECRET: string;
+  GITHUB_CLIENT_SECRET: string;
   MAPTILER_API_KEY: string;
   BETTER_AUTH_SECRET: string;
-  S3_ACCESS_SECRET: string;
   VITE_SENTRY_DSN: string;
 };

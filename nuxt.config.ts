@@ -19,13 +19,6 @@ export default defineNuxtConfig({
 
   css: ["~/assets/css/main.css"],
 
-  runtimeConfig: {
-    public: {
-      // Override via NUXT_PUBLIC_S3_BUCKET_URL env var at build time
-      s3BucketUrl: "",
-    },
-  },
-
   nitro: {
     preset: "cloudflare_module",
 
