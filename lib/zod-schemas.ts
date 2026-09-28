@@ -24,6 +24,14 @@ export const GoogleMapsUrlSchema = z.preprocess(
     .regex(GOOGLE_MAPS_URL_REGEX, "Must be a Google Maps link, e.g. https://maps.app.goo.gl/...")
     .nullable(),
 );
+export const AddressSchema = z.preprocess(
+  value => typeof value === "string" && value.trim() === "" ? null : value,
+  z.string()
+    .trim()
+    .max(500)
+    .regex(/^[^\r\n]*$/, "Address must be a single line.")
+    .nullable(),
+);
 export const DateSchema = z.number({
   message: "Date is required",
 });

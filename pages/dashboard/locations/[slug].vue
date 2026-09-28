@@ -88,6 +88,14 @@ async function confirmDelete() {
       <p class="text-sm mb-4">
         {{ location.description }}
       </p>
+      <p v-if="location.address" class="flex items-center gap-1 text-sm mb-4">
+        <Icon
+          name="tabler:map-pin"
+          size="16"
+          class="shrink-0"
+        />
+        {{ location.address }}
+      </p>
       <a
         v-if="location.googleMapsUrl"
         class="btn btn-outline btn-sm mb-4"
