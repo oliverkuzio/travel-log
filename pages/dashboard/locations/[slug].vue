@@ -19,6 +19,24 @@ const isDeleting = ref(false);
 const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
 
+// Keep spaces as "+" and commas literal so the query reads like "Name,+Street,+City".
+function encodeMapsQueryPart(value: string) {
+  return encodeURIComponent(value).replace(/%20/g, "+").replace(/%2C/g, ",");
+}
+
+const googleMapsHref = computed(() => {
+  if (!location.value) {
+    return null;
+  }
+  if (location.value.googleMapsUrl) {
+    return location.value.googleMapsUrl;
+  }
+  if (location.value.address) {
+    return `https://maps.google.com/?q=${encodeMapsQueryPart(location.value.name)},+${encodeMapsQueryPart(location.value.address)}`;
+  }
+  return null;
+});
+
 const menuItems = computed<HeadingMenuItem[]>(() => [{
   label: "Edit Location",
   icon: "tabler:map-pin-cog",
@@ -97,9 +115,9 @@ async function confirmDelete() {
         {{ location.address }}
       </p>
       <a
-        v-if="location.googleMapsUrl"
+        v-if="googleMapsHref"
         class="btn btn-outline btn-sm mb-4"
-        :href="location.googleMapsUrl"
+        :href="googleMapsHref"
         target="_blank"
         rel="noopener noreferrer"
       >
