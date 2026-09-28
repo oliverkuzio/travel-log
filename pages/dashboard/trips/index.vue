@@ -2,6 +2,7 @@
 const tripsStore = useTripsStore();
 const { trips, filteredTrips, nameFilter, tripsStatus: status } = storeToRefs(tripsStore);
 
+const { formatDateRange } = useDateFormat();
 const tripNames = computed(() => trips.value?.map(trip => trip.name) ?? []);
 </script>
 
@@ -36,11 +37,7 @@ const tripNames = computed(() => trips.value?.map(trip => trip.name) ?? []);
       >
         <template #top>
           <p class="text-xs opacity-50">
-            {{ formatDate(trip.startedAt) }}
-            <span v-if="trip.startedAt !== trip.endedAt">
-              -
-              {{ formatDate(trip.endedAt) }}
-            </span>
+            {{ formatDateRange(trip.startedAt, trip.endedAt) }}
           </p>
         </template>
         <template #bottom>

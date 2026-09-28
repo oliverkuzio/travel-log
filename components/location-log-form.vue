@@ -19,11 +19,14 @@ const props = defineProps<{
   selectTrip?: boolean;
 }>();
 
+// The time input only goes down to minutes, so drop the seconds from the defaults.
+const now = Math.floor(Date.now() / 60_000) * 60_000;
+
 const values = props.initialValues || {
   name: "",
   description: "",
-  startedAt: Date.now() - (24 * 60 * 60 * 1000),
-  endedAt: Date.now(),
+  startedAt: now - (24 * 60 * 60 * 1000),
+  endedAt: now,
 };
 
 const schema: ZodSchema = props.selectLocation ? InsertTripLocationLog : InsertLocationLog;
@@ -78,6 +81,7 @@ const tripOptions = computed(() => trips.value?.map(trip => ({
       label="Started At"
       name="startedAt"
       :value="values.startedAt"
+      with-time
       :error="errors.startedAt"
       :disabled="loading"
     />
@@ -85,6 +89,7 @@ const tripOptions = computed(() => trips.value?.map(trip => ({
       label="Ended At"
       name="endedAt"
       :value="values.endedAt"
+      with-time
       :error="errors.endedAt"
       :disabled="loading"
     />

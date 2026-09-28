@@ -4,6 +4,7 @@ import type { FetchError } from "ofetch";
 import type { HeadingMenuItem } from "~/lib/types";
 
 const route = useRoute();
+const { formatDateRange } = useDateFormat();
 const locationStore = useLocationsStore();
 const {
   currentLocation: location,
@@ -111,11 +112,7 @@ async function confirmDelete() {
       >
         <template #top>
           <p class="text-xs opacity-50">
-            {{ formatDate(log.startedAt) }}
-            <span v-if="log.startedAt !== log.endedAt">
-              -
-              {{ formatDate(log.endedAt) }}
-            </span>
+            {{ formatDateRange(log.startedAt, log.endedAt, true) }}
           </p>
         </template>
       </MapPointCard>

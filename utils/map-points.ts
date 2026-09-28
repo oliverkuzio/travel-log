@@ -31,6 +31,7 @@ export function createMapPointFromLocationLog(log: SelectLocationLog, location: 
     ...createMapPointFromLocation(location),
     name: log.name,
     description: log.description,
+    dates: { startedAt: log.startedAt, endedAt: log.endedAt, withTime: true },
     to: { name: "dashboard-locations-slug-id", params: { slug: location.slug, id: log.id } },
   };
 }
@@ -66,6 +67,7 @@ export function createMapPointFromTrip(trip: SelectTripWithLogs): CardPoint {
     name: trip.name,
     description: trip.description,
     icon: TRIP_ICON,
+    dates: { startedAt: trip.startedAt, endedAt: trip.endedAt },
     ...getTripCoords(trip),
     to: { name: "dashboard-trips-slug", params: { slug: trip.slug } },
     toLabel: "View",

@@ -2,12 +2,19 @@
 import type { MglEvent } from "@indoorequal/vue-maplibre-gl";
 import type { LngLat } from "maplibre-gl";
 
+import type { CardPoint } from "~/lib/types";
+
 import { CENTER_MAP } from "~/lib/constants";
 
 const mapStore = useMapStore();
 const colorMode = useColorMode();
 const style = computed(() => `/api/styles/${colorMode.value}`);
 const zoom = 3;
+const { formatDateRange } = useDateFormat();
+
+function formatPointDates(dates: NonNullable<CardPoint["dates"]>) {
+  return formatDateRange(dates.startedAt, dates.endedAt, dates.withTime);
+}
 
 function updateAddedPoint(location: LngLat) {
   if (mapStore.addedPoint) {
@@ -66,7 +73,6 @@ onMounted(() => {
       <template #marker>
         <div
           class="tooltip tooltip-top hover:cursor-pointer"
-          :data-tip="point.name"
           :class="[
             getPointColors(point.kind, isPointSelected(point, mapStore.activePoint)).tooltip,
             { 'tooltip-open': isPointSelected(point, mapStore.activePoint) },
@@ -74,6 +80,12 @@ onMounted(() => {
           @mouseenter="mapStore.selectedPoint = point"
           @mouseleave="mapStore.selectedPoint = null"
         >
+          <div class="tooltip-content">
+            <div>{{ point.name }}</div>
+            <div v-if="point.dates" class="text-xs opacity-80">
+              {{ formatPointDates(point.dates) }}
+            </div>
+          </div>
           <MapPin
             :colors="getPointColors(point.kind, isPointSelected(point, mapStore.activePoint))"
             :icon="point.icon"
@@ -90,6 +102,9 @@ onMounted(() => {
           />
           {{ point.name }}
         </h3>
+        <p v-if="point.dates" class="text-xs opacity-60 -mt-2 mb-3">
+          {{ formatPointDates(point.dates) }}
+        </p>
         <p v-if="point.description" class="mb-4">
           {{ point.description }}
         </p>

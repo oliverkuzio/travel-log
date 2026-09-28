@@ -4,6 +4,7 @@ import type { FetchError } from "ofetch";
 import type { HeadingMenuItem } from "~/lib/types";
 
 const route = useRoute();
+const { formatDateRange } = useDateFormat();
 const locationStore = useLocationsStore();
 const {
   currentLocation: location,
@@ -77,11 +78,7 @@ async function confirmDelete() {
     />
     <div v-if="route.name === 'dashboard-locations-slug-id' && locationLog && !loading">
       <p class="text-xs opacity-50">
-        {{ formatDate(locationLog.startedAt) }}
-        <span v-if="locationLog.startedAt !== locationLog.endedAt">
-          -
-          {{ formatDate(locationLog.endedAt) }}
-        </span>
+        {{ formatDateRange(locationLog.startedAt, locationLog.endedAt, true) }}
       </p>
       <PageHeadingMenu :title="locationLog.name" :items="menuItems" />
       <NuxtLink
