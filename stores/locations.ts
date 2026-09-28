@@ -1,4 +1,4 @@
-import type { SelectLocationLogWithImages, SelectLocationWithLogs } from "~/lib/db/schema";
+import type { SelectLocationLogWithImages, SelectLocationType, SelectLocationWithLogs } from "~/lib/db/schema";
 
 export const useLocationsStore = defineStore("useLocationsStore", () => {
   const route = useRoute();
@@ -11,6 +11,31 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
     key: "locations",
     lazy: true,
     immediate: false,
+  });
+
+  const nameFilter = ref("");
+  const typeIdsFilter = ref<number[]>([]);
+
+  // The distinct types used by the user's locations, which are the only ones worth filtering by.
+  const locationTypesInUse = computed(() => {
+    const types = new Map<number, SelectLocationType>();
+
+    locations.value?.forEach((location) => {
+      if (location.type) {
+        types.set(location.type.id, location.type);
+      }
+    });
+
+    return [...types.values()].sort((a, b) => a.name.localeCompare(b.name));
+  });
+
+  const filteredLocations = computed(() => {
+    const typeIds = new Set(typeIdsFilter.value);
+
+    return locations.value?.filter(location =>
+      matchesNameFilter(location.name, nameFilter.value)
+      && (!typeIds.size || (location.typeId !== null && typeIds.has(location.typeId))),
+    );
   });
 
   const locationUrlWithSlug = computed(() => `/api/locations/${route.params.slug}`);
@@ -44,6 +69,10 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
     locations,
     locationsStatus,
     refreshLocations,
+    nameFilter,
+    typeIdsFilter,
+    locationTypesInUse,
+    filteredLocations,
     currentLocation,
     currentLocationStatus,
     currentLocationError,

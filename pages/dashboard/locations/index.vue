@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const locationsStore = useLocationsStore();
-const { locations, locationsStatus: status } = storeToRefs(locationsStore);
+const { locations, filteredLocations, locationsStatus: status } = storeToRefs(locationsStore);
 </script>
 
 <template>
@@ -22,8 +22,14 @@ const { locations, locationsStatus: status } = storeToRefs(locationsStore);
       <p v-else-if="!locations?.length" class="text-sm italic">
         Add a location to get started.
       </p>
+      <template v-else>
+        <LocationFilters />
+        <p v-if="!filteredLocations?.length" class="text-sm italic">
+          No locations match your filters.
+        </p>
+      </template>
       <MapPointCard
-        v-for="location in locations"
+        v-for="location in filteredLocations"
         :key="location.id"
         :map-point="createMapPointFromLocation(location)"
         compact

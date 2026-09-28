@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 const tripsStore = useTripsStore();
-const { trips, tripsStatus: status } = storeToRefs(tripsStore);
+const { trips, filteredTrips, nameFilter, tripsStatus: status } = storeToRefs(tripsStore);
+
+const tripNames = computed(() => trips.value?.map(trip => trip.name) ?? []);
 </script>
 
 <template>
@@ -21,8 +23,14 @@ const { trips, tripsStatus: status } = storeToRefs(tripsStore);
       <p v-else-if="!trips?.length" class="text-sm italic">
         Add a trip to get started.
       </p>
+      <template v-else>
+        <NameFilter v-model="nameFilter" :names="tripNames" />
+        <p v-if="!filteredTrips?.length" class="text-sm italic">
+          No trips match your filter.
+        </p>
+      </template>
       <MapPointCard
-        v-for="trip in trips"
+        v-for="trip in filteredTrips"
         :key="trip.id"
         :map-point="createMapPointFromTrip(trip)"
       >

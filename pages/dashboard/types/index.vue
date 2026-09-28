@@ -8,8 +8,10 @@ definePageMeta({
 });
 
 const locationTypesStore = useLocationTypesStore();
-const { locationTypes, locationTypesStatus: status } = storeToRefs(locationTypesStore);
+const { locationTypes, filteredLocationTypes, nameFilter, locationTypesStatus: status } = storeToRefs(locationTypesStore);
 const { $csrfFetch } = useNuxtApp();
+
+const locationTypeNames = computed(() => locationTypes.value?.map(locationType => locationType.name) ?? []);
 
 const deleting = ref<SelectLocationType | null>(null);
 const deleteError = ref("");
@@ -56,8 +58,14 @@ async function confirmDelete() {
       <div v-if="status === 'pending' && !locationTypes">
         <LoadingSpinner />
       </div>
+      <template v-else-if="locationTypes?.length">
+        <NameFilter v-model="nameFilter" :names="locationTypeNames" />
+        <p v-if="!filteredLocationTypes?.length" class="text-sm italic">
+          No location types match your filter.
+        </p>
+      </template>
       <div
-        v-for="locationType in locationTypes"
+        v-for="locationType in filteredLocationTypes"
         :key="locationType.id"
         class="card card-sm card-border bg-base-100 border-base-300"
       >
