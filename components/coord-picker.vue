@@ -17,13 +17,19 @@ const { setFieldValue, errors, values } = useFormContext();
 const mapStore = useMapStore();
 
 function searchResultSelected(result: NominatimResult) {
-  setFieldValue("name", result.display_name);
+  // display_name is "Name, rest, of, address" - split on the first comma only.
+  const commaIndex = result.display_name.indexOf(",");
+  const name = commaIndex === -1 ? result.display_name : result.display_name.slice(0, commaIndex);
+  const address = commaIndex === -1 ? null : result.display_name.slice(commaIndex + 1).trim() || null;
+
+  setFieldValue("name", name);
+  setFieldValue("address", address);
 
   if (mapStore.addedPoint) {
     mapStore.addedPoint = {
       id: 0,
       kind: "location",
-      name: result.display_name,
+      name,
       description: "",
       long: Number(result.lon),
       lat: Number(result.lat),
