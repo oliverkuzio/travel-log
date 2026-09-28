@@ -7,7 +7,7 @@ import { createInsertSchema } from "drizzle-zod";
 import type { SelectLocationLog } from "./location-log";
 import type { SelectLocationType } from "./location-type";
 
-import { DescriptionSchema, IdSchema, LatSchema, LongSchema, NameSchema } from "../../zod-schemas";
+import { DescriptionSchema, GoogleMapsUrlSchema, IdSchema, LatSchema, LongSchema, NameSchema } from "../../zod-schemas";
 import { user } from "./auth";
 import { locationLog } from "./location-log";
 import { locationType } from "./location-type";
@@ -17,6 +17,7 @@ export const location = sqliteTable("location", {
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text(),
+  googleMapsUrl: text(),
   lat: real().notNull(),
   long: real().notNull(),
   typeId: int().references(() => locationType.id, { onDelete: "set null" }),
@@ -38,6 +39,7 @@ export const locationRelations = relations(location, ({ one, many }) => ({
 export const InsertLocation = createInsertSchema(location, {
   name: NameSchema,
   description: DescriptionSchema,
+  googleMapsUrl: GoogleMapsUrlSchema.optional(),
   lat: LatSchema,
   long: LongSchema,
   typeId: IdSchema.nullable().optional(),

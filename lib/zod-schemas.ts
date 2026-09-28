@@ -12,6 +12,18 @@ export const IconSchema = z.string().min(1).max(100).regex(/^tabler:[a-z0-9-]+$/
 export const IdSchema = z.number().int().positive();
 export const LatSchema = z.number().min(-90).max(90);
 export const LongSchema = z.number().min(-180).max(180);
+const GOOGLE_TLD = String.raw`(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2})`;
+const GOOGLE_MAPS_URL_REGEX = new RegExp(String.raw`^https:\/\/(?:(?:www\.)?google\.${GOOGLE_TLD}\/maps(?:[/?#]|$)|maps\.google\.${GOOGLE_TLD}(?:[/?#]|$)|maps\.app\.goo\.gl\/|goo\.gl\/maps\/)`, "i");
+
+export const GoogleMapsUrlSchema = z.preprocess(
+  value => typeof value === "string" && value.trim() === "" ? null : value,
+  z.string()
+    .trim()
+    .max(2048)
+    .url("Must be a valid URL.")
+    .regex(GOOGLE_MAPS_URL_REGEX, "Must be a Google Maps link, e.g. https://maps.app.goo.gl/...")
+    .nullable(),
+);
 export const DateSchema = z.number({
   message: "Date is required",
 });
