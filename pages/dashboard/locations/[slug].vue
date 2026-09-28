@@ -88,6 +88,16 @@ async function confirmDelete() {
       <p class="text-sm mb-4">
         {{ location.description }}
       </p>
+      <a
+        v-if="location.googleMapsUrl"
+        class="btn btn-outline btn-sm mb-4"
+        :href="location.googleMapsUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        View on Google Maps
+        <Icon name="tabler:external-link" size="20" />
+      </a>
       <div v-if="!location.logs.length" class="flex flex-col gap-4">
         <p class="text-sm italic">
           Add a location log to get started.

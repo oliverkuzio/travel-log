@@ -14,6 +14,7 @@ const props = defineProps<{
 const values = props.initialValues || {
   name: "",
   description: "",
+  googleMapsUrl: null,
   typeId: null,
   long: (CENTER_MAP as [number, number])[0],
   lat: (CENTER_MAP as [number, number])[1],
@@ -52,6 +53,12 @@ function findTypeIcon(typeId: unknown) {
       label="Description"
       name="description"
       :error="errors.description"
+      :disabled="loading"
+    />
+    <AppFormField
+      label="Google Maps URL (optional)"
+      name="googleMapsUrl"
+      :error="errors.googleMapsUrl"
       :disabled="loading"
     />
     <AppSelectFormField

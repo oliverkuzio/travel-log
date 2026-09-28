@@ -36,6 +36,13 @@
       "when": 1790330308867,
       "tag": "0004_trip_coords_types_roles",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1790586748852,
+      "tag": "0005_location_google_maps_url",
+      "breakpoints": true
     }
   ]
 }
