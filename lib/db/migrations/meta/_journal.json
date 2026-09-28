@@ -50,6 +50,13 @@
       "when": 1790588017922,
       "tag": "0006_location_address",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1790592071968,
+      "tag": "0007_location_import",
+      "breakpoints": true
     }
   ]
 }

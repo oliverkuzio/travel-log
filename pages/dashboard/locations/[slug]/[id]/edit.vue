@@ -26,6 +26,11 @@ function submitComplete() {
     },
   });
 }
+
+useSeoMeta({
+  title: () => `Edit ${locationLog.value?.name ?? "log"}`,
+  description: "Edit the details of this visit.",
+});
 </script>
 
 <template>

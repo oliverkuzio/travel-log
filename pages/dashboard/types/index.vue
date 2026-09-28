@@ -34,11 +34,16 @@ async function confirmDelete() {
 
   deleting.value = null;
 }
+
+useSeoMeta({
+  title: "Location types",
+  description: "Manage the types used to categorise locations.",
+});
 </script>
 
 <template>
   <div class="p-4">
-    <h1 class="text-xl mb-4">
+    <h1 class="text-2xl font-semibold mb-4">
       Location types
     </h1>
     <AppAlert

@@ -16,6 +16,11 @@ function onSubmitComplete() {
     ? { name: "dashboard-locations-slug", params: { slug: created.value.slug } }
     : "/dashboard/locations");
 }
+
+useSeoMeta({
+  title: "Add location",
+  description: "Add a place you have visited on your trips.",
+});
 </script>
 
 <template>

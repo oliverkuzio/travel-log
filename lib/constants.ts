@@ -16,6 +16,10 @@ export const LOCATIONS_LIST_PAGES = new Set([
   "dashboard-locations-add",
 ]);
 
+export const LOCATION_IMPORT_PAGES = new Set([
+  "dashboard-locations-import",
+]);
+
 export const LOCATION_TYPE_PAGES = new Set([
   "dashboard-types",
   "dashboard-types-add",

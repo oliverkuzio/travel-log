@@ -126,6 +126,11 @@ async function confirmDelete() {
   isDeleting.value = false;
   isOpen.value = false;
 }
+
+useSeoMeta({
+  title: () => locationLog.value ? `Images for ${locationLog.value.name}` : "Images",
+  description: "Add and remove photos for this visit.",
+});
 </script>
 
 <template>

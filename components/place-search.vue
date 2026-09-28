@@ -5,6 +5,10 @@ import type { NominatimResult } from "~/lib/types";
 
 import { SearchSchema } from "~/lib/zod-schemas";
 
+const props = defineProps<{
+  initialQuery?: string;
+}>();
+
 const emit = defineEmits<{
   resultSelected: [result: NominatimResult];
 }>();
@@ -54,7 +58,7 @@ function setLocation(result: NominatimResult) {
       ref="form"
       v-slot="{ errors }"
       class="join flex w-full"
-      :initial-values="{ q: '' }"
+      :initial-values="{ q: props.initialQuery ?? '' }"
       :validation-schema="toTypedSchema(SearchSchema)"
       @submit="onSubmit"
     >
@@ -105,19 +109,15 @@ function setLocation(result: NominatimResult) {
       <li
         v-for="result in searchResults"
         :key="result.place_id"
-        class="list-row items-center"
+        class="list-row flex flex-col items-start gap-2"
       >
-        <div class="list-col-grow">
-          <h4>
-            {{ result.display_name }}
-          </h4>
-        </div>
-        <div class="w-32">
-          <button class="btn btn-sm btn-accent" @click="setLocation(result)">
-            Set location
-            <Icon name="tabler:map-pin-share" size="20" />
-          </button>
-        </div>
+        <h4>
+          {{ result.display_name }}
+        </h4>
+        <button class="btn btn-sm btn-accent" @click="setLocation(result)">
+          Set location
+          <Icon name="tabler:map-pin-share" size="20" />
+        </button>
       </li>
     </ul>
     <div v-if="loading" class="flex justify-center p-4">

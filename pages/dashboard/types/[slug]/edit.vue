@@ -22,6 +22,11 @@ async function onSubmit(values: InsertLocationType) {
 function onSubmitComplete() {
   navigateTo("/dashboard/types");
 }
+
+useSeoMeta({
+  title: () => `Edit ${locationType.value?.name ?? "location type"}`,
+  description: "Edit this location type.",
+});
 </script>
 
 <template>

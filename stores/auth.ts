@@ -18,7 +18,11 @@ export const useAuthStore = defineStore("useAuthStore", () => {
   const session = ref<Awaited<ReturnType<typeof authClient.useSession>> | null>(null);
 
   async function init() {
-    const data = await authClient.useSession(useFetch);
+    // better-auth requests a relative URL on the server but an absolute one in the browser, so
+    // useFetch's generated keys differ and hydration would start without the server's session.
+    // A fixed key reuses it, so the client renders the same (e.g. admin-only) items as the server.
+    const data = await authClient.useSession(((url: string, options: object) =>
+      useFetch(url, { ...options, key: "auth-session" })) as typeof useFetch);
     session.value = data;
   }
 

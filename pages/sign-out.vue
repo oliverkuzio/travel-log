@@ -4,6 +4,11 @@ const authStore = useAuthStore();
 onMounted(() => {
   authStore.signOut();
 });
+
+useSeoMeta({
+  title: "Sign out",
+  description: "Signing you out of Travel Log.",
+});
 </script>
 
 <template>

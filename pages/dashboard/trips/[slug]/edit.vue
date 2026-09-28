@@ -27,6 +27,11 @@ function onSubmitComplete() {
     },
   });
 }
+
+useSeoMeta({
+  title: () => `Edit ${trip.value?.name ?? "trip"}`,
+  description: "Edit the details of this trip.",
+});
 </script>
 
 <template>

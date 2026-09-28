@@ -21,6 +21,11 @@ function onSubmitComplete() {
     },
   });
 }
+
+useSeoMeta({
+  title: () => trip.value ? `Add log to ${trip.value.name}` : "Add log",
+  description: "Log a visit to a location as part of this trip.",
+});
 </script>
 
 <template>

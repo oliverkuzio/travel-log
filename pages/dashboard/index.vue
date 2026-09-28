@@ -3,11 +3,16 @@ const { trips } = storeToRefs(useTripsStore());
 const { locations } = storeToRefs(useLocationsStore());
 
 const mappedTrips = computed(() => trips.value?.filter(trip => getTripCoords(trip)).length ?? 0);
+
+useSeoMeta({
+  title: "Dashboard",
+  description: "An overview of your trips and locations.",
+});
 </script>
 
 <template>
   <div class="p-4">
-    <h1 class="text-xl mb-4">
+    <h1 class="text-2xl font-semibold mb-4">
       Dashboard
     </h1>
     <p class="text-sm mb-4">

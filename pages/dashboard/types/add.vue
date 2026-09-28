@@ -17,6 +17,11 @@ async function onSubmit(values: InsertLocationType) {
 function onSubmitComplete() {
   navigateTo("/dashboard/types");
 }
+
+useSeoMeta({
+  title: "Add location type",
+  description: "Add a type for categorising locations.",
+});
 </script>
 
 <template>
