@@ -27,11 +27,12 @@ export default async function useDashboardView() {
   const {
     locations,
     locationsStatus,
+    filteredLocations,
     currentLocation,
     currentLocationStatus,
     currentLocationLogStatus,
   } = storeToRefs(locationsStore);
-  const { trips, tripsStatus, currentTrip, currentTripStatus } = storeToRefs(tripsStore);
+  const { trips, tripsStatus, filteredTrips, currentTrip, currentTripStatus } = storeToRefs(tripsStore);
 
   const routeName = computed(() => route.name?.toString() || "");
 
@@ -79,11 +80,11 @@ export default async function useDashboardView() {
     loadRouteData();
   });
 
-  function locationItems() {
+  function locationItems(source = locations.value) {
     const mapPoints: MapPoint[] = [];
     const sidebarItems: SidebarItem[] = [];
 
-    locations.value?.forEach((location) => {
+    source?.forEach((location) => {
       const mapPoint = createMapPointFromLocation(location);
 
       sidebarItems.push({
@@ -100,11 +101,11 @@ export default async function useDashboardView() {
     return { mapPoints, sidebarItems };
   }
 
-  function tripItems() {
+  function tripItems(source = trips.value) {
     const mapPoints: MapPoint[] = [];
     const sidebarItems: SidebarItem[] = [];
 
-    trips.value?.forEach((trip) => {
+    source?.forEach((trip) => {
       const point: CardPoint = createMapPointFromTrip(trip);
 
       sidebarItems.push({
@@ -136,11 +137,12 @@ export default async function useDashboardView() {
       loading = tripsStatus.value === "pending" || locationsStatus.value === "pending";
     }
     else if (TRIPS_LIST_PAGES.has(name)) {
-      ({ mapPoints, sidebarItems } = tripItems());
+      ({ mapPoints, sidebarItems } = tripItems(filteredTrips.value));
       loading = tripsStatus.value === "pending";
     }
     else if (LOCATIONS_LIST_PAGES.has(name) || LOCATION_TYPE_PAGES.has(name)) {
-      ({ mapPoints, sidebarItems } = locationItems());
+      // Only the locations list has filters, so the map and sidebar match what it shows.
+      ({ mapPoints, sidebarItems } = locationItems(LOCATIONS_LIST_PAGES.has(name) ? filteredLocations.value : locations.value));
       loading = locationsStatus.value === "pending";
 
       if (LOCATION_TYPE_PAGES.has(name)) {

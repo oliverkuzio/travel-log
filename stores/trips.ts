@@ -13,6 +13,9 @@ export const useTripsStore = defineStore("useTripsStore", () => {
     immediate: false,
   });
 
+  const nameFilter = ref("");
+  const filteredTrips = computed(() => trips.value?.filter(trip => matchesNameFilter(trip.name, nameFilter.value)));
+
   const tripUrlWithSlug = computed(() => `/api/trips/${route.params.slug}`);
 
   const {
@@ -31,6 +34,8 @@ export const useTripsStore = defineStore("useTripsStore", () => {
     trips,
     tripsStatus,
     refreshTrips,
+    nameFilter,
+    filteredTrips,
     currentTrip,
     currentTripStatus,
     currentTripError,

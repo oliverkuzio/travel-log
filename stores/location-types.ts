@@ -9,9 +9,16 @@ export const useLocationTypesStore = defineStore("useLocationTypesStore", () => 
     immediate: false,
   });
 
+  const nameFilter = ref("");
+  const filteredLocationTypes = computed(() =>
+    locationTypes.value?.filter(locationType => matchesNameFilter(locationType.name, nameFilter.value)),
+  );
+
   return {
     locationTypes,
     locationTypesStatus,
     refreshLocationTypes,
+    nameFilter,
+    filteredLocationTypes,
   };
 });
