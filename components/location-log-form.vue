@@ -72,7 +72,7 @@ const tripOptions = computed(() => trips.value?.map(trip => ({
     />
     <AppFormField
       type="textarea"
-      label="Description"
+      label="Description (optional)"
       name="description"
       :error="errors.description"
       :disabled="loading"
@@ -95,7 +95,7 @@ const tripOptions = computed(() => trips.value?.map(trip => ({
     />
     <AppSelectFormField
       v-if="selectTrip"
-      label="Trip"
+      label="Trip (optional)"
       name="tripId"
       empty-label="Not part of a trip"
       :options="tripOptions"

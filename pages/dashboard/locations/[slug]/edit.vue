@@ -25,6 +25,11 @@ function onSubmitComplete() {
     },
   });
 }
+
+useSeoMeta({
+  title: () => `Edit ${location.value?.name ?? "location"}`,
+  description: "Edit the details of this location.",
+});
 </script>
 
 <template>

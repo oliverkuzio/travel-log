@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 const route = useRoute();
 const error = route.query.error?.toString() || "An unknown error occurred. Please try again later.";
+
+useSeoMeta({
+  title: "Error",
+  description: "Something went wrong.",
+});
 </script>
 
 <template>

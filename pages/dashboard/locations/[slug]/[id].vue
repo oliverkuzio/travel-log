@@ -58,6 +58,11 @@ async function confirmDelete() {
     isDeleting.value = false;
   }
 }
+
+useSeoMeta({
+  title: () => locationLog.value?.name ?? "Log",
+  description: () => locationLog.value?.description || `A visit to ${location.value?.name ?? "this location"}.`,
+});
 </script>
 
 <template>

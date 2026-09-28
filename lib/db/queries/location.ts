@@ -1,10 +1,11 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 
 import type { AppDatabase } from "~/lib/db";
 
 import type { InsertLocation } from "../schema/location";
 
+import chunk from "../chunk";
 import { location } from "../schema";
 
 const nanoid = customAlphabet("1234567890", 5);
@@ -103,4 +104,57 @@ export async function findUniqueSlug(db: AppDatabase, slug: string) {
   }
 
   return slug;
+}
+
+export async function findLocationNamesAndUrls(db: AppDatabase, userId: number) {
+  const rows = await db.select({ name: location.name, googleMapsUrl: location.googleMapsUrl })
+    .from(location)
+    .where(eq(location.userId, userId));
+
+  return {
+    names: new Set(rows.map(row => row.name)),
+    urls: new Set(rows.flatMap(row => row.googleMapsUrl ? [row.googleMapsUrl] : [])),
+  };
+}
+
+/**
+ * Batch version of findUniqueSlug: makes each slug unique against the database and each other.
+ */
+export async function findUniqueSlugs(db: AppDatabase, slugs: string[]) {
+  const existing = new Set<string>();
+
+  const results = await Promise.all(chunk([...new Set(slugs)], 90).map(slugsChunk => db
+    .select({ slug: location.slug })
+    .from(location)
+    .where(inArray(location.slug, slugsChunk))));
+
+  results.flat().forEach(row => existing.add(row.slug));
+
+  return slugs.map((slug) => {
+    let unique = slug;
+
+    while (existing.has(unique)) {
+      unique = `${slug}-${nanoid()}`;
+    }
+
+    existing.add(unique);
+
+    return unique;
+  });
+}
+
+export async function insertLocations(db: AppDatabase, insertables: (InsertLocation & { slug: string })[], userId: number) {
+  // Each row binds up to 11 parameters and D1 allows 100 per statement.
+  const statements = chunk(insertables, 8).map(rows => db
+    .insert(location)
+    .values(rows.map(row => ({ ...row, userId })))
+    .returning({ id: location.id }));
+
+  if (!statements.length) {
+    return 0;
+  }
+
+  const results = await db.batch(statements as [typeof statements[number], ...typeof statements]);
+
+  return results.reduce((total, inserted) => total + inserted.length, 0);
 }

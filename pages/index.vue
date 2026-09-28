@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 const authStore = useAuthStore();
+
+useSeoMeta({
+  description: "Keep track of your travels and adventures. Add locations, photos and notes to create a digital journal of your experiences.",
+});
 </script>
 
 <template>

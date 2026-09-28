@@ -13,7 +13,7 @@ export default defineAuthenticatedEventHandler(
     }
 
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${result.data.q}&format=json`, {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(result.data.q)}&format=json&accept-language=en`, {
         signal: AbortSignal.timeout(5000),
         headers: {
           "User-Agent": "travel.kuzio.app",
@@ -38,7 +38,8 @@ export default defineAuthenticatedEventHandler(
     }
   }, {
     maxAge: 60 * 60 * 24,
-    name: "search-nominatim",
+    // Renamed when switching to English results, so cached local-language results aren't reused.
+    name: "search-nominatim-en",
     getKey: async (event) => {
       const query = await getQuery(event);
 

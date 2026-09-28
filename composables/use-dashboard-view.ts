@@ -1,4 +1,4 @@
-import type { CardPoint, MapPoint, SidebarItem } from "~/lib/types";
+import type { CardPoint, MapPoint } from "~/lib/types";
 
 import {
   CURRENT_LOCATION_LOG_PAGES,
@@ -6,6 +6,7 @@ import {
   CURRENT_TRIP_PAGES,
   DASHBOARD_PAGES,
   EDIT_PAGES,
+  LOCATION_IMPORT_PAGES,
   LOCATION_TYPE_PAGES,
   LOCATIONS_LIST_PAGES,
   TRIP_SELECT_PAGES,
@@ -13,16 +14,16 @@ import {
 } from "~/lib/constants";
 
 /**
- * Owns the dashboard's shared state for the current route: which data is loaded, which points
- * are shown on the map, and which items are listed in the sidebar below the main navigation.
+ * Owns the dashboard's shared state for the current route: which data is loaded and which points
+ * are shown on the map.
  */
 export default async function useDashboardView() {
   const route = useRoute();
-  const sidebarStore = useSidebarStore();
   const mapStore = useMapStore();
   const locationsStore = useLocationsStore();
   const tripsStore = useTripsStore();
   const locationTypesStore = useLocationTypesStore();
+  const locationImportStore = useLocationImportStore();
 
   const {
     locations,
@@ -33,6 +34,7 @@ export default async function useDashboardView() {
     currentLocationLogStatus,
   } = storeToRefs(locationsStore);
   const { trips, tripsStatus, filteredTrips, currentTrip, currentTripStatus } = storeToRefs(tripsStore);
+  const { readyImports, importsStatus, selectedIds } = storeToRefs(locationImportStore);
 
   const routeName = computed(() => route.name?.toString() || "");
 
@@ -51,6 +53,11 @@ export default async function useDashboardView() {
       || name === "dashboard-trips-slug-add"
     ) {
       requests.push(locationsStore.refreshLocations());
+    }
+
+    // The locations list shows how many imported places are still waiting to be added.
+    if (LOCATION_IMPORT_PAGES.has(name) || name === "dashboard-locations") {
+      requests.push(locationImportStore.refreshImports());
     }
 
     if (CURRENT_TRIP_PAGES.has(name)) {
@@ -80,92 +87,52 @@ export default async function useDashboardView() {
     loadRouteData();
   });
 
-  function locationItems(source = locations.value) {
-    const mapPoints: MapPoint[] = [];
-    const sidebarItems: SidebarItem[] = [];
-
-    source?.forEach((location) => {
-      const mapPoint = createMapPointFromLocation(location);
-
-      sidebarItems.push({
-        id: `location-${location.id}`,
-        label: location.name,
-        icon: mapPoint.icon || DEFAULT_LOCATION_ICON,
-        pin: true,
-        to: mapPoint.to,
-        mapPoint,
-      });
-      mapPoints.push(mapPoint);
-    });
-
-    return { mapPoints, sidebarItems };
+  function locationPoints(source = locations.value) {
+    return source?.map(createMapPointFromLocation) ?? [];
   }
 
-  function tripItems(source = trips.value) {
-    const mapPoints: MapPoint[] = [];
-    const sidebarItems: SidebarItem[] = [];
-
-    source?.forEach((trip) => {
-      const point: CardPoint = createMapPointFromTrip(trip);
-
-      sidebarItems.push({
-        id: `trip-${trip.id}`,
-        label: trip.name,
-        icon: TRIP_ICON,
-        pin: true,
-        to: point.to,
-        mapPoint: point,
-      });
-
-      if (hasCoords(point)) {
-        mapPoints.push(point);
-      }
-    });
-
-    return { mapPoints, sidebarItems };
+  function tripPoints(source = trips.value) {
+    return source?.map(createMapPointFromTrip).filter(hasCoords) ?? [];
   }
 
   effect(() => {
     const name = routeName.value;
     let mapPoints: MapPoint[] = [];
-    let sidebarItems: SidebarItem[] = [];
     let lockedPoint: CardPoint | null = null;
     let loading = false;
 
     if (DASHBOARD_PAGES.has(name)) {
-      mapPoints = [...locationItems().mapPoints, ...tripItems().mapPoints];
+      mapPoints = [...locationPoints(), ...tripPoints()];
       loading = tripsStatus.value === "pending" || locationsStatus.value === "pending";
     }
     else if (TRIPS_LIST_PAGES.has(name)) {
-      ({ mapPoints, sidebarItems } = tripItems(filteredTrips.value));
+      mapPoints = tripPoints(filteredTrips.value);
       loading = tripsStatus.value === "pending";
     }
     else if (LOCATIONS_LIST_PAGES.has(name) || LOCATION_TYPE_PAGES.has(name)) {
-      // Only the locations list has filters, so the map and sidebar match what it shows.
-      ({ mapPoints, sidebarItems } = locationItems(LOCATIONS_LIST_PAGES.has(name) ? filteredLocations.value : locations.value));
+      // Only the locations list has filters, so the map matches what it shows.
+      mapPoints = locationPoints(LOCATIONS_LIST_PAGES.has(name) ? filteredLocations.value : locations.value);
       loading = locationsStatus.value === "pending";
-
-      if (LOCATION_TYPE_PAGES.has(name)) {
-        sidebarItems = [];
-      }
+    }
+    else if (LOCATION_IMPORT_PAGES.has(name)) {
+      // Preview the places ticked for import; they aren't locations yet, so they don't link anywhere.
+      mapPoints = readyImports.value
+        .filter(item => selectedIds.value.has(item.id) && item.lat !== null && item.long !== null)
+        .map(item => ({
+          id: item.id,
+          kind: "location",
+          name: item.name ?? "",
+          description: item.address,
+          lat: item.lat!,
+          long: item.long!,
+        }));
+      loading = importsStatus.value === "pending";
     }
     else if (CURRENT_TRIP_PAGES.has(name)) {
       loading = currentTripStatus.value === "pending";
 
       if (currentTrip.value) {
         mapPoints = getTripLocations(currentTrip.value).map(createMapPointFromLocation);
-        sidebarItems = currentTrip.value.logs.map((log) => {
-          const mapPoint = createMapPointFromLocationLog(log, log.location);
-
-          return {
-            id: `location-log-${log.id}`,
-            label: log.name,
-            icon: mapPoint.icon || DEFAULT_LOCATION_ICON,
-            pin: true,
-            to: mapPoint.to,
-            mapPoint,
-          };
-        });
       }
     }
     else if (CURRENT_LOCATION_PAGES.has(name) || CURRENT_LOCATION_LOG_PAGES.has(name)) {
@@ -177,28 +144,11 @@ export default async function useDashboardView() {
         // While editing, the draggable (accent) marker stands in for the location.
         mapPoints = EDIT_PAGES.has(name) ? [] : [mapPoint];
         lockedPoint = mapPoint;
-
-        if (CURRENT_LOCATION_PAGES.has(name)) {
-          sidebarItems = currentLocation.value.logs.map((log) => {
-            const logPoint = createMapPointFromLocationLog(log, currentLocation.value!);
-
-            return {
-              id: `location-log-${log.id}`,
-              label: log.name,
-              icon: "tabler:calendar",
-              to: logPoint.to,
-              mapPoint: logPoint,
-            };
-          });
-        }
       }
     }
 
-    sidebarStore.loading = loading;
-
     // Keep showing the previous points while refetching, so the map doesn't jump around.
     if (!loading) {
-      sidebarStore.sidebarSubItems = sidebarItems;
       mapStore.mapPoints = mapPoints;
       mapStore.lockedPoint = lockedPoint;
     }

@@ -68,11 +68,7 @@ export type SidebarItem = {
   id: string;
   label: string;
   icon: string;
-  href?: string;
-  to?: RouteLocationRaw;
-  mapPoint?: CardPoint | null;
+  href: string;
   iconColor?: string;
   matchPrefix?: boolean;
-  // Render the icon inside a map pin, matching the item's marker on the map.
-  pin?: boolean;
 };

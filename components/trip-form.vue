@@ -35,7 +35,7 @@ const values = props.initialValues || {
     />
     <AppFormField
       type="textarea"
-      label="Description"
+      label="Description (optional)"
       name="description"
       :error="errors.description"
       :disabled="loading"

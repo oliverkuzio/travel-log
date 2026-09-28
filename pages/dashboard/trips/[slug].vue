@@ -54,6 +54,11 @@ async function confirmDelete() {
 
   isDeleting.value = false;
 }
+
+useSeoMeta({
+  title: () => trip.value?.name ?? "Trip",
+  description: () => trip.value?.description || `The places you visited on ${trip.value?.name ?? "this trip"}.`,
+});
 </script>
 
 <template>

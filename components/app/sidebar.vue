@@ -2,9 +2,7 @@
 import type { SidebarItem } from "~/lib/types";
 
 const isSidebarOpen = ref(true);
-const sidebarStore = useSidebarStore();
 const authStore = useAuthStore();
-const mapStore = useMapStore();
 
 onMounted(() => {
   isSidebarOpen.value = localStorage.getItem("isSidebarOpen") === "true";
@@ -52,7 +50,8 @@ function toggleSidebar() {
 </script>
 
 <template>
-  <div class="bg-base-300 transition-all duration-300 shrink-0" :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }">
+  <!-- Stack above the page column (z-10) so the collapsed tooltips aren't covered by it. -->
+  <div class="bg-base-300 transition-all duration-300 shrink-0 relative z-20" :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }">
     <div
       class="flex hover:cursor-pointer hover:bg-base-200 p-2"
       :class="{ 'justify-center': !isSidebarOpen, 'justify-end': isSidebarOpen }"
@@ -80,25 +79,6 @@ function toggleSidebar() {
         :icon-color="item.iconColor"
         :match-prefix="item.matchPrefix"
       />
-      <div v-if="sidebarStore.loading || sidebarStore.sidebarSubItems.length" class="divider" />
-      <div v-if="sidebarStore.loading && !sidebarStore.sidebarSubItems.length" class="px-4">
-        <div class="skeleton h-4 w-full" />
-      </div>
-      <div v-if="sidebarStore.sidebarSubItems.length" class="flex flex-col">
-        <SidebarButton
-          v-for="item in sidebarStore.sidebarSubItems"
-          :key="item.id"
-          :show-label="isSidebarOpen"
-          :label="item.label"
-          :icon="item.icon"
-          :to="item.to"
-          :icon-color="item.mapPoint ? getPointColors(item.mapPoint.kind, isPointSelected(item.mapPoint, mapStore.activePoint)).text : undefined"
-          :pin-colors="item.pin && item.mapPoint ? getPointColors(item.mapPoint.kind, isPointSelected(item.mapPoint, mapStore.activePoint)) : undefined"
-          :pin-icon="item.mapPoint?.icon"
-          @mouseenter="mapStore.selectedPoint = item.mapPoint ?? null"
-          @mouseleave="mapStore.selectedPoint = null"
-        />
-      </div>
       <div class="divider" />
       <SidebarButton
         :show-label="isSidebarOpen"

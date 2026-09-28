@@ -51,7 +51,7 @@ function findTypeIcon(typeId: unknown) {
     />
     <AppFormField
       type="textarea"
-      label="Description"
+      label="Description (optional)"
       name="description"
       :error="errors.description"
       :disabled="loading"
@@ -69,7 +69,7 @@ function findTypeIcon(typeId: unknown) {
       :disabled="loading"
     />
     <AppSelectFormField
-      label="Type"
+      label="Type (optional)"
       name="typeId"
       empty-label="No type"
       :options="typeOptions"

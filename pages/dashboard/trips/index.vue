@@ -4,12 +4,17 @@ const { trips, filteredTrips, nameFilter, tripsStatus: status } = storeToRefs(tr
 
 const { formatDateRange } = useDateFormat();
 const tripNames = computed(() => trips.value?.map(trip => trip.name) ?? []);
+
+useSeoMeta({
+  title: "Trips",
+  description: "Your trips, grouping visits to locations into journeys.",
+});
 </script>
 
 <template>
   <div class="p-4">
-    <h1 class="text-xl mb-4">
-      Your trips
+    <h1 class="text-2xl font-semibold mb-4">
+      Trips
     </h1>
     <div class="flex flex-col flex-nowrap gap-4 align-items-stretch">
       <AddCard
@@ -18,6 +23,9 @@ const tripNames = computed(() => trips.value?.map(trip => trip.name) ?? []);
         to="/dashboard/trips/add"
         kind="trip"
       />
+      <h2 class="text-xl font-semibold mt-2">
+        Your trips
+      </h2>
       <div v-if="status === 'pending' && !trips">
         <LoadingSpinner />
       </div>

@@ -44,6 +44,11 @@ async function getSentryData() {
   );
   throw new SentryExampleFrontendError("This error is raised on the frontend of the example page.");
 }
+
+useSeoMeta({
+  title: "Sentry example",
+  description: "Checks that errors are reported to Sentry.",
+});
 </script>
 
 <template>

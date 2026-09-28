@@ -20,6 +20,11 @@ function onSubmitComplete() {
     },
   });
 }
+
+useSeoMeta({
+  title: () => location.value ? `Add log for ${location.value.name}` : "Add log",
+  description: "Log a visit to this location.",
+});
 </script>
 
 <template>
