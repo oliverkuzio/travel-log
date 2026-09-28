@@ -38,8 +38,8 @@ async function onSubmit(query: Record<string, string>) {
 function setLocation(result: NominatimResult) {
   emit("resultSelected", result);
   searchResults.value = [];
-  loading.value = true;
-  submitted.value = true;
+  loading.value = false;
+  submitted.value = false;
   errorMessage.value = "";
 
   if (form.value) {
