@@ -4,6 +4,7 @@ import type { FetchError } from "ofetch";
 import type { HeadingMenuItem } from "~/lib/types";
 
 const route = useRoute();
+const { formatDateRange } = useDateFormat();
 const tripsStore = useTripsStore();
 const {
   currentTrip: trip,
@@ -73,11 +74,7 @@ async function confirmDelete() {
     />
     <div v-if="route.name === 'dashboard-trips-slug' && trip && !loading">
       <p class="text-xs opacity-50">
-        {{ formatDate(trip.startedAt) }}
-        <span v-if="trip.startedAt !== trip.endedAt">
-          -
-          {{ formatDate(trip.endedAt) }}
-        </span>
+        {{ formatDateRange(trip.startedAt, trip.endedAt) }}
       </p>
       <PageHeadingMenu :title="trip.name" :items="menuItems">
         <template #icon>
@@ -109,11 +106,7 @@ async function confirmDelete() {
         >
           <template #top>
             <p class="text-xs opacity-50">
-              {{ formatDate(log.startedAt) }}
-              <span v-if="log.startedAt !== log.endedAt">
-                -
-                {{ formatDate(log.endedAt) }}
-              </span>
+              {{ formatDateRange(log.startedAt, log.endedAt, true) }}
               · {{ log.location.name }}
             </p>
           </template>

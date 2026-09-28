@@ -5,6 +5,8 @@ const props = defineProps<{
   value: number;
   error?: string;
   disabled?: boolean;
+  // Include the time of day, using a datetime-local input.
+  withTime?: boolean;
 }>();
 
 const { handleBlur, value: inputValue, handleChange } = useField<number>(props.name, {
@@ -13,6 +15,11 @@ const { handleBlur, value: inputValue, handleChange } = useField<number>(props.n
 
 function formatDateISO(value: number) {
   return new Date(value).toISOString().split("T")[0];
+}
+
+// datetime-local values are in the user's local time zone, so format with local (not UTC) parts.
+function formatDateTimeLocal(value: number) {
+  return `${toDateInputValue(value)}T${formatTime(value)}`;
 }
 
 function dateChanged(event: Event) {
@@ -33,9 +40,9 @@ function dateChanged(event: Event) {
       }"
       class="input w-full"
       :name="props.name"
-      type="date"
+      :type="props.withTime ? 'datetime-local' : 'date'"
       :disabled="disabled"
-      :value="formatDateISO(inputValue)"
+      :value="props.withTime ? formatDateTimeLocal(inputValue) : formatDateISO(inputValue)"
       @blur="handleBlur"
       @change="dateChanged"
     >

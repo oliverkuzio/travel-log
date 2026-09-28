@@ -24,6 +24,12 @@ export type CardPoint = {
   icon?: string | null;
   to?: RouteLocationRaw;
   toLabel?: string;
+  // When the trip or log took place, shown on the map. Logs include the time of day.
+  dates?: {
+    startedAt: number;
+    endedAt: number;
+    withTime?: boolean;
+  };
 } & Partial<LatLongItem>;
 
 export type MapPoint = CardPoint & LatLongItem;
