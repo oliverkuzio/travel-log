@@ -29,23 +29,11 @@ export async function updateTrip(db: AppDatabase, updates: InsertTrip, slug: str
 }
 
 export async function deleteTrip(db: AppDatabase, slug: string, userId: number) {
-  const existing = await db.query.trip.findFirst({
-    where: and(
-      eq(trip.slug, slug),
-      eq(trip.userId, userId),
-    ),
-  });
-
-  if (!existing) {
-    return undefined;
-  }
-
-  // Location logs belong to their location, not the trip, so detach rather than delete them.
-  // This is done here as well as via the FK because the live `trip_id` FK has no ON DELETE action.
-  const [, [deleted]] = await db.batch([
-    db.update(locationLog).set({ tripId: null }).where(eq(locationLog.tripId, existing.id)),
-    db.delete(trip).where(eq(trip.id, existing.id)).returning(),
-  ]);
+  // The `trip_id` FK is ON DELETE SET NULL, so the trip's location logs are detached, not deleted.
+  const [deleted] = await db.delete(trip).where(and(
+    eq(trip.slug, slug),
+    eq(trip.userId, userId),
+  )).returning();
 
   return deleted;
 }

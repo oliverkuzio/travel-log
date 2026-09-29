@@ -5,7 +5,7 @@ import type { AppDatabase } from "~/lib/db";
 
 import type { InsertLocationType } from "../schema/location-type";
 
-import { location, locationType } from "../schema";
+import { locationType } from "../schema";
 
 const nanoid = customAlphabet("1234567890", 5);
 
@@ -27,17 +27,10 @@ export async function updateLocationType(db: AppDatabase, updates: InsertLocatio
 }
 
 export async function deleteLocationType(db: AppDatabase, slug: string) {
-  const existing = await findLocationType(db, slug);
-
-  if (!existing) {
-    return undefined;
-  }
-
-  // Unassign the type from any locations first; the live `type_id` FK has no ON DELETE action.
-  const [, [deleted]] = await db.batch([
-    db.update(location).set({ typeId: null }).where(eq(location.typeId, existing.id)),
-    db.delete(locationType).where(eq(locationType.id, existing.id)).returning(),
-  ]);
+  // The `type_id` FK is ON DELETE SET NULL, so locations of this type are kept, untyped.
+  const [deleted] = await db.delete(locationType).where(
+    eq(locationType.slug, slug),
+  ).returning();
 
   return deleted;
 }
