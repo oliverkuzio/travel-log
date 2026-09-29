@@ -4,7 +4,7 @@ import type { AppDatabase } from "~/lib/db";
 
 import type { InsertLocationLog } from "../schema";
 
-import { locationLog } from "../schema";
+import { locationLog, locationLogImage } from "../schema";
 
 export async function findLocationLog(db: AppDatabase, locationLogId: number, userId: number) {
   const foundLog = await db.query.locationLog.findFirst({
@@ -54,12 +54,22 @@ export async function updateLocationLog(db: AppDatabase, updateable: InsertLocat
 }
 
 export async function deleteLocationLog(db: AppDatabase, locationLogId: number, userId: number) {
-  const [deleted] = await db.delete(locationLog).where(
-    and(
+  const existing = await db.query.locationLog.findFirst({
+    where: and(
       eq(locationLog.id, locationLogId),
       eq(locationLog.userId, userId),
     ),
-  ).returning();
+  });
 
-  return deleted;
+  if (!existing) {
+    return undefined;
+  }
+
+  // The FK would cascade to the images anyway; deleting them explicitly returns their R2 keys.
+  const [images, [deleted]] = await db.batch([
+    db.delete(locationLogImage).where(eq(locationLogImage.locationLogId, existing.id)).returning(),
+    db.delete(locationLog).where(eq(locationLog.id, existing.id)).returning(),
+  ]);
+
+  return { log: deleted, images };
 }

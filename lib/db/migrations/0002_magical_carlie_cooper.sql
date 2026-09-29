@@ -1,1 +1,0 @@
-DROP INDEX `locationType_icon_unique`;

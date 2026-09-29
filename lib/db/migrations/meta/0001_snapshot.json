@@ -1,8 +1,8 @@
 {
+  "id": "7024238d-7c40-4640-a3ca-4546dab3605b",
+  "prevId": "04dcca23-7424-46de-acad-f40a2ea261a1",
   "version": "6",
   "dialect": "sqlite",
-  "id": "6ec71847-8670-444f-9f82-4ed29fe8e453",
-  "prevId": "00b8dd96-2ed3-40b2-8758-08bb8a265054",
   "tables": {
     "account": {
       "name": "account",
@@ -104,15 +104,15 @@
         "account_user_id_user_id_fk": {
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -192,15 +192,15 @@
         "session_user_id_user_id_fk": {
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -244,6 +244,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'user'"
         },
         "created_at": {
           "name": "created_at",
@@ -357,6 +365,20 @@
           "notNull": false,
           "autoincrement": false
         },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "google_maps_url": {
+          "name": "google_maps_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "lat": {
           "name": "lat",
           "type": "real",
@@ -421,28 +443,131 @@
         "location_type_id_locationType_id_fk": {
           "name": "location_type_id_locationType_id_fk",
           "tableFrom": "location",
-          "tableTo": "locationType",
           "columnsFrom": [
             "type_id"
           ],
+          "tableTo": "locationType",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "set null"
         },
         "location_user_id_user_id_fk": {
           "name": "location_user_id_user_id_fk",
           "tableFrom": "location",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "location_import": {
+      "name": "location_import",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "google_maps_url": {
+          "name": "google_maps_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "query": {
+          "name": "query",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "lat": {
+          "name": "lat",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "long": {
+          "name": "long",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "location_import_userId_googleMapsUrl_unique": {
+          "name": "location_import_userId_googleMapsUrl_unique",
+          "columns": [
+            "user_id",
+            "google_maps_url"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "location_import_user_id_user_id_fk": {
+          "name": "location_import_user_id_user_id_fk",
+          "tableFrom": "location_import",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "tableTo": "user",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -528,41 +653,41 @@
         "locationLog_location_id_location_id_fk": {
           "name": "locationLog_location_id_location_id_fk",
           "tableFrom": "locationLog",
-          "tableTo": "location",
           "columnsFrom": [
             "location_id"
           ],
+          "tableTo": "location",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "locationLog_trip_id_trip_id_fk": {
           "name": "locationLog_trip_id_trip_id_fk",
           "tableFrom": "locationLog",
-          "tableTo": "trip",
           "columnsFrom": [
             "trip_id"
           ],
+          "tableTo": "trip",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "set null"
         },
         "locationLog_user_id_user_id_fk": {
           "name": "locationLog_user_id_user_id_fk",
           "tableFrom": "locationLog",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -620,28 +745,28 @@
         "locationLogImage_location_log_id_locationLog_id_fk": {
           "name": "locationLogImage_location_log_id_locationLog_id_fk",
           "tableFrom": "locationLogImage",
-          "tableTo": "locationLog",
           "columnsFrom": [
             "location_log_id"
           ],
+          "tableTo": "locationLog",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "locationLogImage_user_id_user_id_fk": {
           "name": "locationLogImage_user_id_user_id_fk",
           "tableFrom": "locationLogImage",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -706,13 +831,6 @@
           "name": "locationType_slug_unique",
           "columns": [
             "slug"
-          ],
-          "isUnique": true
-        },
-        "locationType_icon_unique": {
-          "name": "locationType_icon_unique",
-          "columns": [
-            "icon"
           ],
           "isUnique": true
         }
@@ -810,15 +928,15 @@
         "trip_user_id_user_id_fk": {
           "name": "trip_user_id_user_id_fk",
           "tableFrom": "trip",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -829,9 +947,9 @@
   "views": {},
   "enums": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
+    "tables": {}
   },
   "internal": {
     "indexes": {}

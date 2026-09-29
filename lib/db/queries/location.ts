@@ -6,7 +6,7 @@ import type { AppDatabase } from "~/lib/db";
 import type { InsertLocation } from "../schema/location";
 
 import chunk from "../chunk";
-import { location } from "../schema";
+import { location, locationLog, locationLogImage } from "../schema";
 
 const nanoid = customAlphabet("1234567890", 5);
 
@@ -30,12 +30,27 @@ export async function updateLocation(db: AppDatabase, updates: InsertLocation, s
 }
 
 export async function deleteLocation(db: AppDatabase, slug: string, userId: number) {
-  const [deleted] = await db.delete(location).where(and(
-    eq(location.slug, slug),
-    eq(location.userId, userId),
-  )).returning();
+  const existing = await db.query.location.findFirst({
+    where: and(
+      eq(location.slug, slug),
+      eq(location.userId, userId),
+    ),
+  });
 
-  return deleted;
+  if (!existing) {
+    return undefined;
+  }
+
+  // The FKs would cascade to the logs and images anyway; deleting the images explicitly returns
+  // their R2 keys.
+  const logIds = db.select({ id: locationLog.id }).from(locationLog).where(eq(locationLog.locationId, existing.id));
+  const [images, , [deleted]] = await db.batch([
+    db.delete(locationLogImage).where(inArray(locationLogImage.locationLogId, logIds)).returning(),
+    db.delete(locationLog).where(eq(locationLog.locationId, existing.id)),
+    db.delete(location).where(eq(location.id, existing.id)).returning(),
+  ]);
+
+  return { location: deleted, images };
 }
 
 export async function findLocations(db: AppDatabase, userId: number) {

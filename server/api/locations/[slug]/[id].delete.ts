@@ -25,16 +25,20 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
-  const deletedLog = await deleteLocationLog(event.context.db, Number(id), event.context.user.id);
+  const deleted = await deleteLocationLog(event.context.db, Number(id), event.context.user.id);
 
-  if (!deletedLog) {
+  if (!deleted) {
     throw createError({
       statusCode: 404,
       statusMessage: "Location log not found.",
     });
   }
 
+  if (deleted.images.length) {
+    await event.context.cloudflare.env.BUCKET.delete(deleted.images.map(image => image.key));
+  }
+
   setResponseStatus(event, 204);
 
-  return deletedLog;
+  return deleted.log;
 });

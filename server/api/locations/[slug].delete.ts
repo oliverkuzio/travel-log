@@ -12,5 +12,9 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
+  if (deleted.images.length) {
+    await event.context.cloudflare.env.BUCKET.delete(deleted.images.map(image => image.key));
+  }
+
   setResponseStatus(event, 204);
 });

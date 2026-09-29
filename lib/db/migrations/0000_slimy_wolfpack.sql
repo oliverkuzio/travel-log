@@ -34,6 +34,7 @@ CREATE TABLE `user` (
 	`email` text NOT NULL,
 	`email_verified` integer NOT NULL,
 	`image` text,
+	`role` text DEFAULT 'user' NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL
 );
@@ -53,29 +54,48 @@ CREATE TABLE `location` (
 	`name` text NOT NULL,
 	`slug` text NOT NULL,
 	`description` text,
+	`address` text,
+	`google_maps_url` text,
 	`lat` real NOT NULL,
 	`long` real NOT NULL,
+	`type_id` integer,
 	`user_id` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`type_id`) REFERENCES `locationType`(`id`) ON UPDATE no action ON DELETE set null,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `location_slug_unique` ON `location` (`slug`);--> statement-breakpoint
 CREATE UNIQUE INDEX `location_name_userId_unique` ON `location` (`name`,`user_id`);--> statement-breakpoint
+CREATE TABLE `location_import` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`status` text NOT NULL,
+	`name` text,
+	`address` text,
+	`google_maps_url` text NOT NULL,
+	`query` text,
+	`lat` real,
+	`long` real,
+	`user_id` integer NOT NULL,
+	`created_at` integer NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `location_import_userId_googleMapsUrl_unique` ON `location_import` (`user_id`,`google_maps_url`);--> statement-breakpoint
 CREATE TABLE `locationLog` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
 	`description` text,
 	`started_at` integer NOT NULL,
 	`ended_at` integer NOT NULL,
-	`lat` real NOT NULL,
-	`long` real NOT NULL,
 	`location_id` integer NOT NULL,
+	`trip_id` integer,
 	`user_id` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`location_id`) REFERENCES `location`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`trip_id`) REFERENCES `trip`(`id`) ON UPDATE no action ON DELETE set null,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
@@ -89,3 +109,30 @@ CREATE TABLE `locationLogImage` (
 	FOREIGN KEY (`location_log_id`) REFERENCES `locationLog`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
+--> statement-breakpoint
+CREATE TABLE `locationType` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL,
+	`slug` text NOT NULL,
+	`icon` text NOT NULL,
+	`description` text,
+	`created_at` integer NOT NULL,
+	`updated_at` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `locationType_slug_unique` ON `locationType` (`slug`);--> statement-breakpoint
+CREATE TABLE `trip` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL,
+	`slug` text NOT NULL,
+	`description` text,
+	`started_at` integer NOT NULL,
+	`ended_at` integer NOT NULL,
+	`user_id` integer NOT NULL,
+	`created_at` integer NOT NULL,
+	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `trip_slug_unique` ON `trip` (`slug`);--> statement-breakpoint
+CREATE UNIQUE INDEX `trip_name_userId_unique` ON `trip` (`name`,`user_id`);
