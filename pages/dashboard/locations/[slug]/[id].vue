@@ -15,7 +15,12 @@ const {
 
 const isOpen = ref(false);
 const isDeleting = ref(false);
+const isGalleryOpen = ref(false);
+const galleryStartIndex = ref(0);
 const deleteError = ref("");
+
+// Show images oldest first on the log page; the query returns newest first for the Manage Images page
+const images = computed(() => locationLog.value?.images.toReversed() ?? []);
 
 const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
@@ -34,6 +39,11 @@ const menuItems = computed<HeadingMenuItem[]>(() => [{
   danger: true,
   onClick: () => isOpen.value = true,
 }]);
+
+function openGallery(index = 0) {
+  galleryStartIndex.value = index;
+  isGalleryOpen.value = true;
+}
 
 async function confirmDelete() {
   try {
@@ -122,7 +132,26 @@ useSeoMeta({
           <Icon name="tabler:photo-cog" size="24" />
         </NuxtLink>
       </div>
-      <ImageList :images="locationLog.images" />
+      <button
+        v-if="locationLog.images.length"
+        type="button"
+        class="btn btn-sm btn-secondary"
+        @click="openGallery()"
+      >
+        View Gallery
+        <Icon name="tabler:photo-scan" size="18" />
+      </button>
+      <ImageList
+        :images
+        expandable
+        @select="openGallery"
+      />
+      <ImageGallery
+        :images
+        :is-open="isGalleryOpen"
+        :start-index="galleryStartIndex"
+        @on-closed="isGalleryOpen = false"
+      />
     </div>
     <div v-if="route.name !== 'dashboard-locations-slug-id'">
       <NuxtPage />
