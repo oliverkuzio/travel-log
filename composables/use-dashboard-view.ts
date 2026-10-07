@@ -99,6 +99,7 @@ export default async function useDashboardView() {
     const name = routeName.value;
     let mapPoints: MapPoint[] = [];
     let lockedPoint: CardPoint | null = null;
+    let route: GeoJSON.FeatureCollection<GeoJSON.LineString> | null = null;
     let loading = false;
 
     if (DASHBOARD_PAGES.has(name)) {
@@ -134,6 +135,7 @@ export default async function useDashboardView() {
       if (currentTrip.value) {
         // Match the logs shown, which may be filtered to a single day.
         mapPoints = getTripLocations({ logs: filteredCurrentTripLogs.value }).map(createMapPointFromLocation);
+        route = getTripRoute(filteredCurrentTripLogs.value);
       }
     }
     else if (CURRENT_LOCATION_PAGES.has(name) || CURRENT_LOCATION_LOG_PAGES.has(name)) {
@@ -152,6 +154,7 @@ export default async function useDashboardView() {
     if (!loading) {
       mapStore.mapPoints = mapPoints;
       mapStore.lockedPoint = lockedPoint;
+      mapStore.route = route;
     }
   });
 }

@@ -1,8 +1,38 @@
-import type { LngLatBounds } from "maplibre-gl";
+import type { LngLatBounds, Map as MaplibreMap } from "maplibre-gl";
 
 import type { CardPoint, MapPoint } from "~/lib/types";
 
-import { CENTER_MAP } from "~/lib/constants";
+import { CENTER_MAP, ROUTE_CASING_COLOR } from "~/lib/constants";
+
+export const ROUTE_ARROW_IMAGE = "route-arrow";
+
+/**
+ * Draws the chevron shown along trip routes to point the way they were travelled.
+ */
+function addRouteArrowImage(map: MaplibreMap) {
+  const pixelRatio = 2;
+  const size = 12 * pixelRatio;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+
+  const context = canvas.getContext("2d");
+  if (!context) {
+    return;
+  }
+
+  context.strokeStyle = ROUTE_CASING_COLOR;
+  context.lineWidth = 2.5 * pixelRatio;
+  context.lineCap = "round";
+  context.lineJoin = "round";
+  context.beginPath();
+  context.moveTo(size * 0.35, size * 0.2);
+  context.lineTo(size * 0.7, size * 0.5);
+  context.lineTo(size * 0.35, size * 0.8);
+  context.stroke();
+
+  map.addImage(ROUTE_ARROW_IMAGE, context.getImageData(0, 0, size, size), { pixelRatio });
+}
 
 export const useMapStore = defineStore("useMapStore", () => {
   const mapPoints = ref<MapPoint[]>([]);
@@ -11,6 +41,8 @@ export const useMapStore = defineStore("useMapStore", () => {
   const lockedPoint = ref<CardPoint | null>(null);
   const activePoint = computed(() => selectedPoint.value ?? lockedPoint.value);
   const addedPoint = ref<MapPoint & { centerMap?: boolean; zoom?: number } | null>(null);
+  // The current trip's route as one line per leg, or null when not viewing a trip.
+  const route = ref<GeoJSON.FeatureCollection<GeoJSON.LineString> | null>(null);
 
   async function init() {
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
@@ -20,6 +52,17 @@ export const useMapStore = defineStore("useMapStore", () => {
 
     let bounds: LngLatBounds | null = null;
     const padding = 64;
+
+    // Switching between light and dark styles drops added images, so add the arrow whenever it's missing.
+    watch(() => map.map, (newMap) => {
+      newMap?.on("styleimagemissing", (event) => {
+        if (event.id === ROUTE_ARROW_IMAGE && !newMap.hasImage(ROUTE_ARROW_IMAGE)) {
+          addRouteArrowImage(newMap);
+        }
+      });
+    }, {
+      immediate: true,
+    });
 
     effect(() => {
       const firstPoint = mapPoints.value[0];
@@ -64,5 +107,6 @@ export const useMapStore = defineStore("useMapStore", () => {
     selectedPoint,
     lockedPoint,
     activePoint,
+    route,
   };
 });

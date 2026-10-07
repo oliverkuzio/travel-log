@@ -4,11 +4,15 @@ import type { LngLat } from "maplibre-gl";
 
 import type { CardPoint } from "~/lib/types";
 
-import { CENTER_MAP } from "~/lib/constants";
+import { CENTER_MAP, ROUTE_CASING_COLOR, ROUTE_COLOR } from "~/lib/constants";
+import { ROUTE_ARROW_IMAGE } from "~/stores/map";
 
 const mapStore = useMapStore();
 const colorMode = useColorMode();
 const style = computed(() => `/api/styles/${colorMode.value}`);
+// Only the first style is passed to the map. Later switches are made below, because the default diff would
+// drop the trip route's source and layers without firing the "style.load" event that re-adds them.
+const initialStyle = style.value;
 const zoom = 3;
 const { formatDateRange } = useDateFormat();
 
@@ -33,16 +37,48 @@ function onDoubleClick(mglEvent: MglEvent<"dblclick">) {
 onMounted(() => {
   mapStore.init();
 });
+
+watch(style, async (newStyle) => {
+  const { useMap } = await import("@indoorequal/vue-maplibre-gl");
+  useMap().map?.setStyle(newStyle, { diff: false });
+});
 </script>
 
 <template>
   <MglMap
-    :map-style="style"
+    :map-style="initialStyle"
     :center="CENTER_MAP"
     :zoom="zoom"
     @map:dblclick="onDoubleClick($event)"
   >
     <MglNavigationControl />
+    <MglGeoJsonSource
+      v-if="mapStore.route"
+      source-id="trip-route"
+      :data="mapStore.route"
+    >
+      <MglLineLayer
+        layer-id="trip-route-casing"
+        :layout="{ 'line-join': 'round', 'line-cap': 'round' }"
+        :paint="{ 'line-color': ROUTE_CASING_COLOR, 'line-width': 6, 'line-opacity': 0.6 }"
+      />
+      <MglLineLayer
+        layer-id="trip-route-line"
+        :layout="{ 'line-join': 'round', 'line-cap': 'round' }"
+        :paint="{ 'line-color': ROUTE_COLOR, 'line-width': 4 }"
+      />
+      <MglSymbolLayer
+        layer-id="trip-route-arrows"
+        :layout="{
+          'symbol-placement': 'line',
+          'symbol-spacing': 80,
+          'icon-image': ROUTE_ARROW_IMAGE,
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
+          'icon-rotation-alignment': 'map',
+        }"
+      />
+    </MglGeoJsonSource>
     <MglMarker
       v-if="mapStore.addedPoint"
       :coordinates="[mapStore.addedPoint.long, mapStore.addedPoint.lat]"

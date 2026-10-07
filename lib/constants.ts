@@ -2,6 +2,10 @@ import type { LngLatLike } from "maplibre-gl";
 
 export const CENTER_MAP = [0, 0] as LngLatLike;
 
+// The daisyUI secondary (trip) colour and its content colour, as hex because MapLibre layers can't use CSS classes.
+export const ROUTE_COLOR = "#edb200";
+export const ROUTE_CASING_COLOR = "#733e0a";
+
 export const DASHBOARD_PAGES = new Set([
   "dashboard",
 ]);
