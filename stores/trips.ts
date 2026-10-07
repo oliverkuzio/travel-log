@@ -1,4 +1,5 @@
 import type { SelectTripWithLogs } from "~/lib/db/schema";
+import type { SortOrder } from "~/lib/types";
 
 export const useTripsStore = defineStore("useTripsStore", () => {
   const route = useRoute();
@@ -14,7 +15,12 @@ export const useTripsStore = defineStore("useTripsStore", () => {
   });
 
   const nameFilter = ref("");
-  const filteredTrips = computed(() => trips.value?.filter(trip => matchesNameFilter(trip.name, nameFilter.value)));
+  const sortOrder = ref<SortOrder>("desc");
+  const filteredTrips = computed(() => {
+    const matching = trips.value?.filter(trip => matchesNameFilter(trip.name, nameFilter.value));
+
+    return matching && sortByDate(matching, sortOrder.value);
+  });
 
   const tripUrlWithSlug = computed(() => `/api/trips/${route.params.slug}`);
 
@@ -30,15 +36,23 @@ export const useTripsStore = defineStore("useTripsStore", () => {
     watch: false,
   });
 
+  const currentTripLogsSortOrder = ref<SortOrder>("asc");
+  const sortedCurrentTripLogs = computed(() =>
+    currentTrip.value ? sortByDate(currentTrip.value.logs, currentTripLogsSortOrder.value) : [],
+  );
+
   return {
     trips,
     tripsStatus,
     refreshTrips,
     nameFilter,
+    sortOrder,
     filteredTrips,
     currentTrip,
     currentTripStatus,
     currentTripError,
     refreshCurrentTrip,
+    currentTripLogsSortOrder,
+    sortedCurrentTripLogs,
   };
 });

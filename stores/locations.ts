@@ -1,4 +1,5 @@
 import type { SelectLocationLogWithImages, SelectLocationType, SelectLocationWithLogs } from "~/lib/db/schema";
+import type { SortOrder } from "~/lib/types";
 
 export const useLocationsStore = defineStore("useLocationsStore", () => {
   const route = useRoute();
@@ -53,6 +54,11 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
     watch: false,
   });
 
+  const currentLocationLogsSortOrder = ref<SortOrder>("asc");
+  const sortedCurrentLocationLogs = computed(() =>
+    currentLocation.value ? sortByDate(currentLocation.value.logs, currentLocationLogsSortOrder.value) : [],
+  );
+
   const {
     data: currentLocationLog,
     status: currentLocationLogStatus,
@@ -77,6 +83,8 @@ export const useLocationsStore = defineStore("useLocationsStore", () => {
     currentLocationStatus,
     currentLocationError,
     refreshCurrentLocation,
+    currentLocationLogsSortOrder,
+    sortedCurrentLocationLogs,
     currentLocationLog,
     currentLocationLogStatus,
     currentLocationLogError,

@@ -10,6 +10,8 @@ const {
   currentLocation: location,
   currentLocationError: error,
   currentLocationStatus: status,
+  currentLocationLogsSortOrder: sortOrder,
+  sortedCurrentLocationLogs: sortedLogs,
 } = storeToRefs(locationStore);
 
 const isOpen = ref(false);
@@ -146,8 +148,9 @@ useSeoMeta({
       </div>
     </div>
     <div v-if="route.name === 'dashboard-locations-slug' && !loading && location?.logs.length" class="flex flex-col flex-nowrap gap-4 align-items-stretch">
+      <SortToggle v-model="sortOrder" />
       <MapPointCard
-        v-for="log in location.logs"
+        v-for="log in sortedLogs"
         :key="log.id"
         :map-point="createMapPointFromLocationLog(log, location)"
       >

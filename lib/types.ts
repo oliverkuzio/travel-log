@@ -72,3 +72,5 @@ export type SidebarItem = {
   iconColor?: string;
   matchPrefix?: boolean;
 };
+
+export type SortOrder = "asc" | "desc";
