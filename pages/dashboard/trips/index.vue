@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const tripsStore = useTripsStore();
-const { trips, filteredTrips, nameFilter, tripsStatus: status } = storeToRefs(tripsStore);
+const { trips, filteredTrips, nameFilter, sortOrder, tripsStatus: status } = storeToRefs(tripsStore);
 
 const { formatDateRange } = useDateFormat();
 const tripNames = computed(() => trips.value?.map(trip => trip.name) ?? []);
@@ -34,6 +34,7 @@ useSeoMeta({
       </p>
       <template v-else>
         <NameFilter v-model="nameFilter" :names="tripNames" />
+        <SortToggle v-model="sortOrder" />
         <p v-if="!filteredTrips?.length" class="text-sm italic">
           No trips match your filter.
         </p>
