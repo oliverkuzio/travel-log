@@ -33,7 +33,7 @@ export default async function useDashboardView() {
     currentLocationStatus,
     currentLocationLogStatus,
   } = storeToRefs(locationsStore);
-  const { trips, tripsStatus, filteredTrips, currentTrip, currentTripStatus } = storeToRefs(tripsStore);
+  const { trips, tripsStatus, filteredTrips, currentTrip, currentTripStatus, filteredCurrentTripLogs } = storeToRefs(tripsStore);
   const { readyImports, importsStatus, selectedIds } = storeToRefs(locationImportStore);
 
   const routeName = computed(() => route.name?.toString() || "");
@@ -132,7 +132,8 @@ export default async function useDashboardView() {
       loading = currentTripStatus.value === "pending";
 
       if (currentTrip.value) {
-        mapPoints = getTripLocations(currentTrip.value).map(createMapPointFromLocation);
+        // Match the logs shown, which may be filtered to a single day.
+        mapPoints = getTripLocations({ logs: filteredCurrentTripLogs.value }).map(createMapPointFromLocation);
       }
     }
     else if (CURRENT_LOCATION_PAGES.has(name) || CURRENT_LOCATION_LOG_PAGES.has(name)) {

@@ -11,7 +11,9 @@ const {
   currentTripError: error,
   currentTripStatus: status,
   currentTripLogsSortOrder: sortOrder,
-  sortedCurrentTripLogs: sortedLogs,
+  currentTripLogsDateFilter: dateFilter,
+  currentTripLogDates: logDates,
+  filteredCurrentTripLogs: filteredLogs,
 } = storeToRefs(tripsStore);
 
 const isOpen = ref(false);
@@ -106,9 +108,12 @@ useSeoMeta({
           :to="{ name: 'dashboard-trips-slug-add', params: { slug: route.params.slug } }"
           kind="trip"
         />
-        <SortToggle v-if="trip.logs.length" v-model="sortOrder" />
+        <div v-if="trip.logs.length" class="flex flex-wrap items-center justify-end gap-2">
+          <DateFilter v-model="dateFilter" :dates="logDates" />
+          <SortToggle v-model="sortOrder" />
+        </div>
         <MapPointCard
-          v-for="log in sortedLogs"
+          v-for="log in filteredLogs"
           :key="log.id"
           :map-point="createMapPointFromLocationLog(log, log.location)"
         >
