@@ -34,7 +34,7 @@ useSeoMeta({
       </p>
       <template v-else>
         <NameFilter v-model="nameFilter" :names="tripNames" />
-        <SortToggle v-model="sortOrder" />
+        <SortToggle v-model="sortOrder" class="self-end" />
         <p v-if="!filteredTrips?.length" class="text-sm italic">
           No trips match your filter.
         </p>

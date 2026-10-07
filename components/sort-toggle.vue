@@ -11,7 +11,7 @@ function toggle() {
 <template>
   <button
     type="button"
-    class="btn btn-ghost btn-xs self-end gap-1"
+    class="btn btn-ghost btn-xs gap-1"
     :aria-label="order === 'asc' ? 'Sorted oldest first, switch to newest first' : 'Sorted newest first, switch to oldest first'"
     @click="toggle"
   >

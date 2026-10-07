@@ -37,9 +37,30 @@ export const useTripsStore = defineStore("useTripsStore", () => {
   });
 
   const currentTripLogsSortOrder = ref<SortOrder>("asc");
-  const sortedCurrentTripLogs = computed(() =>
-    currentTrip.value ? sortByDate(currentTrip.value.logs, currentTripLogsSortOrder.value) : [],
-  );
+  // A local YYYY-MM-DD day, or an empty string for all dates.
+  const currentTripLogsDateFilter = ref("");
+
+  // Every day covered by the current trip's logs, in the same order as the logs.
+  const currentTripLogDates = computed(() => {
+    const keys = new Set(currentTrip.value?.logs.flatMap(log => getDateKeysInRange(log.startedAt, log.endedAt)));
+    const sorted = [...keys].sort();
+
+    return currentTripLogsSortOrder.value === "asc" ? sorted : sorted.reverse();
+  });
+
+  const filteredCurrentTripLogs = computed(() => {
+    const day = currentTripLogsDateFilter.value;
+    const matching = currentTrip.value?.logs.filter(log => !day || isDateKeyInRange(day, log.startedAt, log.endedAt)) ?? [];
+
+    return sortByDate(matching, currentTripLogsSortOrder.value);
+  });
+
+  // Drop a selected day that no log covers any more, e.g. after switching trips or editing a log.
+  watch(currentTripLogDates, (dates) => {
+    if (currentTripLogsDateFilter.value && !dates.includes(currentTripLogsDateFilter.value)) {
+      currentTripLogsDateFilter.value = "";
+    }
+  });
 
   return {
     trips,
@@ -53,6 +74,8 @@ export const useTripsStore = defineStore("useTripsStore", () => {
     currentTripError,
     refreshCurrentTrip,
     currentTripLogsSortOrder,
-    sortedCurrentTripLogs,
+    currentTripLogsDateFilter,
+    currentTripLogDates,
+    filteredCurrentTripLogs,
   };
 });

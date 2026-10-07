@@ -148,7 +148,7 @@ useSeoMeta({
       </div>
     </div>
     <div v-if="route.name === 'dashboard-locations-slug' && !loading && location?.logs.length" class="flex flex-col flex-nowrap gap-4 align-items-stretch">
-      <SortToggle v-model="sortOrder" />
+      <SortToggle v-model="sortOrder" class="self-end" />
       <MapPointCard
         v-for="log in sortedLogs"
         :key="log.id"
