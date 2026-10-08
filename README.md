@@ -148,7 +148,17 @@ Signing out deletes the `pages`, `api` and `images` caches, because they hold yo
 
 The MapTiler key is restricted to approved origins, so map tiles (and their caching) only work on those origins. Requests from other origins, such as `wrangler dev` on a random port, get a 403.
 
-To debug, run `pnpm preview` and use Chrome DevTools → **Application** (Manifest, Service workers, Cache storage). Tick _Offline_ on the Network tab to simulate losing connection.
+### Offline changes
+
+Adding, editing and deleting locations, trips, logs and photos also works offline. Changes are saved on the device (IndexedDB) and shown straight away with a **Not synced** badge. A cloud icon in the navbar counts what's waiting. When the connection returns, changes are sent in the order they were made: on load, when the device comes back online, when the app is reopened, and every minute.
+
+- Something created offline gets a temporary address (`/dashboard/locations/offline_…`). It can be edited, have visits logged to it, or be picked for a trip before it syncs. Once synced, the page moves to the real address.
+- Creates send an `Idempotency-Key` header, so a request that's retried after a dropped connection never creates a duplicate.
+- If the server rejects a change (e.g. a duplicate name), it and anything that depends on it are marked as failed on **/dashboard/sync**, where they can be retried or discarded.
+- Signing out with unsynced changes asks for confirmation, because they're deleted with the rest of the device's data.
+- Location types and Google Takeout imports still need a connection.
+
+To debug, run `pnpm preview` and use Chrome DevTools → **Application** (Manifest, Service workers, Cache storage, and IndexedDB → `travel-log-outbox` for queued changes). Tick _Offline_ on the Network tab to simulate losing connection.
 
 ## Useful commands
 

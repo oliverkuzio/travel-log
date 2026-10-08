@@ -7,6 +7,7 @@ import { cleanupOutdatedCaches, matchPrecache, precacheAndRoute } from "workbox-
 import { NavigationRoute, registerRoute } from "workbox-routing";
 import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from "workbox-strategies";
 
+import { findPendingImage } from "../lib/outbox";
 import { PWA_CACHES } from "../lib/pwa-caches";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -71,6 +72,18 @@ registerRoute(
     networkTimeoutSeconds: 4,
     plugins: [onlySuccessful],
   }),
+);
+
+// Photos waiting in the outbox to be uploaded, shown from the device until they are.
+registerRoute(
+  ({ url, sameOrigin }) => sameOrigin && url.pathname.startsWith("/api/images/pending/"),
+  async ({ url }) => {
+    const image = await findPendingImage(url.pathname.split("/").pop()!);
+
+    return image
+      ? new Response(image, { headers: { "Content-Type": image.type || "image/jpeg" } })
+      : new Response(null, { status: 404 });
+  },
 );
 
 // Image keys are random and never reused, so a cached copy is always current.

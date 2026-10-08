@@ -4,7 +4,7 @@ import type { CoverImageChange } from "~/lib/types";
 
 const route = useRoute();
 const tripsStore = useTripsStore();
-const { $csrfFetch } = useNuxtApp();
+const outboxStore = useOutboxStore();
 
 const {
   currentTrip: trip,
@@ -14,10 +14,17 @@ const {
 const updated = ref<SelectTrip | null>(null);
 
 async function onSubmit(values: InsertTrip, coverImage?: CoverImageChange) {
-  updated.value = await $csrfFetch<SelectTrip>(`/api/trips/${route.params.slug}`, {
-    method: "put",
+  const { data } = await outboxStore.mutate<SelectTrip>({
+    kind: "trip:update",
+    method: "PUT",
+    url: `/api/trips/${route.params.slug}`,
     body: coverImageRequestBody(values, coverImage),
+    label: `Edit trip “${values.name}”`,
+    target: { slug: String(route.params.slug) },
+    preview: { ...values },
   });
+
+  updated.value = data;
 }
 
 function onSubmitComplete() {

@@ -1,6 +1,8 @@
 import type { SelectLocation, SelectLocationLog, SelectLocationType, SelectTripWithLogs } from "~/lib/db/schema";
 import type { CardPoint, LatLongItem, MapPoint, MapPointKind } from "~/lib/types";
 
+import { isPendingRecord } from "~/lib/outbox-overlay";
+
 type LocationWithOptionalType = SelectLocation & {
   type?: SelectLocationType | null;
   logs?: Pick<SelectLocationLog, "id">[];
@@ -21,6 +23,7 @@ export function createMapPointFromLocation(location: LocationWithOptionalType): 
     typeName: location.type?.name,
     coverImageKey: location.coverImageKey,
     visitCount: location.logs?.length,
+    pending: isPendingRecord(location),
     to: { name: "dashboard-locations-slug", params: { slug: location.slug } },
   };
 }
@@ -35,6 +38,7 @@ export function createMapPointFromLocationLog(log: SelectLocationLog, location: 
     name: log.name,
     description: log.description,
     dates: { startedAt: log.startedAt, endedAt: log.endedAt, withTime: true },
+    pending: isPendingRecord(log),
     to: { name: "dashboard-locations-slug-id", params: { slug: location.slug, id: log.id } },
   };
 }
@@ -74,6 +78,7 @@ export function createMapPointFromTrip(trip: SelectTripWithLogs): CardPoint {
     ...getTripCoords(trip),
     coverImageKey: trip.coverImageKey,
     visitCount: getTripLocations(trip).length,
+    pending: isPendingRecord(trip),
     to: { name: "dashboard-trips-slug", params: { slug: trip.slug } },
   };
 }

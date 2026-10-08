@@ -6,6 +6,7 @@ import type { HeadingMenuItem } from "~/lib/types";
 const route = useRoute();
 const { formatDateRange } = useDateFormat();
 const locationStore = useLocationsStore();
+const outboxStore = useOutboxStore();
 const {
   currentLocation: location,
   currentLocationError: error,
@@ -74,8 +75,12 @@ async function confirmDelete() {
     deleteError.value = "";
     isDeleting.value = true;
 
-    await $fetch(`/api/locations/${route.params.slug}`, {
+    await outboxStore.mutate({
+      kind: "location:delete",
       method: "DELETE",
+      url: `/api/locations/${route.params.slug}`,
+      label: `Delete location “${location.value?.name}”`,
+      target: { slug: String(route.params.slug) },
     });
 
     await navigateTo("/dashboard/locations");
@@ -125,6 +130,7 @@ useSeoMeta({
           :class="getPointColors('location', true).text"
         />
         {{ location.name }}
+        <PendingBadge :record="location" />
       </h1>
       <p v-if="location.type && !location.coverImageKey" class="badge badge-neutral badge-sm mb-4">
         {{ location.type.name }}

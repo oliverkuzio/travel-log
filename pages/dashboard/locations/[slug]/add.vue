@@ -2,13 +2,26 @@
 import type { InsertLocationLog } from "~/lib/db/schema";
 
 const route = useRoute();
-const { $csrfFetch } = useNuxtApp();
+const outboxStore = useOutboxStore();
 const { currentLocation: location } = storeToRefs(useLocationsStore());
+const { trips } = storeToRefs(useTripsStore());
 
 async function onSubmit(values: InsertLocationLog) {
-  await $csrfFetch(`/api/locations/${route.params.slug}/add`, {
-    method: "post",
+  await outboxStore.mutate({
+    kind: "log:create",
+    method: "POST",
+    url: `/api/locations/${route.params.slug}/add`,
     body: values,
+    label: `Log a visit to “${location.value?.name}”`,
+    creates: true,
+    preview: {
+      ...values,
+      tripId: values.tripId ?? null,
+      locationId: location.value?.id,
+      location: locationPreview(location.value),
+      trip: tripPreview(findById(trips.value, values.tripId)),
+      images: [],
+    },
   });
 }
 

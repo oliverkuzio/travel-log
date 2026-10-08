@@ -6,10 +6,19 @@ import type { InsertLocationLogImage } from "../schema";
 
 import { locationLogImage } from "../schema";
 
+export async function findLocationLogImageByClientId(db: AppDatabase, clientId: string, userId: number) {
+  return db.query.locationLogImage.findFirst({
+    where: and(
+      eq(locationLogImage.clientId, clientId),
+      eq(locationLogImage.userId, userId),
+    ),
+  });
+}
+
 export async function insertLocationLogImage(
   db: AppDatabase,
   locationLogId: number,
-  insertable: InsertLocationLogImage,
+  insertable: InsertLocationLogImage & { clientId?: string },
   userId: number,
 ) {
   const [inserted] = await db.insert(locationLogImage).values({

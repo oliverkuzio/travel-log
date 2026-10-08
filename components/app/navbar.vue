@@ -22,6 +22,7 @@ const overMap = computed(() => route.path === "/");
     </div>
     <div class="navbar-end">
       <ClientOnly>
+        <AppSyncStatus />
         <button
           v-if="$pwa?.showInstallPrompt"
           class="btn btn-ghost btn-sm"

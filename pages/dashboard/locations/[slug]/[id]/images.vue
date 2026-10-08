@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { FetchError } from "ofetch";
+import type { FetchError } from "ofetch";
 
 import type { SelectLocationLogImage } from "~/lib/db/schema";
 
@@ -7,7 +7,7 @@ const image = ref<File | null>(null);
 const previewUrl = ref<string | null>(null);
 
 const route = useRoute();
-const { $csrfFetch } = useNuxtApp();
+const outboxStore = useOutboxStore();
 const locationStore = useLocationsStore();
 const {
   currentLocationLog: locationLog,
@@ -48,9 +48,14 @@ async function uploadImage() {
     const formData = new FormData();
     formData.append("file", blob, "image.jpg");
 
-    await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}/image`, {
+    await outboxStore.mutate({
+      kind: "image:create",
       method: "POST",
+      url: `/api/locations/${route.params.slug}/${route.params.id}/image`,
       body: formData,
+      label: `Add a photo to “${locationLog.value?.name}”`,
+      target: { id: Number(route.params.id) },
+      creates: true,
     });
 
     await locationStore.refreshCurrentLocationLog();
@@ -61,15 +66,7 @@ async function uploadImage() {
     }
   }
   catch (e) {
-    if (e instanceof FetchError) {
-      uploadError.value = (e as FetchError).statusMessage || "Unkown error";
-    }
-    else if (e instanceof Error) {
-      uploadError.value = (e as Error).message;
-    }
-    else {
-      uploadError.value = "Unkown error";
-    }
+    uploadError.value = getFetchErrorMessage(e as FetchError);
   }
 
   isUploading.value = false;
@@ -94,8 +91,12 @@ async function confirmDelete() {
     isDeleting.value = true;
     deleteError.value = "";
 
-    await $fetch(`/api/locations/${route.params.slug}/${route.params.id}/image/${deletingImage?.value.id}`, {
+    await outboxStore.mutate({
+      kind: "image:delete",
       method: "DELETE",
+      url: `/api/locations/${route.params.slug}/${route.params.id}/image/${deletingImage.value.id}`,
+      label: `Delete a photo from “${locationLog.value?.name}”`,
+      target: { id: deletingImage.value.id },
     });
     await locationStore.refreshCurrentLocationLog();
   }

@@ -33,6 +33,7 @@ const colors = computed(() => getPointColors(props.mapPoint.kind, selected.value
           :class="colors.text"
         />
         <span class="truncate">{{ mapPoint.name }}</span>
+        <PendingBadge :pending="mapPoint.pending" />
       </h2>
       <p v-if="!compact && mapPoint.description">
         {{ mapPoint.description }}

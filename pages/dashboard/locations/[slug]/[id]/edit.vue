@@ -3,7 +3,8 @@ import type { InsertLocationLog } from "~/lib/db/schema";
 
 const route = useRoute();
 const locationsStore = useLocationsStore();
-const { $csrfFetch } = useNuxtApp();
+const outboxStore = useOutboxStore();
+const { trips } = storeToRefs(useTripsStore());
 
 const {
   currentLocationLog: locationLog,
@@ -11,9 +12,14 @@ const {
 } = storeToRefs(locationsStore);
 
 async function onSubmit(values: InsertLocationLog) {
-  await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}`, {
-    method: "put",
+  await outboxStore.mutate({
+    kind: "log:update",
+    method: "PUT",
+    url: `/api/locations/${route.params.slug}/${route.params.id}`,
     body: values,
+    label: `Edit log “${values.name}”`,
+    target: { id: Number(route.params.id) },
+    preview: { ...values, tripId: values.tripId ?? null, trip: tripPreview(findById(trips.value, values.tripId)) },
   });
 }
 

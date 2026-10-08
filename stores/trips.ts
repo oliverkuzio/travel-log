@@ -3,6 +3,8 @@ import type { SortOrder } from "~/lib/types";
 
 export const useTripsStore = defineStore("useTripsStore", () => {
   const route = useRoute();
+  // Shows changes made offline that haven't been synced yet.
+  const { fetchWithOutbox } = useOutboxStore();
 
   const {
     data: trips,
@@ -12,6 +14,7 @@ export const useTripsStore = defineStore("useTripsStore", () => {
     key: "trips",
     lazy: true,
     immediate: false,
+    $fetch: fetchWithOutbox as unknown as typeof $fetch,
   });
 
   const nameFilter = ref("");
@@ -33,6 +36,7 @@ export const useTripsStore = defineStore("useTripsStore", () => {
     key: "current-trip",
     lazy: true,
     immediate: false,
+    $fetch: fetchWithOutbox as unknown as typeof $fetch,
     watch: false,
   });
 
