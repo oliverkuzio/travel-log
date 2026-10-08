@@ -10,7 +10,7 @@ import { location, locationLog, locationLogImage } from "../schema";
 
 const nanoid = customAlphabet("1234567890", 5);
 
-type LocationWithCoverImage = InsertLocation & { coverImageKey?: string | null };
+type LocationWithCoverImage = InsertLocation & { coverImageKey?: string | null; clientId?: string };
 
 export async function insertLocation(db: AppDatabase, insertable: LocationWithCoverImage, slug: string, userId: number) {
   const [created] = await db.insert(location).values({
@@ -94,6 +94,15 @@ export async function findLocationById(db: AppDatabase, id: number, userId: numb
   return db.query.location.findFirst({
     where: and(
       eq(location.id, id),
+      eq(location.userId, userId),
+    ),
+  });
+}
+
+export async function findLocationByClientId(db: AppDatabase, clientId: string, userId: number) {
+  return db.query.location.findFirst({
+    where: and(
+      eq(location.clientId, clientId),
       eq(location.userId, userId),
     ),
   });

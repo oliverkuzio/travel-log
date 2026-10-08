@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
 import { relations } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { int, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 
 import { user } from "./auth";
@@ -12,9 +12,13 @@ export const locationLogImage = sqliteTable("locationLogImage", {
   key: text().notNull(),
   locationLogId: int().notNull().references(() => locationLog.id, { onDelete: "cascade" }),
   userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
+  // Idempotency key for creates, so a retried request returns the original row instead of a duplicate.
+  clientId: text(),
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
-});
+}, t => [
+  unique().on(t.userId, t.clientId),
+]);
 
 export const locationLogImageRelations = relations(locationLogImage, ({ one }) => ({
   locationLog: one(locationLog, {
@@ -29,6 +33,7 @@ export const InsertLocationLogImage = createInsertSchema(locationLogImage, {
   id: true,
   locationLogId: true,
   userId: true,
+  clientId: true,
   createdAt: true,
   updatedAt: true,
 });

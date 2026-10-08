@@ -25,10 +25,19 @@ export async function findLocationLog(db: AppDatabase, locationLogId: number, us
   return foundLog;
 }
 
+export async function findLocationLogByClientId(db: AppDatabase, clientId: string, userId: number) {
+  return db.query.locationLog.findFirst({
+    where: and(
+      eq(locationLog.clientId, clientId),
+      eq(locationLog.userId, userId),
+    ),
+  });
+}
+
 export async function insertLocationLog(
   db: AppDatabase,
   locationId: number,
-  insertable: InsertLocationLog,
+  insertable: InsertLocationLog & { clientId?: string },
   userId: number,
 ) {
   const [inserted] = await db.insert(locationLog).values({

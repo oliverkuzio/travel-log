@@ -9,7 +9,7 @@ import { locationLog, trip } from "../schema";
 
 const nanoid = customAlphabet("1234567890", 5);
 
-type TripWithCoverImage = InsertTrip & { coverImageKey?: string | null };
+type TripWithCoverImage = InsertTrip & { coverImageKey?: string | null; clientId?: string };
 
 export async function insertTrip(db: AppDatabase, insertable: TripWithCoverImage, slug: string, userId: number) {
   const [created] = await db.insert(trip).values({
@@ -90,6 +90,15 @@ export async function findTripById(db: AppDatabase, id: number, userId: number) 
   return db.query.trip.findFirst({
     where: and(
       eq(trip.id, id),
+      eq(trip.userId, userId),
+    ),
+  });
+}
+
+export async function findTripByClientId(db: AppDatabase, clientId: string, userId: number) {
+  return db.query.trip.findFirst({
+    where: and(
+      eq(trip.clientId, clientId),
       eq(trip.userId, userId),
     ),
   });

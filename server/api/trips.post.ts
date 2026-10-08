@@ -2,12 +2,23 @@ import type { DrizzleError } from "drizzle-orm";
 
 import slugify from "slug";
 
-import { findTripByName, findUniqueSlug, insertTrip } from "~/lib/db/queries/trip";
+import { findTripByClientId, findTripByName, findUniqueSlug, insertTrip } from "~/lib/db/queries/trip";
 import { InsertTrip } from "~/lib/db/schema";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
+import getIdempotencyKey from "~/utils/get-idempotency-key";
 import readCoverImageBody, { putCoverImage } from "~/utils/read-cover-image-body";
 
 export default defineAuthenticatedEventHandler(async (event) => {
+  const clientId = getIdempotencyKey(event);
+
+  if (clientId) {
+    const alreadyCreated = await findTripByClientId(event.context.db, clientId, event.context.user.id);
+
+    if (alreadyCreated) {
+      return alreadyCreated;
+    }
+  }
+
   const { data, coverImage } = await readCoverImageBody(event, InsertTrip);
 
   const existingTrip = await findTripByName(event.context.db, data, event.context.user.id);
@@ -23,7 +34,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
   const coverImageKey = coverImage ? await putCoverImage(event, coverImage, event.context.user.id, "trips") : null;
 
   try {
-    return await insertTrip(event.context.db, { ...data, coverImageKey }, slug, event.context.user.id);
+    return await insertTrip(event.context.db, { ...data, coverImageKey, clientId }, slug, event.context.user.id);
   }
   catch (e) {
     if (coverImageKey) {

@@ -19,10 +19,13 @@ export const trip = sqliteTable("trip", {
   endedAt: int().notNull(),
   coverImageKey: text(),
   userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
+  // Idempotency key for creates, so a retried request returns the original row instead of a duplicate.
+  clientId: text(),
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
 }, t => [
   unique().on(t.name, t.userId),
+  unique().on(t.userId, t.clientId),
 ]);
 
 export const tripRelations = relations(trip, ({ many }) => ({
@@ -39,6 +42,7 @@ export const InsertTripFields = createInsertSchema(trip, {
   slug: true,
   coverImageKey: true,
   userId: true,
+  clientId: true,
   createdAt: true,
   updatedAt: true,
 });

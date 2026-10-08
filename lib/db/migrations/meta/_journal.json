@@ -29,6 +29,13 @@
       "when": 1791448560486,
       "tag": "0003_trip_cover_image",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791468887347,
+      "tag": "0004_offline_idempotency_keys",
+      "breakpoints": true
     }
   ]
 }

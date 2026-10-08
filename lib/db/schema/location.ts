@@ -24,10 +24,13 @@ export const location = sqliteTable("location", {
   long: real().notNull(),
   typeId: int().references(() => locationType.id, { onDelete: "set null" }),
   userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
+  // Idempotency key for creates, so a retried request returns the original row instead of a duplicate.
+  clientId: text(),
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
 }, t => [
   unique().on(t.name, t.userId),
+  unique().on(t.userId, t.clientId),
 ]);
 
 export const locationRelations = relations(location, ({ one, many }) => ({
@@ -51,6 +54,7 @@ export const InsertLocation = createInsertSchema(location, {
   slug: true,
   coverImageKey: true,
   userId: true,
+  clientId: true,
   createdAt: true,
   updatedAt: true,
 });
