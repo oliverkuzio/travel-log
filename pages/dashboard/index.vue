@@ -27,7 +27,7 @@ useSeoMeta({
             size="32"
             class="text-secondary"
           />
-          <div>
+          <div class="flex-1 flex items-baseline justify-between gap-2">
             <h2 class="text-lg">
               {{ trips?.length ?? 0 }} {{ trips?.length === 1 ? "trip" : "trips" }}
             </h2>
