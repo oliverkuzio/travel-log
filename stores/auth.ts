@@ -1,6 +1,8 @@
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/vue";
 
+import { USER_CACHES } from "~/lib/pwa-caches";
+
 const authClient = createAuthClient({
   plugins: [
     inferAdditionalFields({
@@ -53,6 +55,10 @@ export const useAuthStore = defineStore("useAuthStore", () => {
         headers,
       },
     });
+    // Saved pages, data and photos are private, so don't leave them behind for the next person.
+    if ("caches" in window) {
+      await Promise.all(USER_CACHES.map(name => caches.delete(name)));
+    }
     navigateTo("/");
   }
 

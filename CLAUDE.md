@@ -38,8 +38,11 @@ Travel Log: a Nuxt 3 SSR app on Cloudflare Workers (D1 + R2) for logging visited
 - The service worker only exists in production builds. Test it with `pnpm preview` and Chrome DevTools → Application.
 - Navigations are network-first with a cached fallback, then fall back to the precached `/app-shell`. That page is `ssr: false` and is rendered by the server, not prerendered, because prerendering fails without the Cloudflare context. `/api/*` navigations bypass the service worker so that OAuth callbacks work.
 - `registerType: "prompt"` means updates wait for the user to click Reload in `AppPwaUpdate`. Never add `skipWaiting()` or `clientsClaim()` unconditionally.
-- Pages may store user data in `caches`. Anything cached per user must be cleared on sign-out.
-- Roadmap: phase 1 (installable app with update prompt) is done. Phase 2 adds offline reads by runtime-caching API GETs, the session, images, the map style and tiles. Phase 3 adds offline writes, using an IndexedDB outbox with temporary slugs and server-side idempotency keys.
+- Runtime cache names live in `lib/pwa-caches.ts`, which both `sw.ts` and the app import, so keep it free of browser and Nuxt imports. Anything per user goes in `USER_CACHES`; `signOut()` in `stores/auth.ts` deletes those caches. A new user-data API route has to be added to the `api` route regex in `sw.ts`, or it won't be available offline.
+- Only status 200 responses are cached, so 401, 403 and 404 are never saved.
+- Use `useOnline()` for connection state. It starts `true` and updates after hydration, to avoid hydration mismatches. Disable features that need the network when offline (see `place-search.vue`).
+- The MapTiler key is origin-restricted, so tiles return 403 on unapproved origins such as `wrangler dev` on a random port.
+- Roadmap: phases 1 (installable app with update prompt) and 2 (offline reads) are done. Phase 3 adds offline writes, using an IndexedDB outbox with temporary slugs and server-side idempotency keys.
 
 ## Workflow
 
