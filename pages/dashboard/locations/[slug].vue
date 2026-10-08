@@ -108,9 +108,10 @@ useSeoMeta({
         />
         {{ location.name }}
       </h1>
-      <p v-if="location.type" class="badge badge-neutral badge-sm mb-2">
+      <p v-if="location.type" class="badge badge-neutral badge-sm mb-4">
         {{ location.type.name }}
       </p>
+      <EntityActions :items="actions" kind="location" />
       <p class="text-sm mb-4">
         {{ location.description }}
       </p>
@@ -132,10 +133,6 @@ useSeoMeta({
         View on Google Maps
         <Icon name="tabler:external-link" size="20" />
       </a>
-      <p class="text-xs opacity-70 mb-4">
-        {{ location.logs.length }} {{ location.logs.length === 1 ? "log" : "logs" }}
-      </p>
-      <EntityActions :items="actions" kind="location" />
       <p v-if="!location.logs.length" class="text-sm italic">
         Add a location log to get started.
       </p>
@@ -143,7 +140,7 @@ useSeoMeta({
     <div v-if="route.name === 'dashboard-locations-slug' && !loading && location?.logs.length" class="flex flex-col flex-nowrap gap-4 align-items-stretch">
       <div class="flex flex-wrap items-center gap-2">
         <h2 class="text-xl font-semibold flex-1">
-          Your visits
+          {{ location.logs.length }} {{ location.logs.length === 1 ? "visit" : "visits" }}
         </h2>
         <SortToggle v-model="sortOrder" />
       </div>

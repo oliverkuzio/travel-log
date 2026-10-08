@@ -106,7 +106,7 @@ useSeoMeta({
       <div class="flex flex-col flex-nowrap gap-4 align-items-stretch">
         <div v-if="trip.logs.length" class="flex flex-wrap items-center gap-2">
           <h2 class="text-xl font-semibold flex-1">
-            Your visits
+            {{ trip.logs.length }} {{ trip.logs.length === 1 ? "visit" : "visits" }}
           </h2>
           <DateFilter v-model="dateFilter" :dates="logDates" />
           <SortToggle v-model="sortOrder" />
