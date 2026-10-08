@@ -1,0 +1,1 @@
+ALTER TABLE `trip` ADD `cover_image_key` text;

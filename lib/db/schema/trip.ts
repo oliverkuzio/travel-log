@@ -17,6 +17,7 @@ export const trip = sqliteTable("trip", {
   description: text(),
   startedAt: int().notNull(),
   endedAt: int().notNull(),
+  coverImageKey: text(),
   userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
@@ -28,7 +29,7 @@ export const tripRelations = relations(trip, ({ many }) => ({
   logs: many(locationLog),
 }));
 
-export const InsertTrip = createInsertSchema(trip, {
+export const InsertTripFields = createInsertSchema(trip, {
   name: NameSchema,
   description: DescriptionSchema,
   startedAt: DateSchema,
@@ -36,10 +37,13 @@ export const InsertTrip = createInsertSchema(trip, {
 }).omit({
   id: true,
   slug: true,
+  coverImageKey: true,
   userId: true,
   createdAt: true,
   updatedAt: true,
-}).superRefine(refineDates);
+});
+
+export const InsertTrip = InsertTripFields.superRefine(refineDates);
 
 export type InsertTrip = z.infer<typeof InsertTrip>;
 export type SelectTrip = typeof trip.$inferSelect;
