@@ -9,5 +9,6 @@ await authStore.init();
     <main class="flex-1 flex flex-col">
       <slot />
     </main>
+    <AppPwaUpdate />
   </div>
 </template>

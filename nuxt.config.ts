@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     "nuxt-csurf",
     "nuxt-maplibre",
     "@sentry/nuxt/module",
+    "@vite-pwa/nuxt",
   ],
 
   css: ["~/assets/css/main.css"],
@@ -49,6 +50,47 @@ export default defineNuxtConfig({
           "./.docker/*",
         ],
       },
+    },
+  },
+
+  routeRules: {
+    // A client-rendered page the service worker serves for navigations it has no cached copy of,
+    // so the router can still render the requested route while offline.
+    "/app-shell": { ssr: false },
+  },
+
+  pwa: {
+    strategies: "injectManifest",
+    srcDir: "service-worker",
+    filename: "sw.ts",
+    registerType: "prompt",
+    manifest: {
+      id: "/",
+      name: "Travel Log",
+      short_name: "Travel Log",
+      description: "Keep track of your travels and adventures.",
+      start_url: "/dashboard",
+      scope: "/",
+      display: "standalone",
+      // The dark theme's base-100, as dark is the default theme.
+      theme_color: "#002d2c",
+      background_color: "#002d2c",
+      icons: [
+        { src: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+        { src: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+        { src: "/maskable-icon-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      ],
+    },
+    injectManifest: {
+      globPatterns: ["**/*.{js,css,html,png,ico,svg,woff2}"],
+      globIgnores: ["styles/**", "**/sentry-example*"],
+      // Rendered by the server rather than built, so re-fetch it with each new build.
+      additionalManifestEntries: [{ url: "/app-shell", revision: Date.now().toString() }],
+    },
+    client: {
+      installPrompt: true,
+      // Check for a new deployment hourly, as installed apps can stay open for days.
+      periodicSyncForUpdates: 3600,
     },
   },
 
