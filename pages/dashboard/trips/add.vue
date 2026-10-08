@@ -2,14 +2,21 @@
 import type { InsertTrip, SelectTrip } from "~/lib/db/schema";
 import type { CoverImageChange } from "~/lib/types";
 
-const { $csrfFetch } = useNuxtApp();
+const outboxStore = useOutboxStore();
 const created = ref<SelectTrip | null>(null);
 
 async function onSubmit(values: InsertTrip, coverImage?: CoverImageChange) {
-  created.value = await $csrfFetch<SelectTrip>("/api/trips", {
-    method: "post",
+  const { data } = await outboxStore.mutate<SelectTrip>({
+    kind: "trip:create",
+    method: "POST",
+    url: "/api/trips",
     body: coverImageRequestBody(values, coverImage),
+    label: `Add trip “${values.name}”`,
+    creates: true,
+    preview: { ...values, coverImageKey: null, logs: [] },
   });
+
+  created.value = data;
 }
 
 function onSubmitComplete() {

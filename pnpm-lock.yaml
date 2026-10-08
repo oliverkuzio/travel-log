@@ -53,6 +53,9 @@ importers:
       eslint:
         specifier: ^9.25.1
         version: 9.25.1(jiti@2.4.2)
+      idb:
+        specifier: ^8.0.4
+        version: 8.0.4
       import-in-the-middle:
         specifier: ^3.0.1
         version: 3.0.1
@@ -5067,6 +5070,9 @@ packages:
 
   idb@7.1.1:
     resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
+
+  idb@8.0.4:
+    resolution: {integrity: sha512-jd0ITCrN+Zah4J7R/Z2jnR3W7A4BXDAjmo62MwWuSjxCiueUAf7X5rbodEdidWzeknwXHmLpdZkoiiCppNi30Q==}
 
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
@@ -13054,6 +13060,8 @@ snapshots:
   husky@9.1.7: {}
 
   idb@7.1.1: {}
+
+  idb@8.0.4: {}
 
   ieee754@1.2.1: {}
 

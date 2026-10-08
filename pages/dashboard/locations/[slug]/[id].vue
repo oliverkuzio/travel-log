@@ -6,6 +6,7 @@ import type { HeadingMenuItem } from "~/lib/types";
 const route = useRoute();
 const { formatDateRange } = useDateFormat();
 const locationStore = useLocationsStore();
+const outboxStore = useOutboxStore();
 const {
   currentLocation: location,
   currentLocationLog: locationLog,
@@ -51,8 +52,12 @@ async function confirmDelete() {
     deleteError.value = "";
     isDeleting.value = true;
 
-    await $fetch(`/api/locations/${route.params.slug}/${route.params.id}`, {
+    await outboxStore.mutate({
+      kind: "log:delete",
       method: "DELETE",
+      url: `/api/locations/${route.params.slug}/${route.params.id}`,
+      label: `Delete log “${locationLog.value?.name}”`,
+      target: { id: Number(route.params.id) },
     });
 
     await navigateTo({
@@ -98,8 +103,9 @@ useSeoMeta({
           {{ formatDateRange(locationLog.startedAt, locationLog.endedAt, true) }}
         </p>
       </div>
-      <h1 class="text-2xl font-semibold mb-4">
+      <h1 class="text-2xl font-semibold mb-4 flex items-center gap-2">
         {{ locationLog.name }}
+        <PendingBadge :record="locationLog" />
       </h1>
       <p v-if="!location?.coverImageKey" class="badge badge-neutral badge-sm mb-4">
         {{ formatDateRange(locationLog.startedAt, locationLog.endedAt, true) }}

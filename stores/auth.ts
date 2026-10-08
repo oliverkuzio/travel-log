@@ -17,6 +17,7 @@ const authClient = createAuthClient({
 });
 
 export const useAuthStore = defineStore("useAuthStore", () => {
+  const outboxStore = useOutboxStore();
   const session = ref<Awaited<ReturnType<typeof authClient.useSession>> | null>(null);
 
   async function init() {
@@ -55,10 +56,12 @@ export const useAuthStore = defineStore("useAuthStore", () => {
         headers,
       },
     });
-    // Saved pages, data and photos are private, so don't leave them behind for the next person.
+    // Saved pages, data, photos and unsynced changes are private, so don't leave them behind for
+    // the next person.
     if ("caches" in window) {
       await Promise.all(USER_CACHES.map(name => caches.delete(name)));
     }
+    await outboxStore.clear();
     navigateTo("/");
   }
 

@@ -2,14 +2,22 @@
 import type { InsertLocation, SelectLocation } from "~/lib/db/schema";
 import type { CoverImageChange } from "~/lib/types";
 
-const { $csrfFetch } = useNuxtApp();
+const outboxStore = useOutboxStore();
+const { locationTypes } = storeToRefs(useLocationTypesStore());
 const created = ref<SelectLocation | null>(null);
 
 async function onSubmit(values: InsertLocation, coverImage?: CoverImageChange) {
-  created.value = await $csrfFetch<SelectLocation>("/api/locations", {
-    method: "post",
+  const { data } = await outboxStore.mutate<SelectLocation>({
+    kind: "location:create",
+    method: "POST",
+    url: "/api/locations",
     body: coverImageRequestBody(values, coverImage),
+    label: `Add location “${values.name}”`,
+    creates: true,
+    preview: { ...values, type: findById(locationTypes.value, values.typeId), coverImageKey: null, logs: [] },
   });
+
+  created.value = data;
 }
 
 function onSubmitComplete() {

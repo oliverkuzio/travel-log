@@ -4,7 +4,8 @@ import type { CoverImageChange } from "~/lib/types";
 
 const route = useRoute();
 const locationsStore = useLocationsStore();
-const { $csrfFetch } = useNuxtApp();
+const outboxStore = useOutboxStore();
+const { locationTypes } = storeToRefs(useLocationTypesStore());
 
 const {
   currentLocation: location,
@@ -12,9 +13,14 @@ const {
 } = storeToRefs(locationsStore);
 
 async function onSubmit(values: InsertLocation, coverImage?: CoverImageChange) {
-  await $csrfFetch(`/api/locations/${route.params.slug}`, {
-    method: "put",
+  await outboxStore.mutate({
+    kind: "location:update",
+    method: "PUT",
+    url: `/api/locations/${route.params.slug}`,
     body: coverImageRequestBody(values, coverImage),
+    label: `Edit location “${values.name}”`,
+    target: { slug: String(route.params.slug) },
+    preview: { ...values, type: findById(locationTypes.value, values.typeId) },
   });
 }
 

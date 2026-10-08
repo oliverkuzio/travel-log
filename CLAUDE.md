@@ -25,7 +25,7 @@ Travel Log: a Nuxt 3 SSR app on Cloudflare Workers (D1 + R2) for logging visited
 
 - **Lint rules to know**: kebab-case filenames, double quotes, semicolons, `type` instead of `interface`, sorted imports, and at most one attribute per line in multi-line Vue tags. `process.env` is banned (`node/no-process-env`). Read runtime env from `event.context.cloudflare.env`, and build-time env from `lib/env.ts`.
 - **Server handlers** use `defineAuthenticatedEventHandler` (returns 401 without a user) or `defineAdminEventHandler` (returns 403 if not admin), from `utils/`. Scope every query by `event.context.user.id`. Validate request bodies with the Drizzle-derived Zod schemas and return validation failures with `sendZodError`. Throw `createError({ statusCode, statusMessage })`; the client shows `statusMessage`.
-- **Mutations** from the client go through `$csrfFetch` (from `useNuxtApp()`), never plain `$fetch`, because nuxt-csurf rejects requests without the token.
+- **Mutations** of locations, trips, logs and photos go through `useOutboxStore().mutate()`, which sends them straight away when possible and queues them offline (see PWA notes). Other mutations (location types, imports) use `$csrfFetch` (from `useNuxtApp()`), never plain `$fetch`, because nuxt-csurf rejects POST/PUT/PATCH without the token.
 - **Stores** use `useFetch(url, { key, lazy: true, immediate: false })` with fixed keys, and pages call `refresh*()` themselves. The "current" entity URLs are computed from `route.params`.
 - **Images** are stored in R2 under keys prefixed with the user's id. They are served only through `/api/images/<key>`, which checks ownership. Cover images are sent as multipart: a JSON `data` field plus a `coverImage` file (`utils/cover-image-request-body.ts` on the client, `read-cover-image-body.ts` on the server). Resize on the client with `resizeImage` before uploading.
 - **Map styles** are `public/styles/{light,dark}.json`, served through `/api/styles/:theme`, which swaps in `MAPTILER_API_KEY`. Never put the key in client code.
@@ -42,7 +42,15 @@ Travel Log: a Nuxt 3 SSR app on Cloudflare Workers (D1 + R2) for logging visited
 - Only status 200 responses are cached, so 401, 403 and 404 are never saved.
 - Use `useOnline()` for connection state. It starts `true` and updates after hydration, to avoid hydration mismatches. Disable features that need the network when offline (see `place-search.vue`).
 - The MapTiler key is origin-restricted, so tiles return 403 on unapproved origins such as `wrangler dev` on a random port.
-- Roadmap: phases 1 (installable app with update prompt) and 2 (offline reads) are done. Phase 3 adds offline writes, using an IndexedDB outbox with temporary slugs and server-side idempotency keys.
+- **Offline writes** (`stores/outbox.ts`, `lib/outbox.ts`, `lib/outbox-overlay.ts`):
+  - `mutate()` sends the change directly if online and nothing is queued. Otherwise, or if the network fails, it stores the change in IndexedDB. Server errors such as validation still throw, so forms show them inline.
+  - Creates get a temporary slug (`offline_…`) and id (≥ 2^52, so still a positive integer for forms). Pages navigate to them like real records. Once synced, `refs` maps them to the real values, the sync engine rewrites later queued requests, and `plugins/outbox.client.ts` swaps the URL.
+  - Pass a `preview` shaped like the API response (or the changed fields). `fetchWithOutbox`, which the location and trip stores use as their `$fetch`, overlays queued changes on GET responses for `/api/locations…` and `/api/trips…`. A new GET route the pages read needs handling in `lib/outbox-overlay.ts`.
+  - Sync runs in order on load, on `online`, on becoming visible and every minute. A 4xx marks the change failed and blocks anything that depends on it. A 401 stops sync until the user signs in. Users retry or discard on `/dashboard/sync`.
+  - Every create endpoint must honour the `Idempotency-Key` header (`utils/get-idempotency-key.ts` plus a `client_id` column unique per user), returning the existing row on a repeat. PUTs are naturally idempotent, and a DELETE that 404s counts as synced.
+  - Queued photos are shown via `/api/images/pending/<clientId>`, which the service worker serves from IndexedDB.
+  - Pages served from cache can have a stale CSRF token. The outbox refetches one from `/api/csrf-token` after a 403.
+- The PWA roadmap (installable app, offline reads, offline writes) is complete. Possible follow-ups: Background Sync on Android, and offline support for location types and imports.
 
 ## Workflow
 

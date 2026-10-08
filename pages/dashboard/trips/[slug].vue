@@ -6,6 +6,7 @@ import type { HeadingMenuItem } from "~/lib/types";
 const route = useRoute();
 const { formatDateRange } = useDateFormat();
 const tripsStore = useTripsStore();
+const outboxStore = useOutboxStore();
 const {
   currentTrip: trip,
   currentTripError: error,
@@ -45,8 +46,12 @@ async function confirmDelete() {
     deleteError.value = "";
     isDeleting.value = true;
 
-    await $fetch(`/api/trips/${route.params.slug}`, {
+    await outboxStore.mutate({
+      kind: "trip:delete",
       method: "DELETE",
+      url: `/api/trips/${route.params.slug}`,
+      label: `Delete trip “${trip.value?.name}”`,
+      target: { slug: String(route.params.slug) },
     });
 
     await navigateTo("/dashboard/trips");
@@ -95,6 +100,7 @@ useSeoMeta({
           class="text-secondary shrink-0"
         />
         {{ trip.name }}
+        <PendingBadge :record="trip" />
       </h1>
       <p v-if="!trip.coverImageKey" class="badge badge-secondary badge-sm mb-4">
         {{ formatDateRange(trip.startedAt, trip.endedAt) }}

@@ -1,7 +1,17 @@
 <script lang="ts" setup>
 const authStore = useAuthStore();
+const outboxStore = useOutboxStore();
 
-onMounted(() => {
+onMounted(async () => {
+  await outboxStore.ready();
+
+  // eslint-disable-next-line no-alert
+  if (outboxStore.entries.length && !window.confirm(
+    `You have ${outboxStore.entries.length} change(s) that haven't been synced yet. Signing out will discard them. Sign out anyway?`,
+  )) {
+    return navigateTo("/dashboard/sync", { replace: true });
+  }
+
   authStore.signOut();
 });
 

@@ -24,6 +24,7 @@ export default async function useDashboardView() {
   const tripsStore = useTripsStore();
   const locationTypesStore = useLocationTypesStore();
   const locationImportStore = useLocationImportStore();
+  const outboxStore = useOutboxStore();
 
   const {
     locations,
@@ -86,6 +87,9 @@ export default async function useDashboardView() {
     mapStore.selectedPoint = null;
     loadRouteData();
   });
+
+  // Refetch when changes made offline are queued, synced or discarded.
+  watch(() => outboxStore.changedAt, () => loadRouteData());
 
   function locationPoints(source = locations.value) {
     return source?.map(createMapPointFromLocation) ?? [];

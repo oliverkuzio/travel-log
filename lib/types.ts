@@ -28,6 +28,8 @@ export type CardPoint = {
   typeName?: string | null;
   // How many logs a location has, or how many distinct locations a trip visited, when known.
   visitCount?: number;
+  // Created or changed on this device and not synced yet.
+  pending?: boolean;
   // When the trip or log took place, shown on the map. Logs include the time of day.
   dates?: {
     startedAt: number;
