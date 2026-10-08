@@ -67,11 +67,7 @@ useSeoMeta({
 
 <template>
   <div class="p-4">
-    <BackLink
-      v-if="route.name === 'dashboard-trips-slug'"
-      to="/dashboard/trips"
-      label="Trips"
-    />
+    <AppBreadcrumbs v-if="route.name === 'dashboard-trips-slug'" />
     <div v-if="loading">
       <div class="loading" />
     </div>

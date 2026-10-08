@@ -131,7 +131,7 @@ useSeoMeta({
 
 <template>
   <div class="p-4">
-    <BackLink to="/dashboard/locations" label="Locations" />
+    <AppBreadcrumbs />
     <h1 class="text-2xl font-semibold mb-4">
       Import from Google Maps
     </h1>

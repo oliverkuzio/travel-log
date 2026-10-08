@@ -45,6 +45,10 @@ const logsWithLocation = {
     location: {
       with: {
         type: true,
+        // Only counted, for the map point card.
+        logs: {
+          columns: { id: true },
+        },
       },
     },
   },

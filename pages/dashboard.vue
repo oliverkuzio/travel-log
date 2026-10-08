@@ -3,14 +3,15 @@ await useDashboardView();
 </script>
 
 <template>
-  <!-- Leave room for the fixed dock on phones. -->
-  <div class="flex-1 flex items-stretch pb-16 md:pb-0">
-    <AppSidebar />
-    <div class="flex-1 flex items-stretch bg-base-200 relative">
-      <NuxtPage class="w-96 shrink-0 max-h-screen overflow-y-scroll z-10" />
-      <div class="flex-1">
+  <div class="flex-1 relative">
+    <!-- The map fills the space behind the side pane, leaving room for the fixed dock on phones. -->
+    <div class="absolute inset-0 bottom-16 md:bottom-0 overflow-hidden bg-base-200">
+      <div class="absolute inset-0">
         <AppMap />
       </div>
+      <AppSidePane>
+        <NuxtPage />
+      </AppSidePane>
     </div>
     <AppDock />
   </div>

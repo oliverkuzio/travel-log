@@ -18,10 +18,35 @@ const style = computed(() => `/api/styles/${colorMode.value}`);
 // Only the first style is passed to the map. Later switches are made below, because the default diff would
 // drop the trip route's source and layers without firing the "style.load" event that re-adds them.
 const initialStyle = style.value;
-const { formatDateRange } = useDateFormat();
 
-function formatPointDates(dates: NonNullable<CardPoint["dates"]>) {
-  return formatDateRange(dates.startedAt, dates.endedAt, dates.withTime);
+// The card for the hovered point, whether hovered on the map or in the side pane.
+const popupPoint = computed(() => mapStore.mapPoints.find(point => isPointSelected(point, mapStore.selectedPoint)));
+
+// Leaving a pin waits briefly before clearing, so the pointer can move onto its card.
+const HOVER_LEAVE_DELAY = 150;
+let leaveTimeout: ReturnType<typeof setTimeout> | undefined;
+
+function onPointEnter(point: CardPoint) {
+  clearTimeout(leaveTimeout);
+  mapStore.selectedPoint = point;
+}
+
+function onPointLeave() {
+  clearTimeout(leaveTimeout);
+  const point = mapStore.selectedPoint;
+  leaveTimeout = setTimeout(() => {
+    if (mapStore.selectedPoint === point) {
+      mapStore.selectedPoint = null;
+    }
+  }, HOVER_LEAVE_DELAY);
+}
+
+function onPointClick(point: CardPoint) {
+  if (point.to) {
+    clearTimeout(leaveTimeout);
+    mapStore.selectedPoint = null;
+    navigateTo(point.to);
+  }
 }
 
 function updateAddedPoint(location: LngLat) {
@@ -112,53 +137,34 @@ watch(style, async (newStyle) => {
     >
       <template #marker>
         <div
-          class="tooltip tooltip-top hover:cursor-pointer"
-          :class="[
-            getPointColors(point.kind, isPointSelected(point, mapStore.activePoint)).tooltip,
-            { 'tooltip-open': isPointSelected(point, mapStore.activePoint) },
-          ]"
-          @mouseenter="mapStore.selectedPoint = point"
-          @mouseleave="mapStore.selectedPoint = null"
+          class="hover:cursor-pointer"
+          @mouseenter="onPointEnter(point)"
+          @mouseleave="onPointLeave"
+          @click="onPointClick(point)"
         >
-          <div class="tooltip-content">
-            <div>{{ point.name }}</div>
-            <div v-if="point.dates" class="text-xs opacity-80">
-              {{ formatPointDates(point.dates) }}
-            </div>
-          </div>
           <MapPin
             :colors="getPointColors(point.kind, isPointSelected(point, mapStore.activePoint))"
             :icon="point.icon"
           />
         </div>
       </template>
-      <MglPopup>
-        <h3 class="text-base font-semibold me-3 mb-3 flex items-center gap-2">
-          <Icon
-            v-if="point.icon"
-            :name="point.icon"
-            size="20"
-            :class="getPointColors(point.kind).text"
-          />
-          {{ point.name }}
-        </h3>
-        <p v-if="point.dates" class="text-xs opacity-60 -mt-2 mb-3">
-          {{ formatPointDates(point.dates) }}
-        </p>
-        <p v-if="point.description" class="mb-4">
-          {{ point.description }}
-        </p>
-        <div class="flex justify-end">
-          <NuxtLink
-            v-if="point.to"
-            :to="point.to"
-            class="btn btn-sm"
-            :class="getPointColors(point.kind).btn"
-          >
-            {{ point.toLabel }}
-          </NuxtLink>
-        </div>
-      </MglPopup>
     </MglMarker>
+    <MglPopup
+      v-if="popupPoint"
+      :key="`${popupPoint.kind}-${popupPoint.id}`"
+      :coordinates="[popupPoint.long, popupPoint.lat]"
+      :close-button="false"
+      :close-on-click="false"
+      :focus-after-open="false"
+      :offset="20"
+      max-width="none"
+      class-name="map-point-popup"
+    >
+      <MapPointPopup
+        :point="popupPoint"
+        @mouseenter="onPointEnter(popupPoint)"
+        @mouseleave="onPointLeave"
+      />
+    </MglPopup>
   </MglMap>
 </template>

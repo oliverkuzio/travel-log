@@ -3,6 +3,7 @@ import type { CardPoint, LatLongItem, MapPoint, MapPointKind } from "~/lib/types
 
 type LocationWithOptionalType = SelectLocation & {
   type?: SelectLocationType | null;
+  logs?: Pick<SelectLocationLog, "id">[];
 };
 
 export const DEFAULT_LOCATION_ICON = "tabler:map-pin-filled";
@@ -17,8 +18,10 @@ export function createMapPointFromLocation(location: LocationWithOptionalType): 
     lat: location.lat,
     long: location.long,
     icon: location.type?.icon,
+    typeName: location.type?.name,
+    coverImageKey: location.coverImageKey,
+    visitCount: location.logs?.length,
     to: { name: "dashboard-locations-slug", params: { slug: location.slug } },
-    toLabel: "View",
   };
 }
 
@@ -69,8 +72,9 @@ export function createMapPointFromTrip(trip: SelectTripWithLogs): CardPoint {
     icon: TRIP_ICON,
     dates: { startedAt: trip.startedAt, endedAt: trip.endedAt },
     ...getTripCoords(trip),
+    coverImageKey: trip.coverImageKey,
+    visitCount: getTripLocations(trip).length,
     to: { name: "dashboard-trips-slug", params: { slug: trip.slug } },
-    toLabel: "View",
   };
 }
 

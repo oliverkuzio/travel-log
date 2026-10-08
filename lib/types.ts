@@ -23,7 +23,11 @@ export type CardPoint = {
   description: string | null;
   icon?: string | null;
   to?: RouteLocationRaw;
-  toLabel?: string;
+  coverImageKey?: string | null;
+  // The location's type, shown on the map point card.
+  typeName?: string | null;
+  // How many logs a location has, or how many distinct locations a trip visited, when known.
+  visitCount?: number;
   // When the trip or log took place, shown on the map. Logs include the time of day.
   dates?: {
     startedAt: number;

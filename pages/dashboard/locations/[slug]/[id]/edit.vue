@@ -35,10 +35,7 @@ useSeoMeta({
 
 <template>
   <div>
-    <BackLink
-      :to="{ name: 'dashboard-locations-slug-id', params: { slug: route.params.slug, id: route.params.id } }"
-      :label="locationLog?.name"
-    />
+    <AppBreadcrumbs />
     <h1 class="text-2xl font-semibold mb-4">
       Edit Location Log
     </h1>

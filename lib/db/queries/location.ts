@@ -56,6 +56,10 @@ export async function findLocations(db: AppDatabase, userId: number) {
     orderBy: asc(location.name),
     with: {
       type: true,
+      // Only counted, for the map point card.
+      logs: {
+        columns: { id: true },
+      },
     },
   });
 }

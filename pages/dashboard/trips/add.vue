@@ -26,7 +26,7 @@ useSeoMeta({
 
 <template>
   <div class="p-4">
-    <BackLink to="/dashboard/trips" label="Trips" />
+    <AppBreadcrumbs />
     <div class="mb-4">
       <h1 class="text-2xl font-semibold mb-4">
         Add trip
