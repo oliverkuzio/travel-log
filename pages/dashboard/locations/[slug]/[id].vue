@@ -25,16 +25,16 @@ const images = computed(() => locationLog.value?.images.toReversed() ?? []);
 const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
 
-const menuItems = computed<HeadingMenuItem[]>(() => [{
-  label: "Edit Log",
+const actions = computed<HeadingMenuItem[]>(() => [{
+  label: "Edit",
   icon: "tabler:calendar-cog",
   to: { name: "dashboard-locations-slug-id-edit", params: { slug: route.params.slug, id: route.params.id } },
 }, {
-  label: "Manage Images",
+  label: "Images",
   icon: "tabler:photo-cog",
   to: { name: "dashboard-locations-slug-id-images", params: { slug: route.params.slug, id: route.params.id } },
 }, {
-  label: "Delete Log",
+  label: "Delete",
   icon: "tabler:calendar-x",
   danger: true,
   onClick: () => isOpen.value = true,
@@ -88,10 +88,27 @@ useSeoMeta({
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-locations-slug-id' && locationLog && !loading">
-      <p class="text-xs opacity-50">
+      <div v-if="location?.coverImageKey" class="relative mb-4">
+        <img
+          :src="`/api/images/${location.coverImageKey}`"
+          :alt="`Cover photo of ${location.name}`"
+          class="w-full h-48 object-cover rounded-box"
+        >
+        <p class="badge badge-neutral badge-sm absolute top-2 left-2 shadow-sm">
+          {{ formatDateRange(locationLog.startedAt, locationLog.endedAt, true) }}
+        </p>
+      </div>
+      <h1 class="text-2xl font-semibold mb-4">
+        {{ locationLog.name }}
+      </h1>
+      <p v-if="!location?.coverImageKey" class="badge badge-neutral badge-sm mb-4">
         {{ formatDateRange(locationLog.startedAt, locationLog.endedAt, true) }}
       </p>
-      <PageHeadingMenu :title="locationLog.name" :items="menuItems" />
+      <EntityActions :items="actions" kind="location" />
+      <div class="divider" />
+      <p class="text-sm mb-4">
+        {{ locationLog.description }}
+      </p>
       <NuxtLink
         v-if="locationLog.trip"
         :to="{ name: 'dashboard-trips-slug', params: { slug: locationLog.trip.slug } }"
@@ -118,16 +135,10 @@ useSeoMeta({
           </span>
         </div>
       </NuxtLink>
-      <p class="text-sm mb-4">
-        {{ locationLog.description }}
+      <div class="divider" />
+      <p v-if="!locationLog.images.length" class="text-sm italic">
+        Add some images to get started.
       </p>
-      <div v-if="!locationLog.images.length" class="flex flex-col gap-2 mt-2">
-        <p>Add some images get started.</p>
-        <NuxtLink :to="{ name: 'dashboard-locations-slug-id-images', params: { slug: route.params.slug, id: route.params.id } }" class="btn btn-primary w-40">
-          Add Images
-          <Icon name="tabler:photo-cog" size="24" />
-        </NuxtLink>
-      </div>
       <button
         v-if="locationLog.images.length"
         type="button"

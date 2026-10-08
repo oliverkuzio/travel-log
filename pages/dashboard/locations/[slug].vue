@@ -39,20 +39,34 @@ const googleMapsHref = computed(() => {
   return null;
 });
 
-const menuItems = computed<HeadingMenuItem[]>(() => [{
-  label: "Edit Location",
+const actions = computed<HeadingMenuItem[]>(() => [{
+  label: "Edit",
   icon: "tabler:map-pin-cog",
   to: { name: "dashboard-locations-slug-edit", params: { slug: route.params.slug } },
 }, {
-  label: "Add Log",
+  label: "Add log",
   icon: "tabler:calendar-plus",
   to: { name: "dashboard-locations-slug-add", params: { slug: route.params.slug } },
 }, {
-  label: "Delete Location",
+  label: "Delete",
   icon: "tabler:map-pin-x",
   danger: true,
   onClick: () => isOpen.value = true,
 }]);
+
+const addressCopied = ref(false);
+let addressCopiedTimeout: ReturnType<typeof setTimeout> | undefined;
+
+async function copyAddress() {
+  if (!location.value?.address) {
+    return;
+  }
+
+  await navigator.clipboard.writeText(location.value.address);
+  addressCopied.value = true;
+  clearTimeout(addressCopiedTimeout);
+  addressCopiedTimeout = setTimeout(() => addressCopied.value = false, 2000);
+}
 
 async function confirmDelete() {
   try {
@@ -93,64 +107,89 @@ useSeoMeta({
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-locations-slug' && location && !loading">
-      <img
-        v-if="location.coverImageKey"
-        :src="`/api/images/${location.coverImageKey}`"
-        :alt="`Cover photo of ${location.name}`"
-        class="w-full h-48 object-cover rounded-box mb-4"
-      >
-      <PageHeadingMenu :title="location.name" :items="menuItems">
-        <template #icon>
-          <Icon
-            :name="location.type?.icon || DEFAULT_LOCATION_ICON"
-            size="28"
-            class="shrink-0 mt-1"
-            :class="getPointColors('location', true).text"
-          />
-        </template>
-      </PageHeadingMenu>
-      <p v-if="location.type" class="badge badge-neutral badge-sm mb-2">
+      <div v-if="location.coverImageKey" class="relative mb-4">
+        <img
+          :src="`/api/images/${location.coverImageKey}`"
+          :alt="`Cover photo of ${location.name}`"
+          class="w-full h-48 object-cover rounded-box"
+        >
+        <p v-if="location.type" class="badge badge-neutral badge-sm absolute top-2 left-2 shadow-sm">
+          {{ location.type.name }}
+        </p>
+      </div>
+      <h1 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+        <Icon
+          :name="location.type?.icon || DEFAULT_LOCATION_ICON"
+          size="28"
+          class="shrink-0"
+          :class="getPointColors('location', true).text"
+        />
+        {{ location.name }}
+      </h1>
+      <p v-if="location.type && !location.coverImageKey" class="badge badge-neutral badge-sm mb-4">
         {{ location.type.name }}
       </p>
+      <EntityActions :items="actions" kind="location" />
+      <div class="divider" />
       <p class="text-sm mb-4">
         {{ location.description }}
       </p>
-      <p v-if="location.address" class="flex items-center gap-1 text-sm mb-4">
-        <Icon
-          name="tabler:map-pin"
-          size="16"
-          class="shrink-0"
-        />
-        {{ location.address }}
-      </p>
-      <a
-        v-if="googleMapsHref"
-        class="btn btn-outline btn-sm mb-4"
-        :href="googleMapsHref"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        View on Google Maps
-        <Icon name="tabler:external-link" size="20" />
-      </a>
-      <div v-if="!location.logs.length" class="flex flex-col gap-4">
-        <p class="text-sm italic">
-          Add a location log to get started.
-        </p>
-        <NuxtLink
-          class="btn btn-primary"
-          :to="{
-            name: 'dashboard-locations-slug-add',
-            params: { slug: route.params.slug },
-          }"
+      <div v-if="location.address || googleMapsHref" class="flex flex-col gap-1 mb-4">
+        <div
+          v-if="location.address"
+          class="tooltip tooltip-bottom w-full"
+          :data-tip="addressCopied ? 'Copied!' : 'Copy address'"
         >
-          Add Location Log
-          <Icon name="tabler:calendar-plus" size="24" />
-        </NuxtLink>
+          <button
+            type="button"
+            class="flex items-center gap-2 w-full text-left text-sm rounded-box px-2 py-1 hover:bg-base-100 cursor-pointer transition-colors"
+            @click="copyAddress"
+          >
+            <Icon
+              name="tabler:map-pin"
+              size="24"
+              class="shrink-0"
+            />
+            {{ location.address }}
+          </button>
+        </div>
+        <div
+          v-if="googleMapsHref"
+          class="tooltip tooltip-bottom w-full"
+          data-tip="View in Google Maps"
+        >
+          <a
+            class="flex items-center gap-2 w-full text-sm rounded-box px-2 py-1 hover:bg-base-100 transition-colors"
+            :href="googleMapsHref"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon
+              name="tabler:brand-google-maps"
+              size="24"
+              class="shrink-0"
+            />
+            View on Google Maps
+            <Icon
+              name="tabler:external-link"
+              size="14"
+              class="opacity-60"
+            />
+          </a>
+        </div>
       </div>
+      <div class="divider" />
+      <p v-if="!location.logs.length" class="text-sm italic">
+        Add a location log to get started.
+      </p>
     </div>
     <div v-if="route.name === 'dashboard-locations-slug' && !loading && location?.logs.length" class="flex flex-col flex-nowrap gap-4 align-items-stretch">
-      <SortToggle v-model="sortOrder" class="self-end" />
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 class="text-xl font-semibold flex-1">
+          {{ location.logs.length }} {{ location.logs.length === 1 ? "visit" : "visits" }}
+        </h2>
+        <SortToggle v-model="sortOrder" />
+      </div>
       <MapPointCard
         v-for="log in sortedLogs"
         :key="log.id"

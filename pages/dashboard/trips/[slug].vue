@@ -24,16 +24,16 @@ const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
 const locationCount = computed(() => trip.value ? getTripLocations(trip.value).length : 0);
 
-const menuItems = computed<HeadingMenuItem[]>(() => [{
-  label: "Edit Trip",
+const actions = computed<HeadingMenuItem[]>(() => [{
+  label: "Edit",
   icon: "tabler:map-cog",
   to: { name: "dashboard-trips-slug-edit", params: { slug: route.params.slug } },
 }, {
-  label: "Add Log",
+  label: "Add log",
   icon: "tabler:calendar-plus",
   to: { name: "dashboard-trips-slug-add", params: { slug: route.params.slug } },
 }, {
-  label: "Delete Trip",
+  label: "Delete",
   icon: "tabler:map-x",
   danger: true,
   onClick: () => isOpen.value = true,
@@ -78,41 +78,42 @@ useSeoMeta({
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-trips-slug' && trip && !loading">
-      <img
-        v-if="trip.coverImageKey"
-        :src="`/api/images/${trip.coverImageKey}`"
-        :alt="`Cover photo of ${trip.name}`"
-        class="w-full h-48 object-cover rounded-box mb-4"
-      >
-      <p class="text-xs opacity-50">
+      <div v-if="trip.coverImageKey" class="relative mb-4">
+        <img
+          :src="`/api/images/${trip.coverImageKey}`"
+          :alt="`Cover photo of ${trip.name}`"
+          class="w-full h-48 object-cover rounded-box"
+        >
+        <p class="badge badge-secondary badge-sm absolute top-2 left-2 shadow-sm">
+          {{ formatDateRange(trip.startedAt, trip.endedAt) }}
+        </p>
+      </div>
+      <h1 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+        <Icon
+          :name="TRIP_ICON"
+          size="28"
+          class="text-secondary shrink-0"
+        />
+        {{ trip.name }}
+      </h1>
+      <p v-if="!trip.coverImageKey" class="badge badge-secondary badge-sm mb-4">
         {{ formatDateRange(trip.startedAt, trip.endedAt) }}
       </p>
-      <PageHeadingMenu :title="trip.name" :items="menuItems">
-        <template #icon>
-          <Icon
-            :name="TRIP_ICON"
-            size="28"
-            class="text-secondary shrink-0 mt-1"
-          />
-        </template>
-      </PageHeadingMenu>
       <p v-if="trip.description" class="text-sm mb-4">
         {{ trip.description }}
       </p>
-      <p class="text-xs opacity-70 mb-4">
-        {{ trip.logs.length }} {{ trip.logs.length === 1 ? "log" : "logs" }} across
-        {{ locationCount }} {{ locationCount === 1 ? "location" : "locations" }}
-      </p>
+      <EntityActions :items="actions" kind="trip" />
+      <div class="divider" />
       <div class="flex flex-col flex-nowrap gap-4 align-items-stretch">
-        <AddCard
-          label="Add log"
-          icon="tabler:calendar-plus"
-          :to="{ name: 'dashboard-trips-slug-add', params: { slug: route.params.slug } }"
-          kind="trip"
-        />
-        <div v-if="trip.logs.length" class="flex flex-wrap items-center justify-end gap-2">
-          <DateFilter v-model="dateFilter" :dates="logDates" />
-          <SortToggle v-model="sortOrder" />
+        <div v-if="trip.logs.length" class="flex flex-col gap-2">
+          <h2 class="text-xl font-semibold">
+            {{ trip.logs.length }} {{ trip.logs.length === 1 ? "log" : "logs" }} across
+            {{ locationCount }} {{ locationCount === 1 ? "location" : "locations" }}
+          </h2>
+          <div class="flex flex-wrap items-center gap-2">
+            <DateFilter v-model="dateFilter" :dates="logDates" />
+            <SortToggle v-model="sortOrder" class="ml-auto" />
+          </div>
         </div>
         <MapPointCard
           v-for="log in filteredLogs"
