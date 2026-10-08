@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 await useDashboardView();
+useOfflinePrefetch();
 </script>
 
 <template>

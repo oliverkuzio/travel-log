@@ -131,6 +131,23 @@ The app can be installed from the browser (Chrome/Edge show an **Install** butto
 - The service worker source is `service-worker/sw.ts`. It precaches the built assets, serves pages network-first with a cached fallback, and falls back to the client-rendered `/app-shell` page for routes that were never visited, so the app opens offline.
 - New deployments are not activated silently: the app checks hourly and shows a "new version available" toast with a **Reload** button (`components/app/pwa-update.vue`).
 
+### Offline reading
+
+Anything viewed while online can be viewed again offline. A banner shows when the device is offline.
+
+| What                                         | Cache        | Strategy                                        |
+| -------------------------------------------- | ------------ | ----------------------------------------------- |
+| Your locations, trips, types and the session | `api`        | Network first (4s timeout), then the saved copy |
+| Photos (`/api/images/*`)                     | `images`     | Cache first, up to 500 photos for 60 days       |
+| Map style (`/api/styles/*`)                  | `map-styles` | Saved copy, refreshed in the background         |
+| MapTiler tiles, fonts and sprites            | `map-tiles`  | Cache first, up to 2,000 files for 30 days      |
+
+Once per session the dashboard also fetches every location and trip (up to 100) and their cover photos in the background, so they open offline even if they were never visited (`composables/use-offline-prefetch.ts`). Place search needs a connection; offline, set the location with the map marker instead.
+
+Signing out deletes the `pages`, `api` and `images` caches, because they hold your private data. Cache names are defined in `lib/pwa-caches.ts`.
+
+The MapTiler key is restricted to approved origins, so map tiles (and their caching) only work on those origins. Requests from other origins, such as `wrangler dev` on a random port, get a 403.
+
 To debug, run `pnpm preview` and use Chrome DevTools → **Application** (Manifest, Service workers, Cache storage). Tick _Offline_ on the Network tab to simulate losing connection.
 
 ## Useful commands

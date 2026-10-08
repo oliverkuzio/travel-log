@@ -14,6 +14,7 @@ const emit = defineEmits<{
 }>();
 
 const form = useTemplateRef("form");
+const isOnline = useOnline();
 const searchResults = ref<NominatimResult[]>([]);
 const loading = ref(false);
 const submitted = ref(false);
@@ -73,7 +74,7 @@ function setLocation(result: NominatimResult) {
           <Field
             type="text"
             name="q"
-            :disabled="loading"
+            :disabled="loading || !isOnline"
             placeholder="Search for a location..."
           />
         </label>
@@ -81,10 +82,13 @@ function setLocation(result: NominatimResult) {
           {{ errors.q }}
         </p>
       </div>
-      <button class="btn btn-neutral join-item" :disabled="loading">
+      <button class="btn btn-neutral join-item" :disabled="loading || !isOnline">
         Search
       </button>
     </Form>
+    <p v-if="!isOnline" class="text-xs mt-1">
+      Search needs a connection. You can still drag the marker or double-click the map.
+    </p>
     <div class="text-xs italic flex justify-end gap-1 mt-1 mb-2">
       <span>Search results provided by</span><a
         class="link"
