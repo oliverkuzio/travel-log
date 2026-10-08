@@ -82,6 +82,12 @@ useSeoMeta({
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-trips-slug' && trip && !loading">
+      <img
+        v-if="trip.coverImageKey"
+        :src="`/api/images/${trip.coverImageKey}`"
+        :alt="`Cover photo of ${trip.name}`"
+        class="w-full h-48 object-cover rounded-box mb-4"
+      >
       <p class="text-xs opacity-50">
         {{ formatDateRange(trip.startedAt, trip.endedAt) }}
       </p>

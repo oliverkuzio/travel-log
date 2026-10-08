@@ -9,7 +9,9 @@ import { locationLog, trip } from "../schema";
 
 const nanoid = customAlphabet("1234567890", 5);
 
-export async function insertTrip(db: AppDatabase, insertable: InsertTrip, slug: string, userId: number) {
+type TripWithCoverImage = InsertTrip & { coverImageKey?: string | null };
+
+export async function insertTrip(db: AppDatabase, insertable: TripWithCoverImage, slug: string, userId: number) {
   const [created] = await db.insert(trip).values({
     ...insertable,
     slug,
@@ -19,7 +21,7 @@ export async function insertTrip(db: AppDatabase, insertable: InsertTrip, slug: 
   return created;
 }
 
-export async function updateTrip(db: AppDatabase, updates: InsertTrip, slug: string, userId: number) {
+export async function updateTrip(db: AppDatabase, updates: TripWithCoverImage, slug: string, userId: number) {
   const [updated] = await db.update(trip).set(updates).where(and(
     eq(trip.slug, slug),
     eq(trip.userId, userId),
@@ -68,6 +70,15 @@ export async function findTrip(db: AppDatabase, slug: string, userId: number) {
     with: {
       logs: logsWithLocation,
     },
+  });
+}
+
+export async function findOwnedTripBySlug(db: AppDatabase, slug: string, userId: number) {
+  return db.query.trip.findFirst({
+    where: and(
+      eq(trip.slug, slug),
+      eq(trip.userId, userId),
+    ),
   });
 }
 

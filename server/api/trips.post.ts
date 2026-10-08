@@ -5,16 +5,12 @@ import slugify from "slug";
 import { findTripByName, findUniqueSlug, insertTrip } from "~/lib/db/queries/trip";
 import { InsertTrip } from "~/lib/db/schema";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
-import sendZodError from "~/utils/send-zod-error";
+import readCoverImageBody, { putCoverImage } from "~/utils/read-cover-image-body";
 
 export default defineAuthenticatedEventHandler(async (event) => {
-  const result = await readValidatedBody(event, InsertTrip.safeParse);
+  const { data, coverImage } = await readCoverImageBody(event, InsertTrip);
 
-  if (!result.success) {
-    return sendZodError(event, result.error);
-  }
-
-  const existingTrip = await findTripByName(event.context.db, result.data, event.context.user.id);
+  const existingTrip = await findTripByName(event.context.db, data, event.context.user.id);
 
   if (existingTrip) {
     throw createError({
@@ -23,12 +19,17 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
-  const slug = await findUniqueSlug(event.context.db, slugify(result.data.name));
+  const slug = await findUniqueSlug(event.context.db, slugify(data.name));
+  const coverImageKey = coverImage ? await putCoverImage(event, coverImage, event.context.user.id, "trips") : null;
 
   try {
-    return await insertTrip(event.context.db, result.data, slug, event.context.user.id);
+    return await insertTrip(event.context.db, { ...data, coverImageKey }, slug, event.context.user.id);
   }
   catch (e) {
+    if (coverImageKey) {
+      await event.context.cloudflare.env.BUCKET.delete(coverImageKey);
+    }
+
     const error = e as DrizzleError;
     let statusCode = 500;
     let statusMessage = "An unknown error has occurred.";

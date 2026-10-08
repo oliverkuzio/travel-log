@@ -12,5 +12,9 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
+  if (deleted.coverImageKey) {
+    await event.context.cloudflare.env.BUCKET.delete(deleted.coverImageKey);
+  }
+
   setResponseStatus(event, 204);
 });

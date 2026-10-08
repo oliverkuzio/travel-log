@@ -1,22 +1,28 @@
 import type { H3Event } from "h3";
+import type { z, ZodTypeAny } from "zod";
 
 import { MAX_IMAGE_SIZE } from "~/lib/constants";
-import { InsertLocation } from "~/lib/db/schema";
 import sendZodError from "~/utils/send-zod-error";
 
+type BodyWithCoverImage<T extends ZodTypeAny> = {
+  data: z.output<T>;
+  coverImage: File | null;
+  removeCoverImage: boolean;
+};
+
 /**
- * Reads a location from either a JSON body, or a multipart body with the location as JSON in a "data"
- * field, plus an optional "coverImage" file or a "removeCoverImage" flag.
+ * Reads either a JSON body, or a multipart body with the JSON in a "data" field plus an optional
+ * "coverImage" file or a "removeCoverImage" flag.
  */
-export default async function readLocationBody(event: H3Event) {
+export default async function readCoverImageBody<T extends ZodTypeAny>(event: H3Event, schema: T): Promise<BodyWithCoverImage<T>> {
   if (!getRequestHeader(event, "content-type")?.startsWith("multipart/form-data")) {
-    const result = await readValidatedBody(event, InsertLocation.safeParse);
+    const result = await readValidatedBody(event, body => schema.safeParse(body));
 
     if (!result.success) {
       return sendZodError(event, result.error);
     }
 
-    return { location: result.data, coverImage: null, removeCoverImage: false };
+    return { data: result.data, coverImage: null, removeCoverImage: false };
   }
 
   const formData = await readFormData(event);
@@ -24,7 +30,7 @@ export default async function readLocationBody(event: H3Event) {
   const coverImage = formData.get("coverImage");
 
   if (typeof data !== "string") {
-    throw createError({ statusCode: 400, statusMessage: "No location data provided" });
+    throw createError({ statusCode: 400, statusMessage: "No data provided" });
   }
 
   let json: unknown;
@@ -33,10 +39,10 @@ export default async function readLocationBody(event: H3Event) {
     json = JSON.parse(data);
   }
   catch {
-    throw createError({ statusCode: 400, statusMessage: "Invalid location data" });
+    throw createError({ statusCode: 400, statusMessage: "Invalid data" });
   }
 
-  const result = InsertLocation.safeParse(json);
+  const result = schema.safeParse(json);
 
   if (!result.success) {
     return sendZodError(event, result.error);
@@ -51,14 +57,14 @@ export default async function readLocationBody(event: H3Event) {
   }
 
   return {
-    location: result.data,
+    data: result.data,
     coverImage,
     removeCoverImage: formData.get("removeCoverImage") === "true",
   };
 }
 
-export async function putCoverImage(event: H3Event, file: File, userId: number) {
-  const key = `${userId}/locations/${crypto.randomUUID()}.jpg`;
+export async function putCoverImage(event: H3Event, file: File, userId: number, folder: "locations" | "trips") {
+  const key = `${userId}/${folder}/${crypto.randomUUID()}.jpg`;
 
   await event.context.cloudflare.env.BUCKET.put(key, await file.arrayBuffer(), {
     httpMetadata: { contentType: "image/jpeg" },

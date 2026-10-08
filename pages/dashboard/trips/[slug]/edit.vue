@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { InsertTrip, SelectTrip } from "~/lib/db/schema";
+import type { CoverImageChange } from "~/lib/types";
 
 const route = useRoute();
 const tripsStore = useTripsStore();
@@ -12,10 +13,10 @@ const {
 
 const updated = ref<SelectTrip | null>(null);
 
-async function onSubmit(values: InsertTrip) {
+async function onSubmit(values: InsertTrip, coverImage?: CoverImageChange) {
   updated.value = await $csrfFetch<SelectTrip>(`/api/trips/${route.params.slug}`, {
     method: "put",
-    body: values,
+    body: coverImageRequestBody(values, coverImage),
   });
 }
 
@@ -52,6 +53,7 @@ useSeoMeta({
         description: trip.description,
         startedAt: trip.startedAt,
         endedAt: trip.endedAt,
+        coverImageKey: trip.coverImageKey,
       }"
       submit-label="Update"
       submit-icon="tabler:map-check"

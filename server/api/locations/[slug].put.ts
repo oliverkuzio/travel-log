@@ -1,11 +1,12 @@
 import { findLocationByName, findOwnedLocationBySlug, updateLocation } from "~/lib/db/queries/location";
+import { InsertLocation } from "~/lib/db/schema";
 import { assertLocationTypeExists } from "~/utils/assert-references";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
-import readLocationBody, { putCoverImage } from "~/utils/read-location-body";
+import readCoverImageBody, { putCoverImage } from "~/utils/read-cover-image-body";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug") as string;
-  const { location: data, coverImage, removeCoverImage } = await readLocationBody(event);
+  const { data, coverImage, removeCoverImage } = await readCoverImageBody(event, InsertLocation);
 
   await assertLocationTypeExists(event.context.db, data.typeId);
 
@@ -31,7 +32,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
   let coverImageKey: string | null | undefined;
 
   if (coverImage) {
-    coverImageKey = await putCoverImage(event, coverImage, event.context.user.id);
+    coverImageKey = await putCoverImage(event, coverImage, event.context.user.id, "locations");
   }
   else if (removeCoverImage) {
     coverImageKey = null;

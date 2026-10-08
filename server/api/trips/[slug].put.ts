@@ -1,17 +1,13 @@
-import { findTripByName, updateTrip } from "~/lib/db/queries/trip";
+import { findOwnedTripBySlug, findTripByName, updateTrip } from "~/lib/db/queries/trip";
 import { InsertTrip } from "~/lib/db/schema";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
-import sendZodError from "~/utils/send-zod-error";
+import readCoverImageBody, { putCoverImage } from "~/utils/read-cover-image-body";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug") as string;
-  const result = await readValidatedBody(event, InsertTrip.safeParse);
+  const { data, coverImage, removeCoverImage } = await readCoverImageBody(event, InsertTrip);
 
-  if (!result.success) {
-    return sendZodError(event, result.error);
-  }
-
-  const existingTrip = await findTripByName(event.context.db, result.data, event.context.user.id);
+  const existingTrip = await findTripByName(event.context.db, data, event.context.user.id);
 
   if (existingTrip && existingTrip.slug !== slug) {
     throw createError({
@@ -20,13 +16,47 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
-  const trip = await updateTrip(event.context.db, result.data, slug, event.context.user.id);
+  const current = await findOwnedTripBySlug(event.context.db, slug, event.context.user.id);
+
+  if (!current) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Trip not found.",
+    });
+  }
+
+  // undefined leaves the existing cover photo in place.
+  let coverImageKey: string | null | undefined;
+
+  if (coverImage) {
+    coverImageKey = await putCoverImage(event, coverImage, event.context.user.id, "trips");
+  }
+  else if (removeCoverImage) {
+    coverImageKey = null;
+  }
+
+  let trip;
+
+  try {
+    trip = await updateTrip(event.context.db, { ...data, coverImageKey }, slug, event.context.user.id);
+  }
+  catch (e) {
+    if (coverImageKey) {
+      await event.context.cloudflare.env.BUCKET.delete(coverImageKey);
+    }
+
+    throw e;
+  }
 
   if (!trip) {
     throw createError({
       statusCode: 404,
       statusMessage: "Trip not found.",
     });
+  }
+
+  if (coverImageKey !== undefined && current.coverImageKey) {
+    await event.context.cloudflare.env.BUCKET.delete(current.coverImageKey);
   }
 
   return trip;

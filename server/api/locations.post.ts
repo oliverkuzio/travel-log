@@ -3,12 +3,13 @@ import type { DrizzleError } from "drizzle-orm";
 import slugify from "slug";
 
 import { findLocationByName, findUniqueSlug, insertLocation } from "~/lib/db/queries/location";
+import { InsertLocation } from "~/lib/db/schema";
 import { assertLocationTypeExists } from "~/utils/assert-references";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
-import readLocationBody, { putCoverImage } from "~/utils/read-location-body";
+import readCoverImageBody, { putCoverImage } from "~/utils/read-cover-image-body";
 
 export default defineAuthenticatedEventHandler(async (event) => {
-  const { location: data, coverImage } = await readLocationBody(event);
+  const { data, coverImage } = await readCoverImageBody(event, InsertLocation);
 
   await assertLocationTypeExists(event.context.db, data.typeId);
 
@@ -22,7 +23,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
   }
 
   const slug = await findUniqueSlug(event.context.db, slugify(data.name));
-  const coverImageKey = coverImage ? await putCoverImage(event, coverImage, event.context.user.id) : null;
+  const coverImageKey = coverImage ? await putCoverImage(event, coverImage, event.context.user.id, "locations") : null;
 
   try {
     return await insertLocation(event.context.db, { ...data, coverImageKey }, slug, event.context.user.id);

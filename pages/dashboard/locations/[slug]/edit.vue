@@ -14,7 +14,7 @@ const {
 async function onSubmit(values: InsertLocation, coverImage?: CoverImageChange) {
   await $csrfFetch(`/api/locations/${route.params.slug}`, {
     method: "put",
-    body: locationRequestBody(values, coverImage),
+    body: coverImageRequestBody(values, coverImage),
   });
 }
 
