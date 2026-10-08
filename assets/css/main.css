@@ -87,6 +87,11 @@
     @apply text-base-content bg-base-100;
   }
 
+  /* The cover photo runs to the card's edges, so MapPointPopup pads its own content. */
+  .map-point-popup .maplibregl-popup-content {
+    @apply p-0 overflow-hidden rounded-box shadow-lg;
+  }
+
   .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
   .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip,
   .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip {

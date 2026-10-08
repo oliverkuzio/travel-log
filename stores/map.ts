@@ -43,6 +43,9 @@ export const useMapStore = defineStore("useMapStore", () => {
   const addedPoint = ref<MapPoint & { centerMap?: boolean; zoom?: number } | null>(null);
   // The current trip's route as one line per leg, or null when not viewing a trip.
   const route = ref<GeoJSON.FeatureCollection<GeoJSON.LineString> | null>(null);
+  // How much of the map's left and bottom edges the side pane covers. It isn't reactive, so moving the pane
+  // doesn't refit the map.
+  let insets = { left: 0, bottom: 0 };
 
   async function init(defaultZoom = 3) {
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
@@ -82,7 +85,12 @@ export const useMapStore = defineStore("useMapStore", () => {
       ));
 
       map.map?.fitBounds(bounds, {
-        padding,
+        padding: {
+          top: padding,
+          right: padding,
+          bottom: padding + insets.bottom,
+          left: padding + insets.left,
+        },
         maxZoom: 12,
       });
     });
@@ -100,6 +108,10 @@ export const useMapStore = defineStore("useMapStore", () => {
     });
   }
 
+  function setInsets(value: typeof insets) {
+    insets = value;
+  }
+
   /**
    * Clears everything shown on the map, for pages that don't populate it.
    */
@@ -114,6 +126,7 @@ export const useMapStore = defineStore("useMapStore", () => {
   return {
     init,
     reset,
+    setInsets,
     mapPoints,
     addedPoint,
     selectedPoint,

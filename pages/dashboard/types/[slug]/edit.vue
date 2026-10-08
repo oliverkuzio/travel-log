@@ -31,7 +31,7 @@ useSeoMeta({
 
 <template>
   <div class="p-4">
-    <BackLink to="/dashboard/types" label="Location types" />
+    <AppBreadcrumbs />
     <h1 class="text-2xl font-semibold mb-4">
       Edit location type
     </h1>

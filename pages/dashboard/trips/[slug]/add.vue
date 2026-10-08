@@ -30,10 +30,7 @@ useSeoMeta({
 
 <template>
   <div>
-    <BackLink
-      :to="{ name: 'dashboard-trips-slug', params: { slug: route.params.slug } }"
-      :label="trip?.name"
-    />
+    <AppBreadcrumbs />
     <h1 class="text-2xl font-semibold mb-4">
       Add Log
     </h1>

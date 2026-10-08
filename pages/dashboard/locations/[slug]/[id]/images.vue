@@ -117,10 +117,7 @@ useSeoMeta({
 
 <template>
   <div>
-    <BackLink
-      :to="{ name: 'dashboard-locations-slug-id', params: { slug: route.params.slug, id: route.params.id } }"
-      :label="locationLog?.name"
-    />
+    <AppBreadcrumbs />
     <div v-if="loading">
       <div class="loading" />
     </div>
