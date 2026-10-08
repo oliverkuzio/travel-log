@@ -1,0 +1,1 @@
+ALTER TABLE `location` ADD `cover_image_key` text;

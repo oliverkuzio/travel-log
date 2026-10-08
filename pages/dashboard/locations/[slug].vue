@@ -97,6 +97,12 @@ useSeoMeta({
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-locations-slug' && location && !loading">
+      <img
+        v-if="location.coverImageKey"
+        :src="`/api/images/${location.coverImageKey}`"
+        :alt="`Cover photo of ${location.name}`"
+        class="w-full h-48 object-cover rounded-box mb-4"
+      >
       <PageHeadingMenu :title="location.name" :items="menuItems">
         <template #icon>
           <Icon

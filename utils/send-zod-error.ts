@@ -1,7 +1,7 @@
 import type { H3Event } from "h3";
 import type { ZodError } from "zod";
 
-export default function sendZodError(event: H3Event, error: ZodError) {
+export default function sendZodError(event: H3Event, error: ZodError): never {
   const statusMessage = error
     .issues
     .map(issue => `${issue.path.join("")}: ${issue.message}`)

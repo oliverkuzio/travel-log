@@ -43,54 +43,36 @@ async function uploadImage() {
   isUploading.value = true;
   uploadError.value = "";
 
-  const previewImage = new Image();
+  try {
+    const blob = await resizeImage(image.value);
+    const formData = new FormData();
+    formData.append("file", blob, "image.jpg");
 
-  previewImage.addEventListener("load", async () => {
-    const width = Math.min(1000, previewImage.width);
-    const resized = await createImageBitmap(previewImage, {
-      resizeWidth: width,
+    await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}/image`, {
+      method: "POST",
+      body: formData,
     });
 
-    const canvas = new OffscreenCanvas(width, resized.height);
-    canvas.getContext("bitmaprenderer")?.transferFromImageBitmap(resized);
-
-    const blob = await canvas.convertToBlob({
-      type: "image/jpeg",
-      quality: 0.9,
-    });
-
-    try {
-      const formData = new FormData();
-      formData.append("file", blob, "image.jpg");
-
-      await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}/image`, {
-        method: "POST",
-        body: formData,
-      });
-
-      await locationStore.refreshCurrentLocationLog();
-      image.value = null;
-      previewUrl.value = null;
-      if (imageInput.value) {
-        imageInput.value.value = "";
-      }
+    await locationStore.refreshCurrentLocationLog();
+    image.value = null;
+    previewUrl.value = null;
+    if (imageInput.value) {
+      imageInput.value.value = "";
     }
-    catch (e) {
-      if (e instanceof FetchError) {
-        uploadError.value = (e as FetchError).statusMessage || "Unkown error";
-      }
-      else if (e instanceof Error) {
-        uploadError.value = (e as Error).message;
-      }
-      else {
-        uploadError.value = "Unkown error";
-      }
+  }
+  catch (e) {
+    if (e instanceof FetchError) {
+      uploadError.value = (e as FetchError).statusMessage || "Unkown error";
     }
+    else if (e instanceof Error) {
+      uploadError.value = (e as Error).message;
+    }
+    else {
+      uploadError.value = "Unkown error";
+    }
+  }
 
-    isUploading.value = false;
-  });
-
-  previewImage.src = previewUrl.value;
+  isUploading.value = false;
 }
 
 function deleteImage(image: SelectLocationLogImage) {

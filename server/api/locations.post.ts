@@ -3,21 +3,16 @@ import type { DrizzleError } from "drizzle-orm";
 import slugify from "slug";
 
 import { findLocationByName, findUniqueSlug, insertLocation } from "~/lib/db/queries/location";
-import { InsertLocation } from "~/lib/db/schema";
 import { assertLocationTypeExists } from "~/utils/assert-references";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
-import sendZodError from "~/utils/send-zod-error";
+import readLocationBody, { putCoverImage } from "~/utils/read-location-body";
 
 export default defineAuthenticatedEventHandler(async (event) => {
-  const result = await readValidatedBody(event, InsertLocation.safeParse);
+  const { location: data, coverImage } = await readLocationBody(event);
 
-  if (!result.success) {
-    return sendZodError(event, result.error);
-  }
+  await assertLocationTypeExists(event.context.db, data.typeId);
 
-  await assertLocationTypeExists(event.context.db, result.data.typeId);
-
-  const existingLocation = await findLocationByName(event.context.db, result.data, event.context.user.id);
+  const existingLocation = await findLocationByName(event.context.db, data, event.context.user.id);
 
   if (existingLocation) {
     throw createError({
@@ -26,12 +21,17 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
-  const slug = await findUniqueSlug(event.context.db, slugify(result.data.name));
+  const slug = await findUniqueSlug(event.context.db, slugify(data.name));
+  const coverImageKey = coverImage ? await putCoverImage(event, coverImage, event.context.user.id) : null;
 
   try {
-    return await insertLocation(event.context.db, result.data, slug, event.context.user.id);
+    return await insertLocation(event.context.db, { ...data, coverImageKey }, slug, event.context.user.id);
   }
   catch (e) {
+    if (coverImageKey) {
+      await event.context.cloudflare.env.BUCKET.delete(coverImageKey);
+    }
+
     const error = e as DrizzleError;
     let statusCode = 500;
     let statusMessage = "An unknown error has occurred.";
