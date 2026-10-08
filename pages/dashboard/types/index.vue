@@ -2,6 +2,7 @@
 import type { FetchError } from "ofetch";
 
 import type { SelectLocationType } from "~/lib/db/schema";
+import type { HeadingMenuItem } from "~/lib/types";
 
 definePageMeta({
   middleware: "admin",
@@ -12,6 +13,12 @@ const { locationTypes, filteredLocationTypes, nameFilter, locationTypesStatus: s
 const { $csrfFetch } = useNuxtApp();
 
 const locationTypeNames = computed(() => locationTypes.value?.map(locationType => locationType.name) ?? []);
+
+const actions: HeadingMenuItem[] = [{
+  label: "Add type",
+  icon: "tabler:category-plus",
+  to: "/dashboard/types/add",
+}];
 
 const deleting = ref<SelectLocationType | null>(null);
 const deleteError = ref("");
@@ -52,14 +59,8 @@ useSeoMeta({
       icon="circle-x-filled"
       :message="deleteError"
     />
+    <EntityActions :items="actions" kind="location" />
     <div class="flex flex-col flex-nowrap gap-2">
-      <AddCard
-        label="Add new location type"
-        icon="tabler:category-plus"
-        to="/dashboard/types/add"
-        kind="location"
-        compact
-      />
       <div v-if="status === 'pending' && !locationTypes">
         <LoadingSpinner />
       </div>

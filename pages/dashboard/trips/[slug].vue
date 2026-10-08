@@ -24,16 +24,16 @@ const loading = computed(() => status.value === "pending" || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
 const locationCount = computed(() => trip.value ? getTripLocations(trip.value).length : 0);
 
-const menuItems = computed<HeadingMenuItem[]>(() => [{
-  label: "Edit Trip",
+const actions = computed<HeadingMenuItem[]>(() => [{
+  label: "Edit",
   icon: "tabler:map-cog",
   to: { name: "dashboard-trips-slug-edit", params: { slug: route.params.slug } },
 }, {
-  label: "Add Log",
+  label: "Add log",
   icon: "tabler:calendar-plus",
   to: { name: "dashboard-trips-slug-add", params: { slug: route.params.slug } },
 }, {
-  label: "Delete Trip",
+  label: "Delete",
   icon: "tabler:map-x",
   danger: true,
   onClick: () => isOpen.value = true,
@@ -87,15 +87,14 @@ useSeoMeta({
       <p class="text-xs opacity-50">
         {{ formatDateRange(trip.startedAt, trip.endedAt) }}
       </p>
-      <PageHeadingMenu :title="trip.name" :items="menuItems">
-        <template #icon>
-          <Icon
-            :name="TRIP_ICON"
-            size="28"
-            class="text-secondary shrink-0 mt-1"
-          />
-        </template>
-      </PageHeadingMenu>
+      <h1 class="text-2xl font-semibold mb-4 flex items-start gap-4">
+        <Icon
+          :name="TRIP_ICON"
+          size="28"
+          class="text-secondary shrink-0 mt-1"
+        />
+        {{ trip.name }}
+      </h1>
       <p v-if="trip.description" class="text-sm mb-4">
         {{ trip.description }}
       </p>
@@ -103,14 +102,12 @@ useSeoMeta({
         {{ trip.logs.length }} {{ trip.logs.length === 1 ? "log" : "logs" }} across
         {{ locationCount }} {{ locationCount === 1 ? "location" : "locations" }}
       </p>
+      <EntityActions :items="actions" kind="trip" />
       <div class="flex flex-col flex-nowrap gap-4 align-items-stretch">
-        <AddCard
-          label="Add log"
-          icon="tabler:calendar-plus"
-          :to="{ name: 'dashboard-trips-slug-add', params: { slug: route.params.slug } }"
-          kind="trip"
-        />
-        <div v-if="trip.logs.length" class="flex flex-wrap items-center justify-end gap-2">
+        <div v-if="trip.logs.length" class="flex flex-wrap items-center gap-2">
+          <h2 class="text-xl font-semibold flex-1">
+            Your visits
+          </h2>
           <DateFilter v-model="dateFilter" :dates="logDates" />
           <SortToggle v-model="sortOrder" />
         </div>

@@ -39,16 +39,16 @@ const googleMapsHref = computed(() => {
   return null;
 });
 
-const menuItems = computed<HeadingMenuItem[]>(() => [{
-  label: "Edit Location",
+const actions = computed<HeadingMenuItem[]>(() => [{
+  label: "Edit",
   icon: "tabler:map-pin-cog",
   to: { name: "dashboard-locations-slug-edit", params: { slug: route.params.slug } },
 }, {
-  label: "Add Log",
+  label: "Add log",
   icon: "tabler:calendar-plus",
   to: { name: "dashboard-locations-slug-add", params: { slug: route.params.slug } },
 }, {
-  label: "Delete Location",
+  label: "Delete",
   icon: "tabler:map-pin-x",
   danger: true,
   onClick: () => isOpen.value = true,
@@ -99,16 +99,15 @@ useSeoMeta({
         :alt="`Cover photo of ${location.name}`"
         class="w-full h-48 object-cover rounded-box mb-4"
       >
-      <PageHeadingMenu :title="location.name" :items="menuItems">
-        <template #icon>
-          <Icon
-            :name="location.type?.icon || DEFAULT_LOCATION_ICON"
-            size="28"
-            class="shrink-0 mt-1"
-            :class="getPointColors('location', true).text"
-          />
-        </template>
-      </PageHeadingMenu>
+      <h1 class="text-2xl font-semibold mb-4 flex items-start gap-4">
+        <Icon
+          :name="location.type?.icon || DEFAULT_LOCATION_ICON"
+          size="28"
+          class="shrink-0 mt-1"
+          :class="getPointColors('location', true).text"
+        />
+        {{ location.name }}
+      </h1>
       <p v-if="location.type" class="badge badge-neutral badge-sm mb-2">
         {{ location.type.name }}
       </p>
@@ -133,24 +132,21 @@ useSeoMeta({
         View on Google Maps
         <Icon name="tabler:external-link" size="20" />
       </a>
-      <div v-if="!location.logs.length" class="flex flex-col gap-4">
-        <p class="text-sm italic">
-          Add a location log to get started.
-        </p>
-        <NuxtLink
-          class="btn btn-primary"
-          :to="{
-            name: 'dashboard-locations-slug-add',
-            params: { slug: route.params.slug },
-          }"
-        >
-          Add Location Log
-          <Icon name="tabler:calendar-plus" size="24" />
-        </NuxtLink>
-      </div>
+      <p class="text-xs opacity-70 mb-4">
+        {{ location.logs.length }} {{ location.logs.length === 1 ? "log" : "logs" }}
+      </p>
+      <EntityActions :items="actions" kind="location" />
+      <p v-if="!location.logs.length" class="text-sm italic">
+        Add a location log to get started.
+      </p>
     </div>
     <div v-if="route.name === 'dashboard-locations-slug' && !loading && location?.logs.length" class="flex flex-col flex-nowrap gap-4 align-items-stretch">
-      <SortToggle v-model="sortOrder" class="self-end" />
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 class="text-xl font-semibold flex-1">
+          Your visits
+        </h2>
+        <SortToggle v-model="sortOrder" />
+      </div>
       <MapPointCard
         v-for="log in sortedLogs"
         :key="log.id"

@@ -1,9 +1,17 @@
 <script lang="ts" setup>
+import type { HeadingMenuItem } from "~/lib/types";
+
 const tripsStore = useTripsStore();
 const { trips, filteredTrips, nameFilter, sortOrder, tripsStatus: status } = storeToRefs(tripsStore);
 
 const { formatDateRange } = useDateFormat();
 const tripNames = computed(() => trips.value?.map(trip => trip.name) ?? []);
+
+const actions: HeadingMenuItem[] = [{
+  label: "Add trip",
+  icon: "tabler:map-plus",
+  to: "/dashboard/trips/add",
+}];
 
 useSeoMeta({
   title: "Trips",
@@ -16,14 +24,9 @@ useSeoMeta({
     <h1 class="text-2xl font-semibold mb-4">
       Trips
     </h1>
+    <EntityActions :items="actions" kind="trip" />
     <div class="flex flex-col flex-nowrap gap-4 align-items-stretch">
-      <AddCard
-        label="Add new trip"
-        icon="tabler:map-plus"
-        to="/dashboard/trips/add"
-        kind="trip"
-      />
-      <h2 class="text-xl font-semibold mt-2">
+      <h2 class="text-xl font-semibold">
         Your trips
       </h2>
       <div v-if="status === 'pending' && !trips">
