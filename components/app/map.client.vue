@@ -7,13 +7,17 @@ import type { CardPoint } from "~/lib/types";
 import { CENTER_MAP, ROUTE_CASING_COLOR, ROUTE_COLOR } from "~/lib/constants";
 import { ROUTE_ARROW_IMAGE } from "~/stores/map";
 
+const { zoom = 3, controls = true } = defineProps<{
+  zoom?: number;
+  controls?: boolean;
+}>();
+
 const mapStore = useMapStore();
 const colorMode = useColorMode();
 const style = computed(() => `/api/styles/${colorMode.value}`);
 // Only the first style is passed to the map. Later switches are made below, because the default diff would
 // drop the trip route's source and layers without firing the "style.load" event that re-adds them.
 const initialStyle = style.value;
-const zoom = 3;
 const { formatDateRange } = useDateFormat();
 
 function formatPointDates(dates: NonNullable<CardPoint["dates"]>) {
@@ -35,7 +39,7 @@ function onDoubleClick(mglEvent: MglEvent<"dblclick">) {
 }
 
 onMounted(() => {
-  mapStore.init();
+  mapStore.init(zoom);
 });
 
 watch(style, async (newStyle) => {
@@ -51,7 +55,7 @@ watch(style, async (newStyle) => {
     :zoom="zoom"
     @map:dblclick="onDoubleClick($event)"
   >
-    <MglNavigationControl />
+    <MglNavigationControl v-if="controls" />
     <MglGeoJsonSource
       v-if="mapStore.route"
       source-id="trip-route"
