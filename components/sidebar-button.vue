@@ -1,61 +1,25 @@
 <script lang="ts" setup>
+import type { SidebarItem } from "~/lib/types";
+
 const props = defineProps<{
-  label: string;
-  icon: string;
-  href: string;
-  showLabel: boolean;
-  iconColor?: string;
-  // Also treat nested routes (e.g. /dashboard/trips/my-trip for /dashboard/trips) as active.
-  matchPrefix?: boolean;
+  item: SidebarItem;
 }>();
 
-const route = useRoute();
-
-const isActive = computed(() => {
-  return route.path === props.href
-    || (props.matchPrefix && route.path.startsWith(`${props.href}/`));
-});
+const { isActive } = useNavItems();
 </script>
 
 <template>
-  <div>
-    <div
-      class="tooltip-right"
-      :data-tip="showLabel ? undefined : props.label"
-      :class="{ tooltip: !showLabel }"
+  <div class="tooltip tooltip-right w-full" :data-tip="props.item.label">
+    <NuxtLink
+      :to="props.item.href"
+      :class="{ 'bg-base-200': isActive(props.item) }"
+      class="flex w-full justify-center p-2 py-5 hover:bg-base-200/60 hover:cursor-pointer transition-colors"
     >
-      <NuxtLink
-        :to="props.href"
-        :class="{ 'bg-base-200': isActive, 'justify-center': !showLabel, 'justify-start': showLabel }"
-        class="flex gap-2 p-2 text-sm hover:bg-base-200/60 hover:cursor-pointer flex-nowrap transition-colors"
-      >
-        <Icon
-          :name="props.icon"
-          size="24"
-          :class="iconColor"
-        />
-        <Transition name="grow">
-          <span v-if="showLabel" class="truncate">{{ props.label }}</span>
-        </Transition>
-      </NuxtLink>
-    </div>
-    <!-- <div v-if="showDivider" class="divider" /> -->
+      <Icon
+        :name="props.item.icon"
+        size="24"
+        :class="props.item.iconColor"
+      />
+    </NuxtLink>
   </div>
 </template>
-
-<style scoped>
-.grow-enter-active {
-  animation: grow 0.2s;
-}
-.grow-leave-active {
-  animation: grow 0.2s reverse;
-}
-@keyframes grow {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-</style>
