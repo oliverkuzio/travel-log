@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+const { $pwa } = useNuxtApp();
 const route = useRoute();
 // The homepage shows the map behind the navbar.
 const overMap = computed(() => route.path === "/");
@@ -20,6 +21,16 @@ const overMap = computed(() => route.path === "/");
       </NuxtLink>
     </div>
     <div class="navbar-end">
+      <ClientOnly>
+        <button
+          v-if="$pwa?.showInstallPrompt"
+          class="btn btn-ghost btn-sm"
+          @click="$pwa.install()"
+        >
+          <Icon name="tabler:download" size="20" />
+          Install
+        </button>
+      </ClientOnly>
       <AppThemeToggle />
       <AuthButton />
     </div>
