@@ -88,12 +88,27 @@ useSeoMeta({
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-locations-slug-id' && locationLog && !loading">
-      <p class="text-xs opacity-50">
-        {{ formatDateRange(locationLog.startedAt, locationLog.endedAt, true) }}
-      </p>
+      <div v-if="location?.coverImageKey" class="relative mb-4">
+        <img
+          :src="`/api/images/${location.coverImageKey}`"
+          :alt="`Cover photo of ${location.name}`"
+          class="w-full h-48 object-cover rounded-box"
+        >
+        <p class="badge badge-neutral badge-sm absolute top-2 left-2 shadow-sm">
+          {{ formatDateRange(locationLog.startedAt, locationLog.endedAt, true) }}
+        </p>
+      </div>
       <h1 class="text-2xl font-semibold mb-4">
         {{ locationLog.name }}
       </h1>
+      <p v-if="!location?.coverImageKey" class="badge badge-neutral badge-sm mb-4">
+        {{ formatDateRange(locationLog.startedAt, locationLog.endedAt, true) }}
+      </p>
+      <EntityActions :items="actions" kind="location" />
+      <div class="divider" />
+      <p class="text-sm mb-4">
+        {{ locationLog.description }}
+      </p>
       <NuxtLink
         v-if="locationLog.trip"
         :to="{ name: 'dashboard-trips-slug', params: { slug: locationLog.trip.slug } }"
@@ -120,10 +135,7 @@ useSeoMeta({
           </span>
         </div>
       </NuxtLink>
-      <p class="text-sm mb-4">
-        {{ locationLog.description }}
-      </p>
-      <EntityActions :items="actions" kind="location" />
+      <div class="divider" />
       <p v-if="!locationLog.images.length" class="text-sm italic">
         Add some images to get started.
       </p>

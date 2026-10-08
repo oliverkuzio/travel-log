@@ -24,7 +24,11 @@ useSeoMeta({
     <h1 class="text-2xl font-semibold mb-4">
       Trips
     </h1>
-    <EntityActions :items="actions" kind="trip" />
+    <EntityActions
+      :items="actions"
+      kind="trip"
+      align-start
+    />
     <div class="flex flex-col flex-nowrap gap-4 align-items-stretch">
       <h2 class="text-xl font-semibold">
         Your trips
@@ -36,8 +40,14 @@ useSeoMeta({
         Add a trip to get started.
       </p>
       <template v-else>
-        <NameFilter v-model="nameFilter" :names="tripNames" />
-        <SortToggle v-model="sortOrder" class="self-end" />
+        <div class="flex items-center gap-2">
+          <NameFilter
+            v-model="nameFilter"
+            :names="tripNames"
+            class="flex-1 min-w-0"
+          />
+          <SortToggle v-model="sortOrder" />
+        </div>
         <p v-if="!filteredTrips?.length" class="text-sm italic">
           No trips match your filter.
         </p>

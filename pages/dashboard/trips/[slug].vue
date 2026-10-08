@@ -78,38 +78,42 @@ useSeoMeta({
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-trips-slug' && trip && !loading">
-      <img
-        v-if="trip.coverImageKey"
-        :src="`/api/images/${trip.coverImageKey}`"
-        :alt="`Cover photo of ${trip.name}`"
-        class="w-full h-48 object-cover rounded-box mb-4"
-      >
-      <p class="text-xs opacity-50">
-        {{ formatDateRange(trip.startedAt, trip.endedAt) }}
-      </p>
-      <h1 class="text-2xl font-semibold mb-4 flex items-start gap-4">
+      <div v-if="trip.coverImageKey" class="relative mb-4">
+        <img
+          :src="`/api/images/${trip.coverImageKey}`"
+          :alt="`Cover photo of ${trip.name}`"
+          class="w-full h-48 object-cover rounded-box"
+        >
+        <p class="badge badge-secondary badge-sm absolute top-2 left-2 shadow-sm">
+          {{ formatDateRange(trip.startedAt, trip.endedAt) }}
+        </p>
+      </div>
+      <h1 class="text-2xl font-semibold mb-4 flex items-center gap-2">
         <Icon
           :name="TRIP_ICON"
           size="28"
-          class="text-secondary shrink-0 mt-1"
+          class="text-secondary shrink-0"
         />
         {{ trip.name }}
       </h1>
+      <p v-if="!trip.coverImageKey" class="badge badge-secondary badge-sm mb-4">
+        {{ formatDateRange(trip.startedAt, trip.endedAt) }}
+      </p>
       <p v-if="trip.description" class="text-sm mb-4">
         {{ trip.description }}
       </p>
-      <p class="text-xs opacity-70 mb-4">
-        {{ trip.logs.length }} {{ trip.logs.length === 1 ? "log" : "logs" }} across
-        {{ locationCount }} {{ locationCount === 1 ? "location" : "locations" }}
-      </p>
       <EntityActions :items="actions" kind="trip" />
+      <div class="divider" />
       <div class="flex flex-col flex-nowrap gap-4 align-items-stretch">
-        <div v-if="trip.logs.length" class="flex flex-wrap items-center gap-2">
-          <h2 class="text-xl font-semibold flex-1">
-            {{ trip.logs.length }} {{ trip.logs.length === 1 ? "visit" : "visits" }}
+        <div v-if="trip.logs.length" class="flex flex-col gap-2">
+          <h2 class="text-xl font-semibold">
+            {{ trip.logs.length }} {{ trip.logs.length === 1 ? "log" : "logs" }} across
+            {{ locationCount }} {{ locationCount === 1 ? "location" : "locations" }}
           </h2>
-          <DateFilter v-model="dateFilter" :dates="logDates" />
-          <SortToggle v-model="sortOrder" />
+          <div class="flex flex-wrap items-center gap-2">
+            <DateFilter v-model="dateFilter" :dates="logDates" />
+            <SortToggle v-model="sortOrder" class="ml-auto" />
+          </div>
         </div>
         <MapPointCard
           v-for="log in filteredLogs"

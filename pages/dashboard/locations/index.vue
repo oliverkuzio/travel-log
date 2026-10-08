@@ -26,7 +26,11 @@ useSeoMeta({
     <h1 class="text-2xl font-semibold mb-4">
       Locations
     </h1>
-    <EntityActions :items="actions" kind="location" />
+    <EntityActions
+      :items="actions"
+      kind="location"
+      align-start
+    />
     <div class="flex flex-col flex-nowrap gap-2 align-items-stretch">
       <h2 class="text-xl font-semibold">
         Your locations

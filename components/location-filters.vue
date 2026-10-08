@@ -29,25 +29,31 @@ function clearFilters() {
 
 <template>
   <div class="flex flex-col gap-2">
-    <NameFilter v-model="nameFilter" :names="locationNames" />
-    <select
-      v-if="locationTypesInUse.length"
-      class="select select-sm w-full"
-      aria-label="Filter by type"
-      :disabled="!availableTypes.length"
-      @change="addType"
-    >
-      <option value="">
-        {{ availableTypes.length ? "Filter by type..." : "All types selected" }}
-      </option>
-      <option
-        v-for="type in availableTypes"
-        :key="type.id"
-        :value="type.id"
+    <div class="flex gap-2">
+      <NameFilter
+        v-model="nameFilter"
+        :names="locationNames"
+        class="flex-2 min-w-0"
+      />
+      <select
+        v-if="locationTypesInUse.length"
+        class="select select-sm flex-1 min-w-0"
+        aria-label="Filter by type"
+        :disabled="!availableTypes.length"
+        @change="addType"
       >
-        {{ type.name }}
-      </option>
-    </select>
+        <option value="">
+          {{ availableTypes.length ? "Filter by type..." : "All types selected" }}
+        </option>
+        <option
+          v-for="type in availableTypes"
+          :key="type.id"
+          :value="type.id"
+        >
+          {{ type.name }}
+        </option>
+      </select>
+    </div>
     <div v-if="selectedTypes.length" class="flex flex-wrap items-center gap-1">
       <span
         v-for="type in selectedTypes"

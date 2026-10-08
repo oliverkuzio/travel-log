@@ -4,6 +4,7 @@ import type { HeadingMenuItem, MapPointKind } from "~/lib/types";
 const props = defineProps<{
   items: HeadingMenuItem[];
   kind?: MapPointKind;
+  alignStart?: boolean;
 }>();
 
 const NuxtLink = resolveComponent("NuxtLink");
@@ -11,7 +12,7 @@ const colors = computed(() => props.kind ? getPointColors(props.kind) : null);
 </script>
 
 <template>
-  <div class="flex flex-wrap justify-around gap-4 mb-4">
+  <div class="flex flex-wrap gap-4 mb-4" :class="props.alignStart ? 'justify-start' : 'justify-around'">
     <component
       :is="item.to ? NuxtLink : 'button'"
       v-for="item in props.items"

@@ -54,6 +54,20 @@ const actions = computed<HeadingMenuItem[]>(() => [{
   onClick: () => isOpen.value = true,
 }]);
 
+const addressCopied = ref(false);
+let addressCopiedTimeout: ReturnType<typeof setTimeout> | undefined;
+
+async function copyAddress() {
+  if (!location.value?.address) {
+    return;
+  }
+
+  await navigator.clipboard.writeText(location.value.address);
+  addressCopied.value = true;
+  clearTimeout(addressCopiedTimeout);
+  addressCopiedTimeout = setTimeout(() => addressCopied.value = false, 2000);
+}
+
 async function confirmDelete() {
   try {
     isOpen.value = false;
@@ -93,46 +107,78 @@ useSeoMeta({
       :message="errorMessage"
     />
     <div v-if="route.name === 'dashboard-locations-slug' && location && !loading">
-      <img
-        v-if="location.coverImageKey"
-        :src="`/api/images/${location.coverImageKey}`"
-        :alt="`Cover photo of ${location.name}`"
-        class="w-full h-48 object-cover rounded-box mb-4"
-      >
-      <h1 class="text-2xl font-semibold mb-4 flex items-start gap-4">
+      <div v-if="location.coverImageKey" class="relative mb-4">
+        <img
+          :src="`/api/images/${location.coverImageKey}`"
+          :alt="`Cover photo of ${location.name}`"
+          class="w-full h-48 object-cover rounded-box"
+        >
+        <p v-if="location.type" class="badge badge-neutral badge-sm absolute top-2 left-2 shadow-sm">
+          {{ location.type.name }}
+        </p>
+      </div>
+      <h1 class="text-2xl font-semibold mb-4 flex items-center gap-2">
         <Icon
           :name="location.type?.icon || DEFAULT_LOCATION_ICON"
           size="28"
-          class="shrink-0 mt-1"
+          class="shrink-0"
           :class="getPointColors('location', true).text"
         />
         {{ location.name }}
       </h1>
-      <p v-if="location.type" class="badge badge-neutral badge-sm mb-4">
+      <p v-if="location.type && !location.coverImageKey" class="badge badge-neutral badge-sm mb-4">
         {{ location.type.name }}
       </p>
       <EntityActions :items="actions" kind="location" />
+      <div class="divider" />
       <p class="text-sm mb-4">
         {{ location.description }}
       </p>
-      <p v-if="location.address" class="flex items-center gap-1 text-sm mb-4">
-        <Icon
-          name="tabler:map-pin"
-          size="16"
-          class="shrink-0"
-        />
-        {{ location.address }}
-      </p>
-      <a
-        v-if="googleMapsHref"
-        class="btn btn-outline btn-sm mb-4"
-        :href="googleMapsHref"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        View on Google Maps
-        <Icon name="tabler:external-link" size="20" />
-      </a>
+      <div v-if="location.address || googleMapsHref" class="flex flex-col gap-1 mb-4">
+        <div
+          v-if="location.address"
+          class="tooltip tooltip-bottom w-full"
+          :data-tip="addressCopied ? 'Copied!' : 'Copy address'"
+        >
+          <button
+            type="button"
+            class="flex items-center gap-2 w-full text-left text-sm rounded-box px-2 py-1 hover:bg-base-100 cursor-pointer transition-colors"
+            @click="copyAddress"
+          >
+            <Icon
+              name="tabler:map-pin"
+              size="24"
+              class="shrink-0"
+            />
+            {{ location.address }}
+          </button>
+        </div>
+        <div
+          v-if="googleMapsHref"
+          class="tooltip tooltip-bottom w-full"
+          data-tip="View in Google Maps"
+        >
+          <a
+            class="flex items-center gap-2 w-full text-sm rounded-box px-2 py-1 hover:bg-base-100 transition-colors"
+            :href="googleMapsHref"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon
+              name="tabler:brand-google-maps"
+              size="24"
+              class="shrink-0"
+            />
+            View on Google Maps
+            <Icon
+              name="tabler:external-link"
+              size="14"
+              class="opacity-60"
+            />
+          </a>
+        </div>
+      </div>
+      <div class="divider" />
       <p v-if="!location.logs.length" class="text-sm italic">
         Add a location log to get started.
       </p>
