@@ -11,7 +11,7 @@ const colors = computed(() => props.kind ? getPointColors(props.kind) : null);
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-4 mb-4">
+  <div class="flex flex-wrap justify-around gap-4 mb-4">
     <component
       :is="item.to ? NuxtLink : 'button'"
       v-for="item in props.items"
