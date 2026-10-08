@@ -1,20 +1,15 @@
-import { findLocationByName, updateLocation } from "~/lib/db/queries/location";
-import { InsertLocation } from "~/lib/db/schema";
+import { findLocationByName, findOwnedLocationBySlug, updateLocation } from "~/lib/db/queries/location";
 import { assertLocationTypeExists } from "~/utils/assert-references";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
-import sendZodError from "~/utils/send-zod-error";
+import readLocationBody, { putCoverImage } from "~/utils/read-location-body";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug") as string;
-  const result = await readValidatedBody(event, InsertLocation.safeParse);
+  const { location: data, coverImage, removeCoverImage } = await readLocationBody(event);
 
-  if (!result.success) {
-    return sendZodError(event, result.error);
-  }
+  await assertLocationTypeExists(event.context.db, data.typeId);
 
-  await assertLocationTypeExists(event.context.db, result.data.typeId);
-
-  const existingLocation = await findLocationByName(event.context.db, result.data, event.context.user.id);
+  const existingLocation = await findLocationByName(event.context.db, data, event.context.user.id);
 
   if (existingLocation && existingLocation.slug !== slug) {
     throw createError({
@@ -23,13 +18,47 @@ export default defineAuthenticatedEventHandler(async (event) => {
     });
   }
 
-  const location = await updateLocation(event.context.db, result.data, slug, event.context.user.id);
+  const current = await findOwnedLocationBySlug(event.context.db, slug, event.context.user.id);
+
+  if (!current) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Location not found.",
+    });
+  }
+
+  // undefined leaves the existing cover photo in place.
+  let coverImageKey: string | null | undefined;
+
+  if (coverImage) {
+    coverImageKey = await putCoverImage(event, coverImage, event.context.user.id);
+  }
+  else if (removeCoverImage) {
+    coverImageKey = null;
+  }
+
+  let location;
+
+  try {
+    location = await updateLocation(event.context.db, { ...data, coverImageKey }, slug, event.context.user.id);
+  }
+  catch (e) {
+    if (coverImageKey) {
+      await event.context.cloudflare.env.BUCKET.delete(coverImageKey);
+    }
+
+    throw e;
+  }
 
   if (!location) {
     throw createError({
       statusCode: 404,
       statusMessage: "Location not found.",
     });
+  }
+
+  if (coverImageKey !== undefined && current.coverImageKey) {
+    await event.context.cloudflare.env.BUCKET.delete(current.coverImageKey);
   }
 
   return location;

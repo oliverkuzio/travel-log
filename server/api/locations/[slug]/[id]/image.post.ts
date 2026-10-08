@@ -1,7 +1,6 @@
+import { MAX_IMAGE_SIZE } from "~/lib/constants";
 import { insertLocationLogImage } from "~/lib/db/queries/location-log-image";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
-
-const MAX_FILE_SIZE = 1024 * 1024 * 0.5;
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug") as string;
@@ -16,7 +15,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "No file provided" });
   }
 
-  if (file.size > MAX_FILE_SIZE) {
+  if (file.size > MAX_IMAGE_SIZE) {
     throw createError({ statusCode: 400, statusMessage: "File too large" });
   }
 

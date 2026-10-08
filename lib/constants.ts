@@ -2,6 +2,9 @@ import type { LngLatLike } from "maplibre-gl";
 
 export const CENTER_MAP = [0, 0] as LngLatLike;
 
+// Images are resized client side before upload, so this only needs to fit a resized JPEG.
+export const MAX_IMAGE_SIZE = 1024 * 1024 * 0.5;
+
 // The daisyUI secondary (trip) colour and its content colour, as hex because MapLibre layers can't use CSS classes.
 export const ROUTE_COLOR = "#edb200";
 export const ROUTE_CASING_COLOR = "#733e0a";

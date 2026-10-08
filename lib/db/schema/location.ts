@@ -19,6 +19,7 @@ export const location = sqliteTable("location", {
   description: text(),
   address: text(),
   googleMapsUrl: text(),
+  coverImageKey: text(),
   lat: real().notNull(),
   long: real().notNull(),
   typeId: int().references(() => locationType.id, { onDelete: "set null" }),
@@ -48,6 +49,7 @@ export const InsertLocation = createInsertSchema(location, {
 }).omit({
   id: true,
   slug: true,
+  coverImageKey: true,
   userId: true,
   createdAt: true,
   updatedAt: true,

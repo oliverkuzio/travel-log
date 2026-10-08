@@ -1,10 +1,14 @@
 <script lang="ts" setup>
+import { z } from "zod";
+
+import type { CoverImageChange } from "~/lib/types";
+
 import { CENTER_MAP } from "~/lib/constants";
 import { InsertLocation } from "~/lib/db/schema";
 
 const props = defineProps<{
-  initialValues?: InsertLocation;
-  onSubmit: (location: InsertLocation) => Promise<any>;
+  initialValues?: InsertLocation & { coverImageKey?: string | null };
+  onSubmit: (location: InsertLocation, coverImage?: CoverImageChange) => Promise<any>;
   onSubmitComplete: () => void;
   submitLabel: string;
   submitIcon: string;
@@ -20,6 +24,15 @@ const values = props.initialValues || {
   long: (CENTER_MAP as [number, number])[0],
   lat: (CENTER_MAP as [number, number])[1],
 };
+
+// The cover photo is part of the form so changing it marks the form dirty, but it's sent separately.
+const schema = InsertLocation.extend({
+  coverImage: z.custom<CoverImageChange>().optional(),
+});
+
+function onSubmit({ coverImage, ...location }: z.infer<typeof schema>) {
+  return props.onSubmit(location, coverImage);
+}
 
 const { locationTypes } = storeToRefs(useLocationTypesStore());
 
@@ -37,7 +50,7 @@ function findTypeIcon(typeId: unknown) {
   <BaseForm
     v-slot="{ errors, loading }"
     :initial-values="values"
-    :schema="InsertLocation"
+    :schema
     :on-submit
     :on-submit-complete
     :submit-label
@@ -54,6 +67,10 @@ function findTypeIcon(typeId: unknown) {
       label="Description (optional)"
       name="description"
       :error="errors.description"
+      :disabled="loading"
+    />
+    <CoverImageField
+      :current-key="values.coverImageKey"
       :disabled="loading"
     />
     <AppFormField

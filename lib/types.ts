@@ -74,3 +74,6 @@ export type SidebarItem = {
 };
 
 export type SortOrder = "asc" | "desc";
+
+// A resized cover photo to upload, or "remove" to clear the existing one.
+export type CoverImageChange = Blob | "remove";

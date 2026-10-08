@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import type { InsertLocation, SelectLocation } from "~/lib/db/schema";
+import type { CoverImageChange } from "~/lib/types";
 
 const { $csrfFetch } = useNuxtApp();
 const created = ref<SelectLocation | null>(null);
 
-async function onSubmit(values: InsertLocation) {
+async function onSubmit(values: InsertLocation, coverImage?: CoverImageChange) {
   created.value = await $csrfFetch<SelectLocation>("/api/locations", {
     method: "post",
-    body: values,
+    body: locationRequestBody(values, coverImage),
   });
 }
 

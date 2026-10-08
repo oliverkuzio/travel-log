@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { InsertLocation } from "~/lib/db/schema";
+import type { CoverImageChange } from "~/lib/types";
 
 const route = useRoute();
 const locationsStore = useLocationsStore();
@@ -10,10 +11,10 @@ const {
   currentLocationStatus: status,
 } = storeToRefs(locationsStore);
 
-async function onSubmit(values: InsertLocation) {
+async function onSubmit(values: InsertLocation, coverImage?: CoverImageChange) {
   await $csrfFetch(`/api/locations/${route.params.slug}`, {
     method: "put",
-    body: values,
+    body: locationRequestBody(values, coverImage),
   });
 }
 

@@ -10,7 +10,9 @@ import { location, locationLog, locationLogImage } from "../schema";
 
 const nanoid = customAlphabet("1234567890", 5);
 
-export async function insertLocation(db: AppDatabase, insertable: InsertLocation, slug: string, userId: number) {
+type LocationWithCoverImage = InsertLocation & { coverImageKey?: string | null };
+
+export async function insertLocation(db: AppDatabase, insertable: LocationWithCoverImage, slug: string, userId: number) {
   const [created] = await db.insert(location).values({
     ...insertable,
     slug,
@@ -20,7 +22,7 @@ export async function insertLocation(db: AppDatabase, insertable: InsertLocation
   return created;
 }
 
-export async function updateLocation(db: AppDatabase, updates: InsertLocation, slug: string, userId: number) {
+export async function updateLocation(db: AppDatabase, updates: LocationWithCoverImage, slug: string, userId: number) {
   const [updated] = await db.update(location).set(updates).where(and(
     eq(location.slug, slug),
     eq(location.userId, userId),
@@ -30,12 +32,7 @@ export async function updateLocation(db: AppDatabase, updates: InsertLocation, s
 }
 
 export async function deleteLocation(db: AppDatabase, slug: string, userId: number) {
-  const existing = await db.query.location.findFirst({
-    where: and(
-      eq(location.slug, slug),
-      eq(location.userId, userId),
-    ),
-  });
+  const existing = await findOwnedLocationBySlug(db, slug, userId);
 
   if (!existing) {
     return undefined;
@@ -77,6 +74,15 @@ export async function findLocation(db: AppDatabase, slug: string, userId: number
         },
       },
     },
+  });
+}
+
+export async function findOwnedLocationBySlug(db: AppDatabase, slug: string, userId: number) {
+  return db.query.location.findFirst({
+    where: and(
+      eq(location.slug, slug),
+      eq(location.userId, userId),
+    ),
   });
 }
 
