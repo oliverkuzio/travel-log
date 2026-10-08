@@ -44,7 +44,7 @@ export const useMapStore = defineStore("useMapStore", () => {
   // The current trip's route as one line per leg, or null when not viewing a trip.
   const route = ref<GeoJSON.FeatureCollection<GeoJSON.LineString> | null>(null);
 
-  async function init() {
+  async function init(defaultZoom = 3) {
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
     const { LngLatBounds } = await import("maplibre-gl");
 
@@ -69,7 +69,7 @@ export const useMapStore = defineStore("useMapStore", () => {
       if (!firstPoint) {
         map.map?.flyTo({
           center: CENTER_MAP,
-          zoom: 3,
+          zoom: defaultZoom,
         });
         return;
       }
@@ -100,8 +100,20 @@ export const useMapStore = defineStore("useMapStore", () => {
     });
   }
 
+  /**
+   * Clears everything shown on the map, for pages that don't populate it.
+   */
+  function reset() {
+    mapPoints.value = [];
+    selectedPoint.value = null;
+    lockedPoint.value = null;
+    addedPoint.value = null;
+    route.value = null;
+  }
+
   return {
     init,
+    reset,
     mapPoints,
     addedPoint,
     selectedPoint,
