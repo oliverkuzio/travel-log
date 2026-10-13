@@ -6,7 +6,7 @@ Travel Log: a Nuxt 3 SSR app on Cloudflare Workers (D1 + R2) for logging visited
 
 - `pnpm dev`: dev server on :3000. D1, R2 and `.dev.vars` are provided by `nitro-cloudflare-dev`.
 - `pnpm lint` / `pnpm lint:fix`: ESLint (antfu config) also handles formatting. There is no Prettier.
-- `pnpm check`: `nuxi typecheck`. `server/api/sentry-example-api.ts` already has a known error. Treat any other error as new.
+- `pnpm check`: `nuxi typecheck`.
 - `pnpm build`: production build into `.output/`. `pnpm preview` builds and then runs `wrangler dev`.
 - `pnpm db:generate`: create a migration after editing `lib/db/schema/*`. `pnpm db:migrate` applies it locally.
 - There is no test suite. Verify changes by running the app. Use `pnpm preview` for anything involving the service worker.
@@ -28,6 +28,7 @@ Travel Log: a Nuxt 3 SSR app on Cloudflare Workers (D1 + R2) for logging visited
 - **Mutations** of locations, trips, logs and photos go through `useOutboxStore().mutate()`, which sends them straight away when possible and queues them offline (see PWA notes). Other mutations (location types, imports) use `$csrfFetch` (from `useNuxtApp()`), never plain `$fetch`, because nuxt-csurf rejects POST/PUT/PATCH without the token.
 - **Stores** use `useFetch(url, { key, lazy: true, immediate: false })` with fixed keys, and pages call `refresh*()` themselves. The "current" entity URLs are computed from `route.params`.
 - **Images** are stored in R2 under keys prefixed with the user's id. They are served only through `/api/images/<key>`, which checks ownership. Cover images are sent as multipart: a JSON `data` field plus a `coverImage` file (`utils/cover-image-request-body.ts` on the client, `read-cover-image-body.ts` on the server). Resize on the client with `resizeImage` before uploading.
+- **Deployment-specific values** (domain, D1 id, bucket, Sentry slugs) live only in `wrangler.jsonc` and are marked there. Derive hosts from `BETTER_AUTH_URL` rather than hard-coding the domain, so forks only edit that file.
 - **Map styles** are `public/styles/{light,dark}.json`, served through `/api/styles/:theme`, which swaps in `MAPTILER_API_KEY`. Never put the key in client code.
 - **Admin**: `user.role === "admin"`. Location types are admin-managed. On the client, use the `admin` route middleware and `authStore.isAdmin`.
 - **Styling**: use daisyUI components and theme tokens (`base-100`, `primary`, and so on) rather than raw colours. The two themes are defined in `assets/css/main.css`, and dark is the default. Phones get `AppDock`; `md` and wider get the sidebar.

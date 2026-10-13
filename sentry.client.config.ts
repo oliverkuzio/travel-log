@@ -1,31 +1,34 @@
 import * as Sentry from "@sentry/nuxt";
 
+import { stripQueryStrings } from "./lib/sentry-scrub";
+
+// The app holds users' travel history and photos, so send Sentry as little personal data as possible.
+// Keep `PRIVACY.md` in sync with these settings.
 Sentry.init({
   // If set up, you can use your runtime config here
   // dsn: useRuntimeConfig().public.sentry.dsn,
   dsn: import.meta.env.VITE_SENTRY_DSN,
 
-  // We recommend adjusting this value in production, or using tracesSampler
-  // for finer control
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0.2,
 
-  // This sets the sample rate to be 10%. You may want this to be 100% while
-  // in development and sample at a lower rate in production
-  replaysSessionSampleRate: 0.1,
+  // Only record replays around errors, never whole sessions.
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0.25,
 
-  // If the entire session is not sampled, use the below sample rate to sample
-  // sessions when an error occurs.
-  replaysOnErrorSampleRate: 1.0,
-
-  // If you don't want to use Session Replay, just remove the line below:
-  integrations: [Sentry.replayIntegration()],
+  integrations: [Sentry.replayIntegration({
+    maskAllText: true,
+    maskAllInputs: true,
+    blockAllMedia: true,
+  })],
 
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
-  // Enable sending of user PII (Personally Identifiable Information)
-  // https://docs.sentry.io/platforms/javascript/guides/nuxt/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  // Don't attach IP addresses, cookies or request bodies to events.
+  sendDefaultPii: false,
+
+  beforeSend: stripQueryStrings,
+  beforeSendTransaction: stripQueryStrings,
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,

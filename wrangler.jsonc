@@ -3,6 +3,7 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 // TODO: Add auto-deployment to Cloudflare as part of Github CI
+// Deploying your own copy? Replace every value marked "Deployment-specific" (see README → Deploying your own copy).
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "travel-log",
@@ -15,6 +16,7 @@
   "observability": {
     "enabled": true
   },
+  // Deployment-specific: your own custom domain, or remove `routes` to use the workers.dev URL.
   "routes": [
     {
       "pattern": "travel.kuzio.app",
@@ -38,6 +40,7 @@
     {
       "binding": "DB",
       "database_name": "travel-log",
+      // Deployment-specific: the id printed by `wrangler d1 create travel-log`.
       "database_id": "3b9e3acb-8bc6-4ec8-90f9-ffbf3c9eaa71",
       "migrations_dir": "./lib/db/migrations"
     }
@@ -45,6 +48,7 @@
   "r2_buckets": [
     {
       "binding": "BUCKET", // <~ valid JavaScript variable name
+      // Deployment-specific: create with `wrangler r2 bucket create travel-log --jurisdiction eu`, or drop `jurisdiction`.
       "bucket_name": "travel-log",
       "jurisdiction": "eu"
     }
@@ -58,10 +62,14 @@
     // Not secret — Better Auth's own recommended way to pin its base origin
     // instead of trusting request headers. Overridden to localhost for
     // local dev via `.dev.vars` (which takes precedence over this).
+    // Deployment-specific: its host is also allowed by Better Auth and sent to Nominatim as the User-Agent.
     "BETTER_AUTH_URL": "https://travel.kuzio.app",
+    // Deployment-specific: comma-separated extra hosts Better Auth accepts, e.g. the workers.dev preview URL.
+    "AUTH_ALLOWED_HOSTS": "*.empty-queen-0060.workers.dev",
     // Not secret — Sentry org/project slugs. Informational only: @sentry/nuxt
     // reads these from `process.env` at build time (see `nuxt.config.ts`) for
     // source map uploads, so they must also be set in `.env` / CI.
+    // Deployment-specific.
     "SENTRY_ORG": "ok-apps",
     "SENTRY_PROJECT": "travel-log"
   }

@@ -8,6 +8,7 @@ type Env = {
   // Vars (wrangler.jsonc → vars)
   GITHUB_CLIENT_ID: string;
   BETTER_AUTH_URL: string;
+  AUTH_ALLOWED_HOSTS?: string;
   SENTRY_ORG: string;
   SENTRY_PROJECT: string;
   // Secrets (uploaded via `wrangler secret put`)
