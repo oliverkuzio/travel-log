@@ -19,6 +19,16 @@ const style = computed(() => `/api/styles/${colorMode.value}`);
 // drop the trip route's source and layers without firing the "style.load" event that re-adds them.
 const initialStyle = style.value;
 
+// MapTiler's tiles already credit MapTiler and OpenStreetMap; the Positron and Dark Matter styles (CC BY 4.0) need these too.
+const ATTRIBUTION = {
+  compact: true,
+  customAttribution: [
+    "<a href=\"https://openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a>",
+    "Style &copy; <a href=\"https://carto.com/attributions\" target=\"_blank\">CARTO</a>",
+    "<a href=\"https://maplibre.org/\" target=\"_blank\">MapLibre</a>",
+  ],
+};
+
 // The card for the hovered point, whether hovered on the map or in the side pane.
 const popupPoint = computed(() => mapStore.mapPoints.find(point => isPointSelected(point, mapStore.selectedPoint)));
 
@@ -76,6 +86,7 @@ watch(style, async (newStyle) => {
 <template>
   <MglMap
     :map-style="initialStyle"
+    :attribution-control="ATTRIBUTION"
     :center="CENTER_MAP"
     :zoom="zoom"
     @map:dblclick="onDoubleClick($event)"

@@ -37,7 +37,7 @@ export default withNuxt(
           "error",
           {
             case: "kebabCase",
-            ignore: ["README.md", "CLAUDE.md"],
+            ignore: ["README.md", "CLAUDE.md", "PRIVACY.md", "SECURITY.md", "LICENSE.md"],
           },
         ],
         "vue/max-attributes-per-line": [

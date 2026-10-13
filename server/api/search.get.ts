@@ -16,7 +16,8 @@ export default defineAuthenticatedEventHandler(
       const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(result.data.q)}&format=json&accept-language=en`, {
         signal: AbortSignal.timeout(5000),
         headers: {
-          "User-Agent": "travel.kuzio.app",
+          // Nominatim's usage policy requires a User-Agent that identifies the deployment.
+          "User-Agent": `Travel Log (${new URL(event.context.cloudflare.env.BETTER_AUTH_URL).host})`,
         },
       });
 

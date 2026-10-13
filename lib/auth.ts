@@ -13,7 +13,19 @@ export type UserWithId = Omit<User, "id"> & {
   role: UserRole;
 };
 
-type AuthEnv = Pick<Env, "GITHUB_CLIENT_ID" | "GITHUB_CLIENT_SECRET" | "BETTER_AUTH_URL" | "BETTER_AUTH_SECRET">;
+type AuthEnv = Pick<Env, "GITHUB_CLIENT_ID" | "GITHUB_CLIENT_SECRET" | "BETTER_AUTH_URL" | "BETTER_AUTH_SECRET" | "AUTH_ALLOWED_HOSTS">;
+
+// Derived from the deployment's own config so forks only need to change `wrangler.jsonc`.
+function getAllowedHosts(env: AuthEnv) {
+  const extraHosts = (env.AUTH_ALLOWED_HOSTS ?? "").split(",").map(host => host.trim()).filter(Boolean);
+
+  return [
+    "localhost",
+    "localhost:3000",
+    new URL(env.BETTER_AUTH_URL).host,
+    ...extraHosts,
+  ];
+}
 
 export function createAuth(db: AppDatabase, env: AuthEnv) {
   return betterAuth({
@@ -50,12 +62,7 @@ export function createAuth(db: AppDatabase, env: AuthEnv) {
     },
     secret: env.BETTER_AUTH_SECRET,
     baseURL: {
-      allowedHosts: [
-        "localhost",
-        "localhost:3000",
-        "travel.kuzio.app",
-        "*.empty-queen-0060.workers.dev",
-      ],
+      allowedHosts: getAllowedHosts(env),
       protocol: env.BETTER_AUTH_URL.startsWith("https") ? "https" : "http",
     },
     advanced: {

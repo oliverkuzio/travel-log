@@ -90,14 +90,6 @@ pnpm db:generate
 
 `pnpm db:push` and `pnpm db:studio` connect to the **remote** D1 database through the HTTP API, so use them with care.
 
-### 5. R2 CORS (optional)
-
-To update the CORS policy on the R2 bucket from `r2-cors.json`:
-
-```bash
-pnpm wrangler r2 bucket cors put travel-log --rules-file r2-cors.json
-```
-
 ## Development
 
 ```bash
@@ -121,7 +113,22 @@ pnpm preview   # build, then serve with `wrangler dev` on the Workers runtime
 pnpm deploy
 ```
 
-This builds and runs `wrangler deploy`, which publishes the Worker to `travel.kuzio.app`. Apply any new migrations first with `pnpm db:migrate:remote`.
+This builds and runs `wrangler deploy`, which publishes the Worker to the route in `wrangler.jsonc`. Apply any new migrations first with `pnpm db:migrate:remote`.
+
+### Deploying your own copy
+
+`wrangler.jsonc` is set up for the hosted instance at travel.kuzio.app. Before deploying a fork, replace every value marked `Deployment-specific` in it:
+
+| Setting                             | Replace with                                                                                                                                 |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `routes[].pattern`                  | Your custom domain, or remove `routes` to deploy to `<name>.<your-subdomain>.workers.dev`                                                    |
+| `d1_databases[].database_id`        | The id printed by `pnpm wrangler d1 create travel-log`                                                                                       |
+| `r2_buckets[]`                      | Your bucket: `pnpm wrangler r2 bucket create travel-log --jurisdiction eu` (omit `--jurisdiction` and the `jurisdiction` key outside the EU) |
+| `vars.BETTER_AUTH_URL`              | Your app's origin. Its host is also allowed by Better Auth and sent to Nominatim as the User-Agent                                           |
+| `vars.AUTH_ALLOWED_HOSTS`           | Comma-separated extra hosts that may sign in, such as your workers.dev URL, or `""`                                                          |
+| `vars.SENTRY_ORG`, `SENTRY_PROJECT` | Your Sentry slugs (also set them and `VITE_SENTRY_DSN` in `.env`), or leave `VITE_SENTRY_DSN` empty to send nothing                          |
+
+Then create your own GitHub OAuth App and MapTiler key, set the secrets with `pnpm wrangler secret put <NAME>`, run `pnpm db:migrate:remote` and `pnpm deploy`. Restrict the MapTiler key to your origin, and use your own app name and icons (see [License](#license)).
 
 ## Progressive web app
 
@@ -172,3 +179,35 @@ To debug, run `pnpm preview` and use Chrome DevTools → **Application** (Manife
 | `pnpm db:migrate:remote` | Apply migrations to the production D1 database                       |
 | `pnpm db:studio`         | Open Drizzle Studio against the remote database                      |
 | `pnpm cf-typegen`        | Regenerate Cloudflare binding types (`worker-configuration.d.ts`)    |
+
+## External services
+
+The app depends on these services. Each has its own terms, and a deployment needs its own account or key for each.
+
+| Service                                                      | Used for                                                 | Needs                                                                                                                   |
+| ------------------------------------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| [Cloudflare Workers, D1 and R2](https://www.cloudflare.com/) | Hosting, database and photo storage                      | Cloudflare account                                                                                                      |
+| [GitHub OAuth](https://docs.github.com/en/apps/oauth-apps)   | Sign-in                                                  | OAuth App client id and secret                                                                                          |
+| [MapTiler](https://www.maptiler.com/)                        | Vector tiles and fonts                                   | API key (restrict it to your origin)                                                                                    |
+| [OpenStreetMap Nominatim](https://nominatim.org/)            | Place search, proxied and cached for a day by the server | Nothing, but follow the [usage policy](https://operations.osmfoundation.org/policies/nominatim/) (max 1 request/second) |
+| [OpenMapTiles sprites](https://github.com/openmaptiles)      | Map icons, loaded from `openmaptiles.github.io`          | Nothing                                                                                                                 |
+| [Sentry](https://sentry.io/)                                 | Error monitoring and source maps                         | Optional DSN and auth token                                                                                             |
+
+## Privacy
+
+See [PRIVACY.md](PRIVACY.md) for what the hosted app stores and shares. Sentry is configured to send as little personal data as possible (`sentry.client.config.ts`). If you change that, update the policy too.
+
+## Contributing
+
+Bug reports are welcome. Please use the [issue templates](https://github.com/oliverkuzio/travel-log/issues/new/choose). This is a personal project, so pull requests aren't being accepted at the moment, but you're free to fork it under the license below. Report security issues privately as described in [SECURITY.md](SECURITY.md).
+
+## License
+
+The code is available under the [MIT License](LICENSE).
+
+That covers the code only. It does not cover:
+
+- **The Travel Log and Kuzio Apps names, logo and icons.** Please use your own branding for a public fork.
+- **Content users create** on any deployment, such as locations, notes and photos.
+- **The map styles** in `public/styles/`, which are modified copies of OpenMapTiles' Positron and Dark Matter. They are BSD-3-Clause (code) and CC BY 4.0 (design), see [public/styles/LICENSE.md](public/styles/LICENSE.md). Keep the OpenMapTiles and OpenStreetMap credits on the map.
+- **Map data and tiles**: © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright) (ODbL), served by © [MapTiler](https://www.maptiler.com/copyright/) under MapTiler's terms.

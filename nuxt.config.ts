@@ -83,7 +83,7 @@ export default defineNuxtConfig({
     },
     injectManifest: {
       globPatterns: ["**/*.{js,css,html,png,ico,svg,woff2}"],
-      globIgnores: ["styles/**", "**/sentry-example*"],
+      globIgnores: ["styles/**"],
       // Rendered by the server rather than built, so re-fetch it with each new build.
       additionalManifestEntries: [{ url: "/app-shell", revision: Date.now().toString() }],
     },
